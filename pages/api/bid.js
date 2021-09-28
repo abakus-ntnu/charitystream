@@ -5,12 +5,7 @@ import { url } from "./state";
 export default async function handler(req, res) {
   const { method } = req;
 
-  mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  });
+  mongoose.connect(url);
 
   switch (method) {
     case "POST":

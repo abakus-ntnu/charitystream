@@ -12,7 +12,7 @@
   height: 600px;
 }
 
-@media (max-width: 500px){
+@media (max-width: 500px) {
   .youtubeActual {
     width: 400px;
     height: 200px;

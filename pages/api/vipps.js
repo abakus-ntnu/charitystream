@@ -24,12 +24,7 @@ export default async function handler(req, res) {
 
   await runMiddleware(req, res, cors);
 
-  mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  });
+  mongoose.connect(url);
 
   if (headers.password !== process.env.POST_PASSWORD) {
     res.status(401).end();

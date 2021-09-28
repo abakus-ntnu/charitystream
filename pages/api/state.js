@@ -15,12 +15,7 @@ const dbname = "Charity";
 export const url = `mongodb+srv://${username}:${password}@cluster.au8e8.mongodb.net/${dbname}?retryWrites=true&w=majority`;
 
 export default async function handler(_, res) {
-  mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  });
+  mongoose.connect(url);
 
   // Get all the state we need for the page
   const auctions = await Auction.find({});
