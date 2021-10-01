@@ -1,6 +1,6 @@
 export default function StretchGoals(props) {
   const { stretchGoals, totalAmount } = props;
-  const maxAmount = stretchGoals[stretchGoals.length - 1].goal;
+  const maxAmount = stretchGoals[stretchGoals.length - 1]?.goal;
   const meterLen = Math.floor((totalAmount / maxAmount) * 100);
   const nextGoal = stretchGoals.find(
     (stretchGoal) => stretchGoal.goal > totalAmount
@@ -10,8 +10,11 @@ export default function StretchGoals(props) {
     .filter((stretchGoal) => stretchGoal.goal > totalAmount)
     .reverse();
   const reachedGoals = stretchGoals
-    .filter((goal) => goal.goal < totalAmount)
+    .filter((goal) => goal.goal <= totalAmount)
     .reverse();
+  if (stretchGoals.length === 0) {
+    return <p className="text-center">Ingen stretch goals er satt!</p>
+  }
   return (
     <div className="flex flex-wrap items-center h-full p-2 overflow-hidden justify-evenly">
       <div
