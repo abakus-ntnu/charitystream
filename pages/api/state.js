@@ -53,6 +53,11 @@ export default async function handler(_, res) {
             _id: 0,
           },
         },
+        {
+          $sort: {
+            id: 1,
+          },
+        },
       ]),
     ]);
 
