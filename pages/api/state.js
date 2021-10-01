@@ -7,6 +7,7 @@ import {
   SlidoView,
   StretchGoal,
   Bid,
+  BeerCount,
 } from "../../models/schema.js";
 
 const username = process.env.DATABASE_USER;
@@ -60,15 +61,23 @@ export default async function handler(_, res) {
   mongoose.connect(url);
 
   // Get all the state we need for the page
-  const [vipps, streamLink, slidoView, stretchGoals, topDonor, auctions] =
-    await Promise.all([
-      Vipps.find({}),
-      StreamLink.findOne().sort({ date: -1 }).limit(1),
-      SlidoView.findOne().sort({ date: -1 }).limit(1),
-      StretchGoal.find({}).sort("goal"),
-      Vipps.findOne({}).sort({ amount: -1 }).limit(1),
-      getHighestBids(),
-    ]);
+  const [
+    vipps,
+    streamLink,
+    slidoView,
+    stretchGoals,
+    topDonor,
+    auctions,
+    beerCount,
+  ] = await Promise.all([
+    Vipps.find({}),
+    StreamLink.findOne().sort({ date: -1 }).limit(1),
+    SlidoView.findOne().sort({ date: -1 }).limit(1),
+    StretchGoal.find({}).sort("goal"),
+    Vipps.findOne({}).sort({ amount: -1 }).limit(1),
+    getHighestBids(),
+    BeerCount.findOne({}),
+  ]);
 
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
@@ -87,6 +96,7 @@ export default async function handler(_, res) {
       slidoView,
       stretchGoals,
       topDonor,
+      beerCount,
     })
   );
 }
