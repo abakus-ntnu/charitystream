@@ -89,12 +89,13 @@ const AuctionItems = (props) => {
 
       if (res.status == 200) {
         setSuccess(
-          `Ditt bud på ${formData.amount} til ${activeItem.description} ble registrert! Det vil dukke opp etter at Arrkom har verifisert det.`
+          `Ditt bud på ${formData.amount} til ${activeItem.description} ble registrert!`
         );
       } else {
-        const errorMessage = "\n Feilmelding: " + (await res.json()).error;
         setSuccess(
-          `Budet ditt gikk ikke gjennom :(\n FeilKode: ${res.statusText} ${errorMessage}`
+          `Budet ditt gikk ikke gjennom :(\n Feilkode: ${
+            res.statusText
+          } \n Feilmelding: ${(await res.json()).error}`
         );
       }
       setActiveItem(null);
