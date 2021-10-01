@@ -10,7 +10,7 @@ export default function StretchGoals(props) {
     .filter((stretchGoal) => stretchGoal.goal > totalAmount)
     .reverse();
   const reachedGoals = stretchGoals
-    .filter((goal) => goal.goal < totalAmount)
+    .filter((goal) => goal.goal <= totalAmount)
     .reverse();
   if (stretchGoals.length === 0) {
     return <p className="text-center">Ingen stretch goals er satt!</p>
