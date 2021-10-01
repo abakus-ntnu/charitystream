@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Modal from "react-modal";
+import { MAX_BID_AMOUNT } from "../lib/constants";
 
 Modal.setAppElement("#__next");
 
@@ -22,7 +23,10 @@ const AuctionItems = (props) => {
   const [formData, setFormData] = useState({});
   const [success, setSuccess] = useState("");
 
-  const closeModal = () => setModalOpen(false);
+  const closeModal = () => {
+    clearError();
+    setModalOpen(false);
+  };
 
   const openModal = (item) => {
     setActiveItem(item);
@@ -41,6 +45,15 @@ const AuctionItems = (props) => {
         error: {
           ...formData.error,
           amount: `Budet ditt kan ikke være mindre enn ${activeItem.price},- kr!`,
+        },
+      });
+      return false;
+    } else if (formData.amount > MAX_BID_AMOUNT) {
+      setFormData({
+        ...formData,
+        error: {
+          ...formData.error,
+          amount: `Budet ditt kan ikke være større enn ${MAX_BID_AMOUNT},- kr!`,
         },
       });
       return false;
@@ -79,8 +92,9 @@ const AuctionItems = (props) => {
           `Ditt bud på ${formData.amount} til ${activeItem.description} ble registrert! Det vil dukke opp etter at Arrkom har verifisert det.`
         );
       } else {
+        const errorMessage = "\n Feilmelding: " + (await res.json()).error;
         setSuccess(
-          `Budet ditt gikk ikke gjennom :(\n FeilKode: ${res.statusText}`
+          `Budet ditt gikk ikke gjennom :(\n FeilKode: ${res.statusText} ${errorMessage}`
         );
       }
       setActiveItem(null);
@@ -198,6 +212,7 @@ const AuctionItems = (props) => {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                     id="amount"
                     type="number"
+                    min="0"
                     placeholder={activeItem.price * 1.1}
                     onChange={(e) =>
                       setFormData({ ...formData, amount: e.target.value })
