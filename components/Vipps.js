@@ -45,6 +45,7 @@ const Vipps = (props) => {
       <TopVipp vipp={props.topDonor} />
       <hr />
       {vipps}
+      {props.items.length === 0 && (<p className="text-center">Ingen Vipps-donasjoner er registrert enda! :(</p>)}
     </div>
   );
 };
