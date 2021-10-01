@@ -4,14 +4,14 @@ name: default
 
 steps:
   - name: setup
-    image: node:latest
+    image: node:14-alpine
     when:
       event: [pull_request]
     commands:
       - yarn install
 
   - name: build
-    image: node:latest
+    image: node:14-alpine
     when:
       event: [pull_request]
     depends_on:
@@ -21,7 +21,7 @@ steps:
 
 
   - name: prettier
-    image: node:latest
+    image: node:14-alpine
     when:
       event: [pull_request]
     depends_on:
@@ -30,7 +30,7 @@ steps:
       - yarn prettier
 
   - name: lint
-    image: node:latest
+    image: node:14-alpine
     when:
       event: [pull_request]
     depends_on:
