@@ -11,7 +11,6 @@ const AuctionSchema = new mongoose.Schema(
   {
     id: { type: Number },
     description: { type: String, default: "NULL" },
-    price: { type: Number, default: 0 },
   },
   { autoCreate: true }
 );
@@ -55,7 +54,6 @@ const BidSchema = new mongoose.Schema(
   {
     name: { type: String, default: "" },
     email: { type: String, default: "" },
-    description: { type: String, default: "" },
     item: { type: Number, default: "" },
     amount: { type: Number, default: 0 },
   },
