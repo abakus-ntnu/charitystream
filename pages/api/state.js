@@ -16,42 +16,45 @@ const dbname = "Charity";
 export const url = `mongodb+srv://${username}:${password}@cluster.au8e8.mongodb.net/${dbname}?retryWrites=true&w=majority`;
 export default async function handler(_, res) {
   mongoose.connect(url);
-  const auctions = await Bid.aggregate([
-    {
-      $group: {
-        _id: "$item",
-        amount: {
-          $max: "$amount",
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: "auctions",
-        localField: "_id",
-        foreignField: "id",
-        as: "auctions",
-      },
-    },
-    {
-      $unwind: "$auctions",
-    },
-    {
-      $project: {
-        price: "$amount",
-        description: "$auctions.description",
-        id: "$auctions.id",
-        _id: 0,
-      },
-    },
-  ]);
 
   // Get all the state we need for the page
-  const vipps = await Vipps.find({});
-  const streamLink = await StreamLink.findOne().sort({ date: -1 }).limit(1);
-  const slidoView = await SlidoView.findOne().sort({ date: -1 }).limit(1);
-  const stretchGoals = await StretchGoal.find({}).sort("goal");
-  const topDonor = await Vipps.findOne({}).sort({ amount: -1 }).limit(1);
+  const [vipps, streamLink, slidoView, stretchGoals, topDonor, auctions] =
+    await Promise.all([
+      Vipps.find({}),
+      StreamLink.findOne().sort({ date: -1 }).limit(1),
+      SlidoView.findOne().sort({ date: -1 }).limit(1),
+      StretchGoal.find({}).sort("goal"),
+      Vipps.findOne({}).sort({ amount: -1 }).limit(1),
+      Bid.aggregate([
+        {
+          $group: {
+            _id: "$item",
+            amount: {
+              $max: "$amount",
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "auctions",
+            localField: "_id",
+            foreignField: "id",
+            as: "auctions",
+          },
+        },
+        {
+          $unwind: "$auctions",
+        },
+        {
+          $project: {
+            price: "$amount",
+            description: "$auctions.description",
+            id: "$auctions.id",
+            _id: 0,
+          },
+        },
+      ]),
+    ]);
 
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
