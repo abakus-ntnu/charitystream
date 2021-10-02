@@ -13,6 +13,7 @@ const Item = (props) => {
       <div className="font-bold text-xl mb-2">{props.price},-</div>
       <hr />
       <p className="text-white text-base mb-8">{props.description}</p>
+      {props.name && <b>Vinner: {props.name}</b>}
     </div>
   );
 };
@@ -129,6 +130,7 @@ const AuctionItems = (props) => {
           <Item
             key={item.description}
             description={item.description}
+            name={item.name}
             onClick={() => openModal(item)}
             price={item.price}
           />
