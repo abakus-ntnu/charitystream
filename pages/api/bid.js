@@ -4,7 +4,7 @@ import { url } from "./state";
 import { MAX_BID_AMOUNT } from "../../lib/constants";
 
 export default async function handler(req, res) {
-  const { method } = req;
+  const { method, headers } = req;
 
   mongoose.connect(url);
 
@@ -27,8 +27,22 @@ export default async function handler(req, res) {
         res.status(200).json(bid);
       }
       break;
+    case "DELETE": {
+      if (headers.password !== process.env.POST_PASSWORD) {
+        res.status(401).end();
+        return;
+      }
+
+      Bid.findOne({ item: req.body.item })
+        .sort({ amount: -1 })
+        .exec(function (err, doc) {
+          doc.remove();
+        });
+
+      res.status(200).end(`Deleted highest bid for item ${req.body.item}`);
+    }
     default:
-      res.setHeader("Allow", ["POST"]);
+      res.setHeader("Allow", ["POST", "DELETE"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
