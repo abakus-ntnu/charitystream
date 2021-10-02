@@ -3,8 +3,8 @@ import Link from "next/link";
 import Alerts from "../../lib/Alerts";
 
 const links = [
-  { href: "/images", page: "Approve bilder" },
-  { href: "/scores", page: "Scores" },
+  { href: "/admin/vipps", page: "Legg til donasjoner" },
+  { href: "/admin/beer", page: "Legg til øl" },
 ];
 
 const Layout = ({ children, full = false }) => {
@@ -15,7 +15,7 @@ const Layout = ({ children, full = false }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 ">
             {links.map((link) => (
-              <div className="bg-white px-3 py-2 mx-5 rounded-md text-large font-medium">
+              <div className="bg-white px-3 py-2 mx-5 rounded-md text-large font-medium text-black">
                 <Link href={link.href}>{link.page}</Link>
               </div>
             ))}
