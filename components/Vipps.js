@@ -8,7 +8,7 @@ const Vipp = (props) => {
     >
       <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
       <span className="flex justify-between w-full">
-        <span className="p-3">{props.name} donerte</span>
+        <span className="p-3 truncate max-w-xs">{props.name} donerte</span>
         <span className="p-3 font-bold">{props.amount}kr!!</span>
       </span>
     </div>
