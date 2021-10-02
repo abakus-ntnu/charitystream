@@ -13,7 +13,7 @@ export default function StretchGoals(props) {
     .filter((goal) => goal.goal <= totalAmount)
     .reverse();
   if (stretchGoals.length === 0) {
-    return <p className="text-center">Ingen stretch goals er satt!</p>
+    return <p className="text-center">Ingen stretch goals er satt!</p>;
   }
   return (
     <div className="flex flex-wrap items-center h-full p-2 overflow-hidden justify-evenly">

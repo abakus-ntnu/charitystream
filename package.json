@@ -6,7 +6,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
-    "prettier": "prettier '**/*.{js,css,md}' --write"
+    "prettier": "prettier '**/*.{js,css,md}' --write",
+    "ci-lint": "next lint",
+    "ci-prettier": "prettier '**/*.{js,css,md}' --check"
   },
   "dependencies": {
     "classnames": "^2.3.1",

@@ -27,7 +27,7 @@ steps:
     depends_on:
       - setup
     commands:
-      - yarn prettier
+      - yarn ci-prettier
 
   - name: lint
     image: node:14-alpine
@@ -36,4 +36,4 @@ steps:
     depends_on:
       - setup
     commands:
-      - yarn lint
+      - yarn ci-lint
