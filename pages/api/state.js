@@ -7,8 +7,8 @@ import {
   SlidoView,
   StretchGoal,
   Bid,
-  BeerCount,
   AuctionOption,
+  Beer,
 } from "../../models/schema.js";
 
 const username = process.env.DATABASE_USER;
@@ -71,38 +71,36 @@ const getHighestBids = async () => {
   ]);
 };
 
+// export const url = `mongodb://0.0.0.0:27017/${dbname}?retryWrites=true&w=majority`;
 export const url = `mongodb+srv://${username}:${password}@cluster.au8e8.mongodb.net/${dbname}?retryWrites=true&w=majority`;
 
 export default async function handler(_, res) {
   mongoose.connect(url);
 
   // Get all the state we need for the page
-  const [
-    vipps,
-    streamLink,
-    slidoView,
-    stretchGoals,
-    topDonor,
-    auctions,
-    beerCount,
-  ] = await Promise.all([
-    Vipps.find({}),
-    StreamLink.findOne().sort({ date: -1 }).limit(1),
-    SlidoView.findOne().sort({ date: -1 }).limit(1),
-    StretchGoal.find({}).sort("goal"),
-    Vipps.findOne({}).sort({ amount: -1 }).limit(1),
-    getHighestBids(),
-    BeerCount.findOne({}),
-  ]);
+  const [vipps, streamLink, slidoView, stretchGoals, topDonor, auctions, beer] =
+    await Promise.all([
+      Vipps.find({}),
+      StreamLink.findOne().sort({ date: -1 }).limit(1),
+      SlidoView.findOne().sort({ date: -1 }).limit(1),
+      StretchGoal.find({}).sort("goal"),
+      Vipps.findOne({}).sort({ amount: -1 }).limit(1),
+      getHighestBids(),
+      Beer.findOne({}),
+    ]);
 
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
 
   // Find totalAmount using the sum all vipps
+  const beerDonation =
+    beer && beer.count && beer.price ? beer.count * beer.price : 0;
+  const beerMaxDonation = beer && beer.maxDonation ? beer.maxDonation : 0;
   const totalAmount =
     auctions.reduce((a, b) => {
       return a + b.price;
     }, 0) +
+    (beerDonation < beerMaxDonation ? beerDonation : beerMaxDonation) +
     vipps.reduce((a, b) => {
       return a + b.amount;
     }, 0);
@@ -116,7 +114,7 @@ export default async function handler(_, res) {
       slidoView,
       stretchGoals,
       topDonor,
-      beerCount,
+      beer,
     })
   );
 }

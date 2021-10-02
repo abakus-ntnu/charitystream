@@ -18,9 +18,11 @@ const Layout = ({ children, full = false }) => {
           <div className="flex items-center h-16 ">
             <h1 className="text-xl">Veldedighetsfest 2021</h1>
             {links.map((link) => (
-              <div key={link.href} className="bg-white px-3 py-2 mx-5 rounded-md text-large font-medium text-black">
-                <Link href={link.href}>{link.page}</Link>
-              </div>
+              <Link key={link.href} href={link.href}>
+                <a className="bg-white px-3 py-2 mx-5 rounded-md text-large font-medium text-black">
+                  {link.page}
+                </a>
+              </Link>
             ))}
           </div>
         </div>

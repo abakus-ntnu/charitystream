@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { BeerCount } from "../../models/schema.js";
+import { Beer } from "../../models/schema.js";
 import { url } from "./state";
 
 export default async function handler(req, res) {
@@ -15,9 +15,20 @@ export default async function handler(req, res) {
         return;
       }
 
-      await BeerCount.findOneAndUpdate({}, { count: req.body.count });
+      if (req.body.count) {
+        await Beer.findOneAndUpdate({}, { count: req.body.count });
+      }
 
-      res.status(200).json(await BeerCount.findOne({}));
+      if (req.body.price) {
+        await Beer.findOneAndUpdate({}, { price: req.body.price });
+      }
+
+      if (req.body.maxDonation) {
+        await Beer.findOneAndUpdate({}, { maxDonation: req.body.maxDonation });
+      }
+
+      res.status(200).json(await Beer.findOne({}));
+      break;
     }
 
     case "PATCH": {
@@ -25,24 +36,23 @@ export default async function handler(req, res) {
         res.status(401).end();
         return;
       }
-      const beerCount = await BeerCount.findOne({});
-      const newBeerCount = beerCount.count + req.body.count;
-      await BeerCount.findOneAndUpdate({}, { count: newBeerCount });
+      const beer = await Beer.findOne({});
+      const newBeerCount = beer.count + req.body.count;
+      await Beer.findOneAndUpdate({}, { count: newBeerCount });
 
-      res.status(200).json(await BeerCount.findOne({}));
+      res.status(200).json(await Beer.findOne({}));
+      break;
+    }
+    case "GET": {
+      const beer = await Beer.findOne({});
+      res.end(
+        JSON.stringify({
+          beer,
+        })
+      );
+      break;
     }
 
-    case "GET":
-      {
-        const beerCount = await BeerCount.findOne({});
-        res.end(
-          JSON.stringify({
-            beerCount,
-          })
-        );
-      }
-
-      break;
     default:
       res.setHeader("Allow", ["GET", "POST", "PATCH"]);
       res.status(405).end(`Method ${method} Not Allowed`);
