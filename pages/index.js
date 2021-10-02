@@ -20,19 +20,19 @@ export default function Index() {
   return (
     <>
       <div className={"flex h-screen flex-wrap justify-evenly"}>
-        <div className="flex max-w-full flex-grow justify-center flex-wrap">
-          <div className={"flex-grow max-w-lg"}>
-            <Vipps items={data.vipps} topDonor={data.topDonor} />
-          </div>
-          <div className={"flex-grow max-w-lg"}>
-            <BeerCounter beerCount={data.beerCount.count} />
-          </div>
-        </div>
-        <div className={"w-screen"}>
+        <div className="flex w-screen">
           <StretchGoals
             stretchGoals={data.stretchGoals}
             totalAmount={data.totalAmount}
           />
+          <div className={"flex-grow max-w-lg"}>
+            <BeerCounter beerCount={data.beerCount.count} />
+          </div>
+          <div className="flex max-w-full flex-grow justify-center flex-wrap">
+            <div className={"flex-grow max-w-lg"}>
+              <Vipps items={data.vipps} topDonor={data.topDonor} />
+            </div>
+          </div>
         </div>
         <div className={"w-screen"}>
           <SilentAuction items={data.auctions} />
