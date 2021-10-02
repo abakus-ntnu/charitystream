@@ -22,7 +22,7 @@ const StretchGoalBar = ({ totalAmount, maxAmount, stretchGoals }) => {
 
         return (
           <div
-            key={goal.description}
+            key={goal._id}
             className="absolute flex w-full"
             style={{ bottom: `calc(${goalPosition}%)`, left: 0 }}
           >
