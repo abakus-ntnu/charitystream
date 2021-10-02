@@ -11,7 +11,7 @@ const Vipps = () => {
   const { state } = useContext(State);
   const { addAlert } = useContext(Alerts);
 
-  const addVipps = async (name: string, amount: number) => {
+  const addVipps = async (name: string, amount: number): Promise<boolean> => {
     const res = await fetch("/api/vipps", {
       method: "POST",
       headers: {
@@ -24,14 +24,23 @@ const Vipps = () => {
     });
     if (res.ok) {
       addAlert(`Donasjonen på ${amount}kr fra ${name} ble lagt til!`, "green");
+      return true;
     }
     if (res.status !== 200) {
-      const json = await res.json();
-      addAlert(
-          `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-          "red"
-      );
+      try {
+        const json = await res.json();
+        addAlert(
+            `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
+            "red"
+        );
+      } catch (e) {
+        addAlert(
+            `${res.statusText}`,
+            "red"
+        );
+      }
     }
+    return false;
   };
 
 
@@ -51,7 +60,10 @@ const Vipps = () => {
       );
       return
     }
-    addVipps(name, amount);
+    if (await addVipps(name, amount)) {
+      setName(null);
+      setAmount(null);
+    }
   };
 
   return (
@@ -83,6 +95,7 @@ const Vipps = () => {
                     border-b-2 border-gray-100
                     focus:text-gray-700 focus:outline-none focus:border-gray-200"
                         required
+                        value={name ?? ""}
                         onChange={(e) => setName(e.target.value)}
                     />
                     <label
@@ -101,6 +114,7 @@ const Vipps = () => {
                     border-b-2 border-gray-100
                     focus:text-gray-700 focus:outline-none focus:border-gray-200"
                         required
+                        value={amount ?? ""}
                         onChange={(e) => setAmount(Number(e.target.value))}
                     />
                     <button
