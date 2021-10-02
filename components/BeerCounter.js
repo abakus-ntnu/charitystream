@@ -1,4 +1,4 @@
-const BeerCounter = ({ count }) => {
+const BeerCounter = ({ count, price, maxDonation }) => {
   return (
     <div className={"flex align-center justify-center relative"}>
       <img
@@ -8,10 +8,16 @@ const BeerCounter = ({ count }) => {
         width={700}
       />
       <div
-        className="text-center text-6xl z-10 absolute text-black font-extrabold -ml-2"
+        className="text-center text-5xl z-10 absolute text-black font-extrabold -ml-2"
         style={{ top: "40%" }}
       >
-        {count}
+        {count}stk
+      </div>
+      <div
+        className="text-center text-4xl z-10 absolute text-black font-extrabold -ml-2"
+        style={{ top: "50%" }}
+      >
+        {Math.min(count * price, maxDonation)}kr
       </div>
     </div>
   );

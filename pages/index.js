@@ -21,7 +21,7 @@ export default function Index() {
           stretchGoals={data.stretchGoals}
           totalAmount={data.totalAmount}
         />
-        <BeerCounter count={data.beer.count} />
+        <BeerCounter {...data.beer} />
         <Vipps items={data.vipps} topDonor={data.topDonor} />
       </div>
       <SilentAuction items={data.auctions} />
