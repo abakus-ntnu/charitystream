@@ -51,9 +51,7 @@ const Vipps = () => {
       );
       return
     }
-    //await addVipps(name, amount);
-    setAmount(undefined);
-    setName(undefined);
+    addVipps(name, amount);
   };
 
   return (
