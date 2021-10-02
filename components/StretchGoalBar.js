@@ -1,5 +1,10 @@
-const StretchGoalBar = ({ totalAmount, maxAmount, goals }) => {
+const StretchGoalBar = ({ totalAmount, maxAmount, stretchGoals }) => {
   const meterLen = Math.floor((totalAmount / maxAmount) * 100);
+
+  const nextGoal = stretchGoals.find(
+    (stretchGoal) => stretchGoal.goal > totalAmount
+  );
+  const lowestGoal = stretchGoals[0];
 
   return (
     <div className="flex relative h-full w-full m-1">
@@ -9,18 +14,23 @@ const StretchGoalBar = ({ totalAmount, maxAmount, goals }) => {
           className="bg-green-500 shadow-none w-full"
         />
       </div>
-      {goals.map((goal) => {
+      {stretchGoals.map((goal) => {
         const goalPosition = Math.floor((goal.goal / maxAmount) * 100);
+        const goalReached = goal.goal <= totalAmount;
+        const goalNext = goal === nextGoal;
+        const isLowest = goal === lowestGoal;
 
         return (
           <div
             key={goal.description}
-            className="absolute leading-4 flex w-full"
+            className="absolute flex w-full"
             style={{ bottom: `calc(${goalPosition}%)`, left: 0 }}
           >
-            <div className="border-b border-black w-12 flex-shrink-0" />
-            <p className="relative ml-2" style={{ top: "0.5rem" }}>
-              {goal.goal + "kr  - " + goal.description}
+            <div className={"border-b border-black w-12 flex-shrink-0"} />
+            <p className={`ml-2 text-2xl ${goalNext ? "text-indigo-400 animate-pulse" : ""} ${goalReached ? "line-through text-green-400" : ""}`}
+               style={{ top: "0.5rem", transform: `translateY(${isLowest ? "90" : "50"}%)` }}
+            >
+              {goal.goal + "kr  - " + goal.description + goalNext}
             </p>
           </div>
         );
