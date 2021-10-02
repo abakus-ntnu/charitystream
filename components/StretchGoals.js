@@ -17,11 +17,11 @@ export default function StretchGoals(props) {
     return <p className="text-center">Ingen stretch goals er satt!</p>;
   }
   return (
-    <div className="flex-grow">
+    <div className="flex flex-col flex-grow h-full">
       <div className="italic text-center">
         <p className="text-3xl font-medium w-">Totalt innsamlet</p>
       </div>
-      <div className="flex items-center h-full p-2 overflow-hidden">
+      <div className="flex items-center flex-grow p-2 overflow-hidden">
         <div className="w-full h-full">
           {
             //      <p className="absolute flex items-center justify-center w-full h-full text-xl text-black">{`${totalAmount}kr av ${maxAmount}kr`}</p>

@@ -21,14 +21,14 @@ const SilentAuction = (props) => {
 
   return (
     <div className="flex flex-col items-center">
+      <div className={styles.wrapper}>
+        <div className={styles.slideshow}>{items}</div>
+      </div>
       <Link href="/auksjon" class="font-bold">
         <button className="mb-2 mt-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
           Gå til stilleauksjon
         </button>
       </Link>
-      <div className={styles.wrapper}>
-        <div className={styles.slideshow}>{items}</div>
-      </div>
     </div>
   );
 };
