@@ -36,8 +36,8 @@ const TopVipp = ({ vipp }) => {
 };
 
 const Vipps = (props) => {
-  const vipps = props.items.map((item) => (
-    <Vipp name={item.name} amount={item.amount} key={item.name} />
+  const vipps = props.items.slice(0, 10).map((item) => (
+    <Vipp name={item.name} amount={item.amount} key={item._id} />
   ));
 
   return (
