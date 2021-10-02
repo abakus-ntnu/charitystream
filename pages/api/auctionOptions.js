@@ -14,6 +14,7 @@ export default async function handler(req, res) {
   switch (method) {
     case "GET":
       res.status(200).json(await AuctionOption.findOne({}));
+      break;
     case "POST":
       {
         if (headers.password !== process.env.POST_PASSWORD) {
