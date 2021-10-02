@@ -10,7 +10,7 @@ const Beer = () => {
   const { state } = useContext(State);
   const { addAlert } = useContext(Alerts);
 
-  const updateBeer = async (count: number) => {
+  const updateBeer = async (count: number): Promise<boolean> => {
     const res = await fetch("/api/beer", {
       method: "POST",
       headers: {
@@ -23,6 +23,7 @@ const Beer = () => {
     });
     if (res.ok) {
       addAlert(`Antall øl oppdatert til ${count}!`, "green");
+      return true;
     }
     if (res.status !== 200) {
       try {
@@ -38,6 +39,7 @@ const Beer = () => {
         );
       }
     }
+    return false;
   };
 
   const submit = async (e: FormEvent) => {
@@ -49,7 +51,9 @@ const Beer = () => {
       );
       return
     }
-    updateBeer(count);
+    if (await updateBeer(count)) {
+      setCount(null);
+    }
   };
 
   return (
@@ -75,6 +79,7 @@ const Beer = () => {
                     border-b-2 border-gray-100
                     focus:text-gray-700 focus:outline-none focus:border-gray-200"
                         required
+                        value={count ?? ""}
                         onChange={(e) => setCount(Number(e.target.value))}
                     />
                     <button
