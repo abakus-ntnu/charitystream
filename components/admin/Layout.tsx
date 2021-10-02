@@ -4,7 +4,7 @@ import Alerts from "../../lib/Alerts";
 
 const links = [
   { href: "/admin/vipps", page: "Legg til donasjoner" },
-  { href: "/admin/beer", page: "Legg til øl" },
+  { href: "/admin/beer", page: "Oppdater antall øl" },
 ];
 
 const Layout = ({ children, full = false }) => {
