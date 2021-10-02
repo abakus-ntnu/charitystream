@@ -15,7 +15,7 @@ export default function Index() {
   if (!data) return <div>Loading...</div>;
 
   return (
-    <div className="flex flex-col h-screen flex-wrap justify-evenly">
+    <div className="flex flex-col h-screen justify-evenly">
       <div className="flex flex-grow items-center m-6">
         <StretchGoals
           stretchGoals={data.stretchGoals}
