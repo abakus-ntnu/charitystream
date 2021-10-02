@@ -26,11 +26,18 @@ const Vipps = () => {
       addAlert(`Donasjonen på ${amount}kr fra ${name} ble lagt til!`, "green");
     }
     if (res.status !== 200) {
-      const json = await res.json();
-      addAlert(
-          `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-          "red"
-      );
+      try {
+        const json = await res.json();
+        addAlert(
+            `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
+            "red"
+        );
+      } catch (e) {
+        addAlert(
+            `${res.statusText}`,
+            "red"
+        );
+      }
     }
   };
 
