@@ -16,7 +16,7 @@ export default function Index() {
 
   return (
     <div className="flex flex-col h-screen flex-wrap justify-evenly">
-      <div className="flex flex-grow items-center">
+      <div className="flex flex-grow items-center m-6">
         <StretchGoals
           stretchGoals={data.stretchGoals}
           totalAmount={data.totalAmount}

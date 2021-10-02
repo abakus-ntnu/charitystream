@@ -30,7 +30,7 @@ const StretchGoalBar = ({ totalAmount, maxAmount, stretchGoals }) => {
             <p className={`ml-2 text-2xl ${goalNext ? "text-indigo-400 animate-pulse" : ""} ${goalReached ? "line-through text-green-400" : ""}`}
                style={{ top: "0.5rem", transform: `translateY(${isLowest ? "90" : "50"}%)` }}
             >
-              {goal.goal + "kr  - " + goal.description + goalNext}
+              {goal.goal + "kr  - " + goal.description}
             </p>
           </div>
         );
