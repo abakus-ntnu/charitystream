@@ -3,6 +3,7 @@ import Link from "next/link";
 import Alerts from "../../lib/Alerts";
 
 const links = [
+  { href: "/", page: "Festsiden" },
   { href: "/admin/vipps", page: "Legg til donasjoner" },
   { href: "/admin/beer", page: "Oppdater antall øl" },
 ];
@@ -14,6 +15,7 @@ const Layout = ({ children, full = false }) => {
       <nav className="bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 ">
+            <h1 className="text-xl">Veldedighetsfest 2021</h1>
             {links.map((link) => (
               <div className="bg-white px-3 py-2 mx-5 rounded-md text-large font-medium text-black">
                 <Link href={link.href}>{link.page}</Link>
