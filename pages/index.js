@@ -5,6 +5,7 @@ import Vipps from "../components/Vipps";
 import styles from "../frontpage.module.css";
 import Stream from "../components/Stream";
 import Chat from "../components/Chat";
+import BeerCounter from "../components/BeerCounter";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -22,6 +23,9 @@ export default function Index() {
         <div className="flex max-w-full flex-grow justify-center flex-wrap">
           <div className={"flex-grow max-w-lg"}>
             <Vipps items={data.vipps} topDonor={data.topDonor} />
+          </div>
+          <div className={"flex-grow max-w-lg"}>
+            <BeerCounter beerCount={data.beerCount.count} />
           </div>
         </div>
         <div className={"w-screen"}>
