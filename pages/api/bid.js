@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Bid } from "../../models/schema.js";
+import { Bid, AuctionOption } from "../../models/schema.js";
 import { url } from "./state";
 import { MAX_BID_AMOUNT } from "../../lib/constants";
 
@@ -10,6 +10,11 @@ export default async function handler(req, res) {
 
   switch (method) {
     case "POST":
+      const auctionOptions = await AuctionOption.findOne({});
+      if (auctionOptions.freezeBidding) {
+        res.status(403).json({ error: `Auction has ended!` });
+        break;
+      }
       const bid = new Bid(req.body);
       const highestBid = await Bid.find({ item: bid.item })
         .sort({ amount: -1 })
