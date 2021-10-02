@@ -1,16 +1,15 @@
-import { useState } from "react";
-
 const BeerCounter = ({ beerCount }) => {
   return (
-    <div className={"flex flex-center justify-center"}>
+    <div className={"flex align-center justify-center relative"}>
       <img
-        className={"flex-grow max-w-lg absolute z-0"}
+        className={"max-w-lg z-0 max-w-full"}
         src="beeer.png"
         alt="Picture of a beer"
+        width={700}
       />
       <div
-        className="text-center text-3xl z-10 text-black font-extrabold -ml-2"
-        style={{ marginTop: "7rem" }}
+        className="text-center text-6xl z-10 absolute text-black font-extrabold -ml-2"
+        style={{ top: "40%" }}
       >
         {beerCount}
       </div>

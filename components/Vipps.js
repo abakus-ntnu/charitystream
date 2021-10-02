@@ -8,7 +8,7 @@ const Vipp = (props) => {
     >
       <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
       <span className="flex justify-between w-full">
-        <span className="p-3">{props.name} donerte</span>
+        <span className="p-3 truncate max-w-xs">{props.name} donerte</span>
         <span className="p-3 font-bold">{props.amount}kr!!</span>
       </span>
     </div>
@@ -36,12 +36,14 @@ const TopVipp = ({ vipp }) => {
 };
 
 const Vipps = (props) => {
-  const vipps = props.items.map((item) => (
-    <Vipp name={item.name} amount={item.amount} key={item.name} />
-  ));
+  const vipps = props.items
+    .slice(0, 10)
+    .map((item) => (
+      <Vipp name={item.name} amount={item.amount} key={item._id} />
+    ));
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full max-w-full">
       <TopVipp vipp={props.topDonor} />
       <hr />
       {vipps}

@@ -111,7 +111,7 @@ export default async function handler(_, res) {
     JSON.stringify({
       auctions,
       totalAmount,
-      vipps: vipps.slice(vipps.length - 7, vipps.length),
+      vipps: vipps.slice(vipps.length - 10, vipps.length),
       streamLink,
       slidoView,
       stretchGoals,
