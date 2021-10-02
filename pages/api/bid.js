@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Bid } from "../../models/schema.js";
 import { url } from "./state";
+import { MAX_BID_AMOUNT } from "../../lib/constants";
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -10,8 +11,21 @@ export default async function handler(req, res) {
   switch (method) {
     case "POST":
       const bid = new Bid(req.body);
-      await bid.save();
-      res.status(200).json(bid);
+      const highestBid = await Bid.find({ item: bid.item })
+        .sort({ amount: -1 })
+        .limit(1);
+      if (bid.amount > MAX_BID_AMOUNT || bid.amount <= 0) {
+        res
+          .status(403)
+          .json({ error: `Bids must between 0 and ${MAX_BID_AMOUNT} kr` });
+      } else if (bid.amount <= highestBid.amount) {
+        res.status(403).json({
+          error: `Bid must be greater than current highest bid: ${highestBid.amount} kr`,
+        });
+      } else {
+        await bid.save();
+        res.status(200).json(bid);
+      }
       break;
     default:
       res.setHeader("Allow", ["POST"]);
