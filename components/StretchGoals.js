@@ -10,7 +10,9 @@ export default function StretchGoals(props) {
   return (
     <div className="flex flex-col flex-grow h-full">
       <div className="italic text-center">
-        <p className="text-5xl font-medium w-">Totalt donert: {totalAmount}kr</p>
+        <p className="text-5xl font-medium w-">
+          Totalt donert: {totalAmount}kr
+        </p>
       </div>
       <div className="flex items-center flex-grow p-2 overflow-hidden">
         <div className="w-full h-full py-4">
