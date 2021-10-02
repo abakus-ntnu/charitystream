@@ -7,6 +7,7 @@ delete mongoose.connection.models["SlidoView"];
 delete mongoose.connection.models["StretchGoal"];
 delete mongoose.connection.models["Bid"];
 delete mongoose.connection.models["BeerCount"];
+delete mongoose.connection.models["AuctionOption"];
 
 const AuctionSchema = new mongoose.Schema(
   {
@@ -70,3 +71,14 @@ const BeerCountSchema = new mongoose.Schema(
 );
 
 export const BeerCount = mongoose.model("BeerCount", BeerCountSchema);
+const AuctionOptionSchema = new mongoose.Schema(
+  {
+    freezeBidding: { type: Boolean, default: false },
+    displayWinners: { type: Boolean, default: false },
+  },
+  { autoCreate: true }
+);
+export const AuctionOption = mongoose.model(
+  "AuctionOption",
+  AuctionOptionSchema
+);
