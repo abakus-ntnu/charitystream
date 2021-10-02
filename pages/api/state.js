@@ -8,20 +8,34 @@ import {
   StretchGoal,
   Bid,
   BeerCount,
+  AuctionOption,
 } from "../../models/schema.js";
 
 const username = process.env.DATABASE_USER;
 const password = process.env.DATABASE_PASSWORD;
 const dbname = "Charity";
 
-const getHighestBids = () =>
-  Bid.aggregate([
+const getHighestBids = async () => {
+  const auctionOptions = await AuctionOption.findOne({});
+  const displayNames = {};
+  if (auctionOptions.displayWinners) {
+    displayNames.name = 1;
+  }
+  return Bid.aggregate([
     // Find the highest bids for each item
+    {
+      $sort: {
+        amount: -1,
+      },
+    },
     {
       $group: {
         _id: "$item",
         amount: {
           $max: "$amount",
+        },
+        name: {
+          $first: "$name",
         },
       },
     },
@@ -45,6 +59,7 @@ const getHighestBids = () =>
         description: "$auctions.description",
         id: "$auctions.id",
         _id: 0,
+        ...displayNames,
       },
     },
     // Make sure the bids are in the same order every time
@@ -54,6 +69,7 @@ const getHighestBids = () =>
       },
     },
   ]);
+};
 
 export const url = `mongodb+srv://${username}:${password}@cluster.au8e8.mongodb.net/${dbname}?retryWrites=true&w=majority`;
 
