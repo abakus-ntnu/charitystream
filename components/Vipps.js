@@ -43,7 +43,7 @@ const Vipps = (props) => {
     ));
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full max-w-full">
       <TopVipp vipp={props.topDonor} />
       <hr />
       {vipps}

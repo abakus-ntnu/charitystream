@@ -15,8 +15,8 @@ export default function Index() {
   if (!data) return <div>Loading...</div>;
 
   return (
-    <div className="flex flex-col h-screen justify-evenly">
-      <div className="flex flex-grow items-center m-6">
+    <div className="flex flex-col-reverse md:flex-col md:h-screen justify-evenly">
+      <div className="flex flex-col md:flex-row flex-grow items-center m-2 md:m-6">
         <StretchGoals
           stretchGoals={data.stretchGoals}
           totalAmount={data.totalAmount}
@@ -24,9 +24,7 @@ export default function Index() {
         <BeerCounter beerCount={data.beerCount.count} />
         <Vipps items={data.vipps} topDonor={data.topDonor} />
       </div>
-      <div className="">
-        <SilentAuction items={data.auctions} />
-      </div>
+      <SilentAuction items={data.auctions} />
     </div>
   );
 }

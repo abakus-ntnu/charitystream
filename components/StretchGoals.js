@@ -14,7 +14,7 @@ export default function StretchGoals(props) {
           Totalt donert: {totalAmount}kr
         </p>
       </div>
-      <div className="flex items-center flex-grow p-2 overflow-hidden">
+      <div className="flex items-center flex-grow p-2 overflow-hidden h-screen md:h-full">
         <div className="w-full h-full py-4">
           <StretchGoalBar
             totalAmount={totalAmount}

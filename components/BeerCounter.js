@@ -2,7 +2,7 @@ const BeerCounter = ({ beerCount }) => {
   return (
     <div className={"flex align-center justify-center relative"}>
       <img
-        className={"max-w-lg z-0"}
+        className={"max-w-lg z-0 max-w-full"}
         src="beeer.png"
         alt="Picture of a beer"
         width={700}
