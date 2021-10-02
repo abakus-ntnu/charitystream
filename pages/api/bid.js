@@ -45,6 +45,7 @@ export default async function handler(req, res) {
         });
 
       res.status(200).end(`Deleted highest bid for item ${req.body.item}`);
+      break;
     }
     default:
       res.setHeader("Allow", ["POST", "DELETE"]);

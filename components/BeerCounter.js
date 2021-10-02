@@ -1,4 +1,4 @@
-const BeerCounter = ({ beerCount }) => {
+const BeerCounter = ({ count }) => {
   return (
     <div className={"flex align-center justify-center relative"}>
       <img
@@ -11,7 +11,7 @@ const BeerCounter = ({ beerCount }) => {
         className="text-center text-6xl z-10 absolute text-black font-extrabold -ml-2"
         style={{ top: "40%" }}
       >
-        {beerCount}
+        {count}
       </div>
     </div>
   );

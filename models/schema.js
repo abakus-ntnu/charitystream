@@ -6,8 +6,8 @@ delete mongoose.connection.models["StreamLink"];
 delete mongoose.connection.models["SlidoView"];
 delete mongoose.connection.models["StretchGoal"];
 delete mongoose.connection.models["Bid"];
-delete mongoose.connection.models["BeerCount"];
 delete mongoose.connection.models["AuctionOption"];
+delete mongoose.connection.models["Beer"];
 
 const AuctionSchema = new mongoose.Schema(
   {
@@ -63,14 +63,17 @@ const BidSchema = new mongoose.Schema(
 );
 export const Bid = mongoose.model("Bid", BidSchema);
 
-const BeerCountSchema = new mongoose.Schema(
+const BeerSchema = new mongoose.Schema(
   {
     count: { type: Number, default: 0 },
+    price: { type: Number, default: 0 },
+    maxDonation: { type: Number, default: 8000 },
   },
   { autoCreate: true }
 );
 
-export const BeerCount = mongoose.model("BeerCount", BeerCountSchema);
+export const Beer = mongoose.model("Beer", BeerSchema);
+
 const AuctionOptionSchema = new mongoose.Schema(
   {
     freezeBidding: { type: Boolean, default: false },
