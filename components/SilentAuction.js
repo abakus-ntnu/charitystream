@@ -25,7 +25,7 @@ const SilentAuction = (props) => {
         <div className={styles.slideshow}>{items}</div>
       </div>
       <Link href="/auksjon" class="font-bold">
-        <button className="mb-2 -mt-10 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+        <button className="mb-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
           Gå til stilleauksjon
         </button>
       </Link>
