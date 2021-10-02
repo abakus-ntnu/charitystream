@@ -215,8 +215,9 @@ const AuctionItems = (props) => {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                     id="amount"
                     type="number"
+                    step="1"
                     min="0"
-                    placeholder={activeItem.price * 1.1}
+                    placeholder={Math.ceil(activeItem.price * 1.1)}
                     onChange={(e) =>
                       setFormData({ ...formData, amount: e.target.value })
                     }
