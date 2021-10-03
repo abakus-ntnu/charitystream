@@ -5,7 +5,7 @@ const Item = (props) => {
   return (
     <div
       className="w-48 rounded overflow-hidden shadow-lg m-2 text-center px-3 py-2"
-      style={{ background: "#444" }}
+      style={{ background: "#c0392b" }}
     >
       <div className="font-bold text-2xl mb-2">{props.price},-</div>
       <hr />

@@ -13,7 +13,11 @@ export default function StretchGoals(props) {
     <div className="flex flex-col flex-grow h-full">
       <div className="italic text-center">
         <p className="text-5xl font-medium w-">
-          Totalt donert: {totalAmount}kr
+          Totalt donert: {totalAmount}kr{" "}
+          <span style={{ color: "blue", marginLeft: "20px" }}>
+            {" "}
+            Legg inn bud på aba.wtf/fest
+          </span>
         </p>
       </div>
       <div
