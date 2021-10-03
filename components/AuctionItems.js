@@ -7,7 +7,7 @@ Modal.setAppElement("#__next");
 const Item = (props) => {
   return (
     <div
-      className="w-48 rounded overflow-hidden shadow-lg m-5 text-center px-3 py-2 cursor-pointer hover:bg-gray-600 bg-gray-800"
+      className="lg:w-48 w-40 rounded overflow-hidden shadow-lg lg:m-5 m-2 text-center px-3 py-2 cursor-pointer hover:bg-gray-600 bg-gray-800"
       onClick={props.onClick}
     >
       <div className="font-bold text-xl mb-2">{props.price},-</div>
