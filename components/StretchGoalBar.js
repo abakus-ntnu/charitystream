@@ -28,7 +28,7 @@ const StretchGoalBar = ({ totalAmount, maxAmount, stretchGoals }) => {
           >
             <div className={"border-b border-black w-12 flex-shrink-0"} />
             <p
-              className={`ml-2 text-l md:text-2xl ${
+              className={`ml-2 text-sm md:text-2xl ${
                 goalNext ? "text-indigo-400 animate-pulse" : ""
               } ${goalReached ? "line-through text-green-400" : ""}`}
               style={{
