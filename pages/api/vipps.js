@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Cors from "cors";
-import { Vipps } from "../../models/schema.ts";
+import { Vipps } from "../../models/schema.js";
 import { url } from "./state";
 
 const cors = Cors();

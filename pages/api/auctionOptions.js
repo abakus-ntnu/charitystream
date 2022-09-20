@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { AuctionOption } from "../../models/schema.ts";
+import { AuctionOption } from "../../models/schema.js";
 import { url } from "./state";
 
 export default async function handler(req, res) {

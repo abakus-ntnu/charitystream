@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Bid, AuctionOption } from "../../models/schema.ts";
+import { Bid, AuctionOption } from "../../models/schema.js";
 import { url } from "./state";
 import { MAX_BID_AMOUNT } from "../../lib/constants";
 
