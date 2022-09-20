@@ -9,7 +9,7 @@ import {
   Bid,
   AuctionOption,
   Beer,
-} from "../../models/schema.ts";
+} from "../../models/schema.js";
 
 const username = process.env.DATABASE_USER;
 const password = process.env.DATABASE_PASSWORD;
