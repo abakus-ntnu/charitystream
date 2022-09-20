@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { Beer } from "../../models/schema.js";
+import { Beer } from "../../models/schema.ts";
 import { url } from "./state";
 
 export default async function handler(req, res) {

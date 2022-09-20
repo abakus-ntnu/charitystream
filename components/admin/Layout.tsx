@@ -39,7 +39,8 @@ const Layout = ({ children, full = false }) => {
           >
             <div className=" h-20 min-h-20 sticky top-10 z-50">
               {alerts.map((alert) => (
-                <div key={alert.text}
+                <div
+                  key={alert.text}
                   className={`text-white px-6 py-4 border-0 rounded relative mb-4 bg-${alert.color}-500`}
                 >
                   <span className="text-xl inline-block mr-5 align-middle">

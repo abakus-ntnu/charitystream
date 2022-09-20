@@ -5,7 +5,11 @@ module.exports = {
     // defaultLineHeights: true,
     // standardFontWeights: true
   },
-  purge: [],
+  content: [
+    "./components/**/*.{js,ts,tsx}",
+    "./lib/**/*.{js,ts,tsx}",
+    "./pages/**/*.{js,ts,tsx}",
+  ],
   theme: {
     extend: {},
   },
