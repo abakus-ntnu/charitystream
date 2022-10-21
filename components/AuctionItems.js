@@ -39,13 +39,15 @@ const AuctionItems = ({ items, bids }) => {
   };
 
   const validate = (formData) => {
+    const currentPrice =
+      bids.find((bid) => bid.item === activeItem._id)?.price ?? 0;
     clearError();
-    if (formData.amount < activeItem.price) {
+    if (formData.amount < currentPrice) {
       setFormData({
         ...formData,
         error: {
           ...formData.error,
-          amount: `Budet ditt kan ikke være mindre enn ${activeItem.price},- kr!`,
+          amount: `Budet ditt kan ikke være mindre enn ${currentPrice},- kr!`,
         },
       });
       return false;
@@ -156,7 +158,18 @@ const AuctionItems = ({ items, bids }) => {
                 <div className="text-2xl text-white font-bold italic">
                   {activeItem.description}
                 </div>
-                <p>Nåværende bud: {activeItem.price},-</p>
+                <p>
+                  Nåværende bud:{" "}
+                  {
+                    (
+                      bids.find((bid) => bid.item === activeItem._id) ?? {
+                        price: 0,
+                        name: "",
+                      }
+                    ).price
+                  }
+                  ,-
+                </p>
                 <div className="mb-4">
                   <label
                     className="block text-white text-lg font-bold mb-2"
