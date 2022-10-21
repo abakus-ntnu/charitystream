@@ -15,7 +15,7 @@ export default async function handler(req, res) {
         return;
       }
 
-      if (req.body.count) {
+      if (req.body.count >= 0) {
         await Beer.findOneAndUpdate({}, { count: req.body.count });
       }
 

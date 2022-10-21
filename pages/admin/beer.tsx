@@ -74,7 +74,7 @@ const Beer = () => {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!count) {
+    if (count === null) {
       addAlert(`Antall øl mangler!`, "red");
       return;
     }
@@ -86,8 +86,8 @@ const Beer = () => {
 
   const submitPrice = async (e: FormEvent) => {
     e.preventDefault();
-    if (!price) {
-      addAlert(`Vennligst skriv inn en pris`, "red");
+    if (price < 0) {
+      addAlert(`Vennligst skriv inn en pris større enn 0`, "red");
       return;
     }
     if (await updateBeerPrice(price)) {
