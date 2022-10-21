@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Modal from "react-modal";
-import { MAX_BID_AMOUNT } from "../lib/constants";
-import { Auction, Bid } from "../models/types";
+import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "../lib/constants";
+import { Auction, Bid, CharityState } from "../models/types";
+import { KeyedMutator } from "swr";
 
 Modal.setAppElement("#__next");
 
@@ -35,16 +36,21 @@ interface FormData extends Bid {
 }
 
 const AuctionItems = ({
+  mutate,
   auctions,
   bids,
 }: {
+  mutate: KeyedMutator<CharityState>;
   auctions: Auction[];
   bids: Bid[];
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState(null);
+  const [activeAuction, setActiveAuction] = useState<Auction>(null);
   const [formData, setFormData] = useState<FormData>({} as FormData);
   const [success, setSuccess] = useState("");
+
+  const getActiveBidAmount = () =>
+    bids.find((bid) => bid.item === activeAuction._id)?.amount ?? 0;
 
   const closeModal = () => {
     clearError();
@@ -52,7 +58,7 @@ const AuctionItems = ({
   };
 
   const openModal = (item) => {
-    setActiveItem(item);
+    setActiveAuction(item);
     setModalOpen(true);
   };
 
@@ -61,8 +67,7 @@ const AuctionItems = ({
   };
 
   const validate = (formData) => {
-    const currentPrice =
-      bids.find((bid) => bid.item === activeItem._id)?.amount ?? 0;
+    const currentPrice = getActiveBidAmount() + MIN_BID_MODIFIER;
     clearError();
     if (formData.amount < currentPrice) {
       setFormData({
@@ -106,15 +111,16 @@ const AuctionItems = ({
         },
         body: JSON.stringify({
           ...formData,
-          item: activeItem._id,
-          description: activeItem.description,
+          item: activeAuction._id,
+          description: activeAuction.description,
         }),
       });
 
       if (res.status == 200) {
         setSuccess(
-          `Ditt bud på ${formData.amount} til ${activeItem.description} ble registrert!`
+          `Ditt bud på ${formData.amount} til ${activeAuction.description} ble registrert!`
         );
+        await mutate();
       } else {
         setSuccess(
           `Budet ditt gikk ikke gjennom :(\n Feilkode: ${
@@ -122,7 +128,7 @@ const AuctionItems = ({
           } \n Feilmelding: ${(await res.json()).error}`
         );
       }
-      setActiveItem(null);
+      setActiveAuction(null);
       clearError();
     }
   };
@@ -162,28 +168,20 @@ const AuctionItems = ({
           shouldCloseOnOverlayClick={true}
           onRequestClose={closeModal}
           style={modalStyles}
-          onAfterOpen={activeItem ? undefined : closeModal}
+          onAfterOpen={activeAuction ? undefined : closeModal}
         >
           <div className="w-full max-w-xs bg-gray-800 rounded">
-            {activeItem ? (
+            {activeAuction ? (
               <form
                 className="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4"
                 onSubmit={bid}
               >
                 <div className="text-2xl">By på</div>
                 <div className="text-2xl text-white font-bold italic">
-                  {activeItem.description}
+                  {activeAuction.description}
                 </div>
                 <p>
-                  Nåværende bud:{" "}
-                  {
-                    (
-                      bids.find((bid) => bid.item === activeItem._id) ?? {
-                        amount: 0,
-                        name: "",
-                      }
-                    ).amount
-                  }
+                  Nåværende bud: {getActiveBidAmount()}
                   ,-
                 </p>
                 <div className="mb-4">
@@ -197,7 +195,7 @@ const AuctionItems = ({
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="name"
                     type="text"
-                    placeholder="Ola Nordmann"
+                    placeholder="Ditt ekte navn"
                     value={formData.name || ""}
                     onChange={(e) => {
                       setFormData({ ...formData, name: e.target.value });
@@ -250,7 +248,12 @@ const AuctionItems = ({
                     type="number"
                     step="1"
                     min="0"
-                    placeholder={String(Math.ceil(activeItem.amount * 1.1))}
+                    placeholder={String(
+                      Math.max(
+                        Math.ceil(getActiveBidAmount() * 1.1),
+                        getActiveBidAmount() + MIN_BID_MODIFIER
+                      )
+                    )}
                     onChange={(e) =>
                       setFormData({
                         ...formData,

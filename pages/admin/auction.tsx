@@ -17,7 +17,7 @@ const Auction = () => {
   const { state } = useContext(State);
   const { addAlert } = useContext(Alerts);
 
-  const { data, error, mutate } = useSWR("/api/state", fetcher, {
+  const { data, error, mutate } = useSWR<CharityState>("/api/state", fetcher, {
     refreshInterval: 5000,
   });
 
@@ -60,8 +60,6 @@ const Auction = () => {
 
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading...</div>;
-
-  const charityState = data as CharityState;
 
   const toggleFreezeBids = () => {
     updateAuctionOptions({
@@ -174,8 +172,8 @@ const Auction = () => {
                   }}
                 >
                   <option>-- Velg et bud --</option>
-                  {charityState.bids.map((bid) => {
-                    const auction = charityState.auctions.find(
+                  {data.bids.map((bid) => {
+                    const auction = data.auctions.find(
                       (auction) => auction._id === bid.item
                     );
                     return (

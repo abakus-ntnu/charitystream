@@ -15,13 +15,11 @@ const Beer = () => {
   const { state } = useContext(State);
   const { addAlert } = useContext(Alerts);
 
-  const { data, mutate } = useSWR("/api/state", fetcher, {
+  const { data, mutate } = useSWR<CharityState>("/api/state", fetcher, {
     refreshInterval: 5000,
   });
 
   if (!data) return <div>Loading...</div>;
-
-  const charityState = data as CharityState;
 
   const updateBeer = async (count: number): Promise<boolean> => {
     const res = await fetch("/api/beer", {
@@ -121,7 +119,7 @@ const Beer = () => {
                     id="count"
                     type="number"
                     name="count"
-                    placeholder={String(charityState.beer.count)}
+                    placeholder={String(data.beer.count)}
                     className="block w-full py-3 px-1 mt-2 mb-4
                     text-gray-800 appearance-none
                     border-b-2 border-gray-100
@@ -157,7 +155,7 @@ const Beer = () => {
                     id="count"
                     type="number"
                     name="count"
-                    placeholder={String(charityState.beer.price)}
+                    placeholder={String(data.beer.price)}
                     className="block w-full py-3 px-1 mt-2 mb-4
                     text-gray-800 appearance-none
                     border-b-2 border-gray-100

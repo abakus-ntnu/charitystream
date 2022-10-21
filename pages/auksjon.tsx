@@ -16,20 +16,17 @@ const NavBar = () => (
 );
 
 export default function AuctionItemsPage() {
-  const { data, error } = useSWR("/api/state", fetcher, {
+  const { data, error, mutate } = useSWR<CharityState>("/api/state", fetcher, {
     refreshInterval: 5000,
   });
 
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading...</div>;
 
-  const state = data as CharityState;
-  console.log(state);
-
   return (
     <div>
       <NavBar />
-      <AuctionItems auctions={state.auctions} bids={data.bids} />
+      <AuctionItems mutate={mutate} auctions={data.auctions} bids={data.bids} />
     </div>
   );
 }

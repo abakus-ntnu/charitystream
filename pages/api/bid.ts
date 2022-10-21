@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Bid, AuctionOption } from "../../models/schema.js";
 import { url } from "./state";
-import { MAX_BID_AMOUNT } from "../../lib/constants";
+import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "../../lib/constants";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
@@ -23,9 +23,14 @@ export default async function handler(req, res) {
         res
           .status(403)
           .json({ error: `Bids must between 0 and ${MAX_BID_AMOUNT} kr` });
-      } else if (highestBid && bid.amount <= highestBid.amount) {
+      } else if (
+        highestBid &&
+        bid.amount < highestBid.amount + MIN_BID_MODIFIER
+      ) {
         res.status(403).json({
-          error: `Bid must be greater than current highest bid: ${highestBid.amount} kr`,
+          error: `Bid must be greater than current highest bid plus the minimum bid modifier: ${
+            highestBid.amount + MIN_BID_MODIFIER
+          } kr`,
         });
       } else {
         await bid.save();
