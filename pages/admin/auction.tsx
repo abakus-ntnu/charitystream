@@ -12,6 +12,8 @@ const Auction = () => {
     {} as AuctionOptions
   );
   const [bidToDelete, setBidToDelete] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedAuctionId, setSelectedSelectedAuctionId] = useState("");
 
   const { state } = useContext(State);
   const { addAlert } = useContext(Alerts);
@@ -102,6 +104,49 @@ const Auction = () => {
     deleteBid(bidToDelete);
   };
 
+  const onAddAuction = async (e) => {
+    e.preventDefault();
+    await fetchRequest(
+      "/api/auctions",
+      "POST",
+      { description },
+      (res) => {
+        if (res.ok) {
+          addAlert(`${description} ble lagt til.`, "green");
+          setDescription("");
+          mutate();
+        }
+      },
+      addAlert,
+      state.token
+    );
+  };
+
+  const onDeleteAuction = async (e) => {
+    e.preventDefault();
+    await fetchRequest(
+      "/api/auctions",
+      "DELETE",
+      { auctionId: selectedAuctionId },
+      (res) => {
+        if (res.ok) {
+          addAlert(
+            `${
+              data.auctions.find(
+                (stretchGoal) => stretchGoal._id === selectedAuctionId
+              ).description
+            } ble slettet.`,
+            "green"
+          );
+          setSelectedSelectedAuctionId("");
+          mutate();
+        }
+      },
+      addAlert,
+      state.token
+    );
+  };
+
   return (
     <Layout full>
       {!state?.token ? (
@@ -112,6 +157,71 @@ const Auction = () => {
             bg-white rounded-lg shadow-md lg:shadow-lg"
         >
           <h1 className="font-bold text-center text-3xl text-gray-900">
+            Legg til auksjonsobjekt
+          </h1>
+          <div className="w-full">
+            <div className="mt-5 w-full">
+              <form>
+                <input
+                  id="description"
+                  type="text"
+                  name="description"
+                  placeholder="Beskrivelse"
+                  className="block w-full py-3 px-1 mt-2 mb-4
+                    text-gray-800 appearance-none
+                    border-b-2 border-gray-100
+                    focus:text-gray-700 focus:outline-none focus:border-gray-200"
+                  required
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <button
+                  onClick={onAddAuction}
+                  className="w-full py-3 mt-10 bg-gray-800 rounded-sm
+                    font-medium text-white uppercase
+                    focus:outline-none hover:bg-gray-700 hover:shadow-none"
+                >
+                  Legg til auksjonsobjekt
+                </button>
+              </form>
+            </div>
+          </div>
+          <h2 className="font-bold text-center text-2xl text-gray-900 mt-5">
+            Fjern auksjonsobjekt
+          </h2>
+          <div className="w-full">
+            <div className="mt-5 w-full">
+              <form>
+                <select
+                  className="block w-full py-3 px-1 mt-2 mb-4
+                    text-gray-800 appearance-none
+                    border-b-2 border-gray-100
+                    focus:text-gray-700 focus:outline-none focus:border-gray-200"
+                  onChange={(e) => {
+                    setSelectedSelectedAuctionId(e.target.value);
+                  }}
+                >
+                  <option>-- Velg Auksjonsobjekt --</option>
+                  {data.auctions.map((auction) => {
+                    return (
+                      <option value={auction._id} key={auction._id}>
+                        {auction.description}
+                      </option>
+                    );
+                  })}
+                </select>
+                <button
+                  onClick={onDeleteAuction}
+                  className="w-full py-3 bg-gray-800 rounded-sm
+                    font-medium text-white uppercase
+                    focus:outline-none hover:bg-gray-700 hover:shadow-none"
+                >
+                  Fjern Auksjonsobjekt
+                </button>
+              </form>
+            </div>
+          </div>
+          <h1 className="font-bold text-center text-3xl text-gray-900 mt-10">
             Administrer auksjon
           </h1>
           <button

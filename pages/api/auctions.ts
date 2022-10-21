@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { StretchGoal } from "../../models/schema.js";
+import { Auction, Bid } from "../../models/schema.js";
 import { url } from "./state";
 
 export default async function handler(req, res) {
@@ -14,13 +14,14 @@ export default async function handler(req, res) {
 
   switch (method) {
     case "POST":
-      const stretchGoal = new StretchGoal(req.body);
-      await stretchGoal.save();
-      res.status(200).json(stretchGoal);
+      const auction = new Auction(req.body);
+      await auction.save();
+      res.status(200).json(auction);
       break;
     case "DELETE": {
-      await StretchGoal.deleteOne({ _id: req.body.goalId });
-      res.status(200).json({ deleted: req.body.goalId });
+      await Auction.deleteOne({ _id: req.body.auctionId });
+      await Bid.deleteMany({ item: req.body.auctionId });
+      res.status(200).json({ deleted: req.body.auctionId });
       break;
     }
     default:
