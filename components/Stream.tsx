@@ -11,6 +11,7 @@ const Stream = ({ streamId }) => {
   return (
     <div className={styles.youtubeWrapper}>
       <YouTube
+        // @ts-ignore
         containerClassName={styles.youtube}
         videoId={streamId}
         opts={videoOpts}

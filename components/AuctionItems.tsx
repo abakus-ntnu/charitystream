@@ -1,27 +1,49 @@
 import { useState } from "react";
 import Modal from "react-modal";
 import { MAX_BID_AMOUNT } from "../lib/constants";
+import { Auction, Bid } from "../models/types";
 
 Modal.setAppElement("#__next");
 
-const Item = ({ item, bid, onClick }) => {
+const AuctionCard = ({
+  auction,
+  bid,
+  onClick,
+}: {
+  auction: Auction;
+  bid: Bid;
+  onClick: () => void;
+}) => {
   return (
     <div
       className="lg:w-48 w-40 rounded overflow-hidden shadow-lg lg:m-5 m-2 text-center px-3 py-2 cursor-pointer hover:bg-gray-600 bg-gray-800"
       onClick={onClick}
     >
-      <div className="font-bold text-xl mb-2">{bid.price},-</div>
+      <div className="font-bold text-xl mb-2">{bid.amount},-</div>
       <hr />
-      <p className="text-white text-base mb-8">{item.description}</p>
+      <p className="text-white text-base mb-8">{auction.description}</p>
       {bid.name && <b>Vinner: {bid.name}</b>}
     </div>
   );
 };
 
-const AuctionItems = ({ items, bids }) => {
+interface FormData extends Bid {
+  error: {
+    name?: string;
+    amount?: number;
+  };
+}
+
+const AuctionItems = ({
+  auctions,
+  bids,
+}: {
+  auctions: Auction[];
+  bids: Bid[];
+}) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<FormData>({} as FormData);
   const [success, setSuccess] = useState("");
 
   const closeModal = () => {
@@ -40,7 +62,7 @@ const AuctionItems = ({ items, bids }) => {
 
   const validate = (formData) => {
     const currentPrice =
-      bids.find((bid) => bid.item === activeItem._id)?.price ?? 0;
+      bids.find((bid) => bid.item === activeItem._id)?.amount ?? 0;
     clearError();
     if (formData.amount < currentPrice) {
       setFormData({
@@ -74,10 +96,9 @@ const AuctionItems = ({ items, bids }) => {
     return true;
   };
 
-  const bid = async (e) => {
+  const bid = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const valid = validate(formData);
-    if (valid) {
+    if (validate(formData)) {
       const res = await fetch("/api/bid", {
         method: "POST",
         headers: {
@@ -128,17 +149,12 @@ const AuctionItems = ({ items, bids }) => {
         Trykk på et auksjonsobjekt for å by!
       </div>
       <div className="flex flex-row flex-wrap justify-evenly">
-        {items.map((item) => (
-          <Item
-            key={item._id}
-            item={item}
-            bid={
-              bids.find((bid) => bid.item === item._id) ?? {
-                price: 0,
-                name: "",
-              }
-            }
-            onClick={() => openModal(item)}
+        {auctions.map((auction) => (
+          <AuctionCard
+            key={auction._id}
+            auction={auction}
+            bid={bids.find((bid) => bid.item === auction._id) ?? ({} as Bid)}
+            onClick={() => openModal(auction)}
           />
         ))}
         <Modal
@@ -163,10 +179,10 @@ const AuctionItems = ({ items, bids }) => {
                   {
                     (
                       bids.find((bid) => bid.item === activeItem._id) ?? {
-                        price: 0,
+                        amount: 0,
                         name: "",
                       }
-                    ).price
+                    ).amount
                   }
                   ,-
                 </p>
@@ -224,7 +240,7 @@ const AuctionItems = ({ items, bids }) => {
                 <div className="mb-6">
                   <label
                     className="block text-white text-lg font-bold mb-2"
-                    htmlFor="price"
+                    htmlFor="amount"
                   >
                     Pris
                   </label>
@@ -234,9 +250,12 @@ const AuctionItems = ({ items, bids }) => {
                     type="number"
                     step="1"
                     min="0"
-                    placeholder={Math.ceil(activeItem.price * 1.1)}
+                    placeholder={String(Math.ceil(activeItem.amount * 1.1))}
                     onChange={(e) =>
-                      setFormData({ ...formData, amount: e.target.value })
+                      setFormData({
+                        ...formData,
+                        amount: Number(e.target.value),
+                      })
                     }
                   />
                   {formData.error && formData.error.amount && (

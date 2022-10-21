@@ -16,7 +16,7 @@ const Layout = ({ children, full = false }) => {
       <nav className="bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 ">
-            <h1 className="text-xl">Veldedighetsfest 2021</h1>
+            <h1 className="text-xl">Veldedighetsfest 2022</h1>
             {links.map((link) => (
               <Link key={link.href} href={link.href}>
                 <a className="bg-white px-3 py-2 mx-5 rounded-md text-large font-medium text-black">

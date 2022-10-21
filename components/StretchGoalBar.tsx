@@ -1,4 +1,14 @@
-const StretchGoalBar = ({ totalAmount, maxAmount, stretchGoals }) => {
+import { StretchGoal } from "../models/types";
+
+const StretchGoalBar = ({
+  totalAmount,
+  maxAmount,
+  stretchGoals,
+}: {
+  totalAmount: number;
+  maxAmount: number;
+  stretchGoals: StretchGoal[];
+}) => {
   const meterLen = Math.floor((totalAmount / maxAmount) * 100);
 
   const nextGoal = stretchGoals.find(

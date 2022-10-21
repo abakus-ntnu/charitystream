@@ -4,6 +4,7 @@ import State from "../../lib/State";
 import Alerts from "../../lib/Alerts";
 import Layout from "../../components/admin/Layout";
 import SetPasswordBox from "../../components/admin/SetPasswordBox";
+import { CharityState } from "../../models/types";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -11,12 +12,16 @@ const Beer = () => {
   const [count, setCount] = useState<null | number>();
   const [price, setPrice] = useState<null | number>();
 
+  const { state } = useContext(State);
+  const { addAlert } = useContext(Alerts);
+
   const { data, mutate } = useSWR("/api/state", fetcher, {
     refreshInterval: 5000,
   });
 
-  const { state } = useContext(State);
-  const { addAlert } = useContext(Alerts);
+  if (!data) return <div>Loading...</div>;
+
+  const charityState = data as CharityState;
 
   const updateBeer = async (count: number): Promise<boolean> => {
     const res = await fetch("/api/beer", {
@@ -116,7 +121,7 @@ const Beer = () => {
                     id="count"
                     type="number"
                     name="count"
-                    placeholder={data?.beer?.count ?? "69"}
+                    placeholder={String(charityState.beer.count)}
                     className="block w-full py-3 px-1 mt-2 mb-4
                     text-gray-800 appearance-none
                     border-b-2 border-gray-100
@@ -152,7 +157,7 @@ const Beer = () => {
                     id="count"
                     type="number"
                     name="count"
-                    placeholder={data?.beer?.price ?? "69"}
+                    placeholder={String(charityState.beer.price)}
                     className="block w-full py-3 px-1 mt-2 mb-4
                     text-gray-800 appearance-none
                     border-b-2 border-gray-100

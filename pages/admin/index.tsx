@@ -1,7 +1,6 @@
 import { FormEvent, useContext, useState } from "react";
 import Layout from "../../components/admin/Layout";
-import State, { StateProvider } from "../../lib/State";
-import { AlertsProvider } from "../../lib/Alerts";
+import State from "../../lib/State";
 import { useRouter } from "next/router";
 
 export default function Admin() {

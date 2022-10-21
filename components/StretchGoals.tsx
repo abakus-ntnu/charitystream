@@ -1,9 +1,15 @@
 import StretchGoalBar from "./StretchGoalBar";
 import styles from "./StretchGoals.module.css";
 import cx from "classnames";
+import { StretchGoal } from "../models/types";
 
-export default function StretchGoals(props) {
-  const { stretchGoals, totalAmount } = props;
+export default function StretchGoals({
+  stretchGoals,
+  totalAmount,
+}: {
+  stretchGoals: StretchGoal[];
+  totalAmount: number;
+}) {
   const maxAmount = stretchGoals[stretchGoals.length - 1]?.goal;
 
   if (stretchGoals.length === 0) {

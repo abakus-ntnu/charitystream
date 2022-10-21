@@ -11,7 +11,6 @@ delete mongoose.connection.models["Beer"];
 
 const AuctionSchema = new mongoose.Schema(
   {
-    id: { type: Number },
     description: { type: String, default: "NULL" },
   },
   { autoCreate: true }
@@ -67,7 +66,7 @@ const BeerSchema = new mongoose.Schema(
   {
     count: { type: Number, default: 0 },
     price: { type: Number, default: 0 },
-    maxDonation: { type: Number, default: 8000 },
+    maxDonation: { type: Number, default: 20000 },
   },
   { autoCreate: true }
 );

@@ -1,6 +1,7 @@
 import animations from "../styles/animations.module.css";
+import { Donation } from "../models/types";
 
-const Vipp = (props) => {
+const DonationCard = (props) => {
   return (
     <div
       className={`flex items-center overflow-hidden m-3 rounded-tl-lg rounded-tr-lg rounded-br-lg shadow-md ${animations.wiggle}`}
@@ -15,19 +16,19 @@ const Vipp = (props) => {
   );
 };
 
-const TopVipp = ({ vipp }) => {
+const TopDonation = ({ topDonor }: { topDonor: Donation }) => {
   return (
     <div>
       <div className="font-bold m-1 text-xl mb-2">Største donasjon:</div>
-      {vipp && (
+      {topDonor && (
         <div
           className={`flex items-center overflow-hidden m-3 rounded-tl-lg rounded-tr-lg rounded-br-lg shadow-md ${animations.wiggle}`}
           style={{ background: "#39AC37" }}
         >
           <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
           <span className="flex justify-between w-full">
-            <span className="p-3">{vipp.name} donerte</span>
-            <span className="p-3 font-bold">{vipp.amount}kr!!</span>
+            <span className="p-3">{topDonor.name} donerte</span>
+            <span className="p-3 font-bold">{topDonor.amount}kr!!</span>
           </span>
         </div>
       )}
@@ -35,19 +36,29 @@ const TopVipp = ({ vipp }) => {
   );
 };
 
-const Vipps = (props) => {
-  const vipps = props.items
+const Donations = ({
+  donations,
+  topDonor,
+}: {
+  donations: Donation[];
+  topDonor: Donation;
+}) => {
+  const vipps = donations
     .slice(0, 10)
-    .map((item) => (
-      <Vipp name={item.name} amount={item.amount} key={item._id} />
+    .map((donation) => (
+      <DonationCard
+        name={donation.name}
+        amount={donation.amount}
+        key={donation._id}
+      />
     ));
 
   return (
     <div className="flex flex-col h-full max-w-full">
-      <TopVipp vipp={props.topDonor} />
+      <TopDonation topDonor={topDonor} />
       <hr />
       {vipps}
-      {props.items.length === 0 && (
+      {donations.length === 0 && (
         <p className="text-center">
           Ingen Vipps-donasjoner er registrert enda! :(
         </p>
@@ -56,4 +67,4 @@ const Vipps = (props) => {
   );
 };
 
-export default Vipps;
+export default Donations;

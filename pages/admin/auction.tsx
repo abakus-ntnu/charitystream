@@ -4,19 +4,14 @@ import State from "../../lib/State";
 import Alerts from "../../lib/Alerts";
 import Layout from "../../components/admin/Layout";
 import SetPasswordBox from "../../components/admin/SetPasswordBox";
-
-interface AuctionOptions {
-  freezeBidding: Boolean | null;
-  displayWinners: Boolean | null;
-}
+import { AuctionOptions, CharityState } from "../../models/types";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const Auction = () => {
-  const [auctionOptions, setAuctionOptions] = useState<AuctionOptions>({
-    freezeBidding: null,
-    displayWinners: null,
-  });
+  const [auctionOptions, setAuctionOptions] = useState<AuctionOptions>(
+    {} as AuctionOptions
+  );
   const [bidToDelete, setBidToDelete] = useState("");
 
   const { state } = useContext(State);
@@ -65,6 +60,8 @@ const Auction = () => {
 
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading...</div>;
+
+  const charityState = data as CharityState;
 
   const toggleFreezeBids = () => {
     updateAuctionOptions({
@@ -176,23 +173,17 @@ const Auction = () => {
                     setBidToDelete(e.target.value);
                   }}
                 >
-                  {!error && data ? (
-                    <>
-                      <option>-- Velg et bud --</option>
-                      {data.bids.map((bid) => {
-                        const auction = data.auctions.find(
-                          (auction) => auction._id === bid.item
-                        );
-                        return (
-                          <option value={auction._id} key={auction._id}>
-                            {bid.price}kr &nbsp; - &nbsp; {auction.description}
-                          </option>
-                        );
-                      })}
-                    </>
-                  ) : (
-                    <option>Loading...</option>
-                  )}
+                  <option>-- Velg et bud --</option>
+                  {charityState.bids.map((bid) => {
+                    const auction = charityState.auctions.find(
+                      (auction) => auction._id === bid.item
+                    );
+                    return (
+                      <option value={auction._id} key={auction._id}>
+                        {bid.amount}kr &nbsp; - &nbsp; {auction.description}
+                      </option>
+                    );
+                  })}
                 </select>
                 <button
                   type="submit"

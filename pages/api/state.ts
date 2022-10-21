@@ -17,10 +17,7 @@ const dbname = "Charity";
 
 const getHighestBids = async () => {
   const auctionOptions = await AuctionOption.findOne({});
-  const displayNames = {};
-  if (auctionOptions.displayWinners) {
-    displayNames.name = 1;
-  }
+  const displayNames = { name: auctionOptions.displayWinners ? 1 : undefined };
   return Bid.aggregate([
     // Find the highest bids for each item
     {
@@ -41,7 +38,7 @@ const getHighestBids = async () => {
     },
     {
       $project: {
-        price: "$amount",
+        amount: "$amount",
         item: "$_id",
         ...displayNames,
       },
@@ -91,7 +88,7 @@ export default async function handler(_, res) {
   const beerMaxDonation = beer && beer.maxDonation ? beer.maxDonation : 0;
   const totalAmount =
     bids.reduce((a, b) => {
-      return a + b.price;
+      return a + b.amount;
     }, 0) +
     (beerDonation < beerMaxDonation ? beerDonation : beerMaxDonation) +
     vipps.reduce((a, b) => {

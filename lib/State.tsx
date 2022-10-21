@@ -12,7 +12,7 @@ export const StateProvider = ({ children, value }) => {
     !value?.state?.token &&
       localStorage &&
       value.setState(JSON.parse(localStorage.getItem("state")));
-  }, []);
+  }, [value]);
 
   return <State.Provider value={value}>{children}</State.Provider>;
 };

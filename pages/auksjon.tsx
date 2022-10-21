@@ -1,6 +1,7 @@
 import Link from "next/link";
 import useSWR from "swr";
 import AuctionItems from "../components/AuctionItems";
+import { CharityState } from "../models/types";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -22,10 +23,13 @@ export default function AuctionItemsPage() {
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading...</div>;
 
+  const state = data as CharityState;
+  console.log(state);
+
   return (
     <div>
       <NavBar />
-      <AuctionItems items={data.auctions} bids={data.bids} />
+      <AuctionItems auctions={state.auctions} bids={data.bids} />
     </div>
   );
 }

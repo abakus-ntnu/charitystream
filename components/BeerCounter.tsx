@@ -1,4 +1,7 @@
-const BeerCounter = ({ count, price, maxDonation }) => {
+import { BeerData } from "../models/types";
+
+const BeerCounter = ({ beerData }: { beerData: BeerData }) => {
+  const { count, price, maxDonation } = beerData;
   return (
     <div className={"flex align-center justify-center relative"}>
       <img
