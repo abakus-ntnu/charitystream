@@ -25,7 +25,7 @@ export default function AuctionItemsPage() {
   return (
     <div>
       <NavBar />
-      <AuctionItems items={data.auctions} />
+      <AuctionItems items={data.auctions} bids={data.bids} />
     </div>
   );
 }

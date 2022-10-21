@@ -17,7 +17,7 @@ const Auction = () => {
     freezeBidding: null,
     displayWinners: null,
   });
-  const [bidToDelete, setBidToDelete] = useState<number>(NaN);
+  const [bidToDelete, setBidToDelete] = useState("");
 
   const { state } = useContext(State);
   const { addAlert } = useContext(Alerts);
@@ -89,12 +89,10 @@ const Auction = () => {
     });
   };
 
-  const deleteBid = async (bidId: number) => {
-    if (data.auctions.find((auction) => auction.id == bidId).price === 0) {
-      addAlert(`Du kan ikke slette bud på 0kr! `, "red");
-      return;
-    }
-    fetchRequest("/api/bid", "DELETE", { item: bidId }, (res) => {
+  const deleteBid = async (auctionId: string) => {
+    if (auctionId.length === 0) return;
+
+    fetchRequest("/api/bid", "DELETE", { auctionId }, (res) => {
       if (res.ok) {
         addAlert(
           `Budet ble slettet! Det kan ta noen sekunder før lista reloades`,
@@ -107,7 +105,7 @@ const Auction = () => {
 
   const submitDeleteBid = async (e: FormEvent) => {
     e.preventDefault();
-    if (isNaN(bidToDelete)) {
+    if (bidToDelete.length === 0) {
       addAlert(`Du må velge et bud!`, "red");
       return;
     }
@@ -175,20 +173,22 @@ const Auction = () => {
                     border-b-2 border-gray-100
                     focus:text-gray-700 focus:outline-none focus:border-gray-200"
                   onChange={(e) => {
-                    setBidToDelete(parseInt(e.target.value));
+                    setBidToDelete(e.target.value);
                   }}
                 >
                   {!error && data ? (
                     <>
                       <option>-- Velg et bud --</option>
-                      {data.auctions
-                        .filter((auction) => auction.price !== 0)
-                        .map((auction) => (
-                          <option value={auction.id} key={auction.id}>
-                            {auction.price}kr &nbsp; - &nbsp;{" "}
-                            {auction.description}
+                      {data.bids.map((bid) => {
+                        const auction = data.auctions.find(
+                          (auction) => auction._id === bid.item
+                        );
+                        return (
+                          <option value={auction._id} key={auction._id}>
+                            {bid.price}kr &nbsp; - &nbsp; {auction.description}
                           </option>
-                        ))}
+                        );
+                      })}
                     </>
                   ) : (
                     <option>Loading...</option>

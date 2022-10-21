@@ -4,21 +4,21 @@ import { MAX_BID_AMOUNT } from "../lib/constants";
 
 Modal.setAppElement("#__next");
 
-const Item = (props) => {
+const Item = ({ item, bid, onClick }) => {
   return (
     <div
       className="lg:w-48 w-40 rounded overflow-hidden shadow-lg lg:m-5 m-2 text-center px-3 py-2 cursor-pointer hover:bg-gray-600 bg-gray-800"
-      onClick={props.onClick}
+      onClick={onClick}
     >
-      <div className="font-bold text-xl mb-2">{props.price},-</div>
+      <div className="font-bold text-xl mb-2">{bid.price},-</div>
       <hr />
-      <p className="text-white text-base mb-8">{props.description}</p>
-      {props.name && <b>Vinner: {props.name}</b>}
+      <p className="text-white text-base mb-8">{item.description}</p>
+      {bid.name && <b>Vinner: {bid.name}</b>}
     </div>
   );
 };
 
-const AuctionItems = (props) => {
+const AuctionItems = ({ items, bids }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
   const [formData, setFormData] = useState({});
@@ -83,7 +83,7 @@ const AuctionItems = (props) => {
         },
         body: JSON.stringify({
           ...formData,
-          item: activeItem.id,
+          item: activeItem._id,
           description: activeItem.description,
         }),
       });
@@ -126,13 +126,17 @@ const AuctionItems = (props) => {
         Trykk på et auksjonsobjekt for å by!
       </div>
       <div className="flex flex-row flex-wrap justify-evenly">
-        {props.items.map((item) => (
+        {items.map((item) => (
           <Item
-            key={item.description}
-            description={item.description}
-            name={item.name}
+            key={item._id}
+            item={item}
+            bid={
+              bids.find((bid) => bid.item === item._id) ?? {
+                price: 0,
+                name: "",
+              }
+            }
             onClick={() => openModal(item)}
-            price={item.price}
           />
         ))}
         <Modal

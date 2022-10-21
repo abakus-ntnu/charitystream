@@ -39,26 +39,10 @@ const getHighestBids = async () => {
         },
       },
     },
-    // JOIN with auction table to get item description
-    {
-      $lookup: {
-        from: "auctions",
-        localField: "_id",
-        foreignField: "id",
-        as: "auctions",
-      },
-    },
-    // Destructure auction array, since each bid only has one auctioned item
-    {
-      $unwind: "$auctions",
-    },
-    // Format the data
     {
       $project: {
         price: "$amount",
-        description: "$auctions.description",
-        id: "$auctions.id",
-        _id: 0,
+        item: "$_id",
         ...displayNames,
       },
     },
@@ -78,16 +62,25 @@ export default async function handler(_, res) {
   mongoose.connect(url);
 
   // Get all the state we need for the page
-  const [vipps, streamLink, slidoView, stretchGoals, topDonor, auctions, beer] =
-    await Promise.all([
-      Vipps.find({}),
-      StreamLink.findOne().sort({ date: -1 }).limit(1),
-      SlidoView.findOne().sort({ date: -1 }).limit(1),
-      StretchGoal.find({}).sort("goal"),
-      Vipps.findOne({}).sort({ amount: -1 }).limit(1),
-      getHighestBids(),
-      Beer.findOne({}),
-    ]);
+  const [
+    vipps,
+    streamLink,
+    slidoView,
+    stretchGoals,
+    topDonor,
+    auctions,
+    bids,
+    beer,
+  ] = await Promise.all([
+    Vipps.find({}),
+    StreamLink.findOne().sort({ date: -1 }).limit(1),
+    SlidoView.findOne().sort({ date: -1 }).limit(1),
+    StretchGoal.find({}).sort("goal"),
+    Vipps.findOne({}).sort({ amount: -1 }).limit(1),
+    Auction.find({}),
+    getHighestBids(),
+    Beer.findOne({}),
+  ]);
 
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
@@ -97,7 +90,7 @@ export default async function handler(_, res) {
     beer && beer.count && beer.price ? beer.count * beer.price : 0;
   const beerMaxDonation = beer && beer.maxDonation ? beer.maxDonation : 0;
   const totalAmount =
-    auctions.reduce((a, b) => {
+    bids.reduce((a, b) => {
       return a + b.price;
     }, 0) +
     (beerDonation < beerMaxDonation ? beerDonation : beerMaxDonation) +
@@ -107,6 +100,7 @@ export default async function handler(_, res) {
 
   res.end(
     JSON.stringify({
+      bids,
       auctions,
       totalAmount,
       vipps: vipps.slice(vipps.length - 10, vipps.length),

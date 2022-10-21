@@ -37,8 +37,7 @@ export default async function handler(req, res) {
         res.status(401).end();
         return;
       }
-
-      Bid.findOne({ item: req.body.item })
+      Bid.findOne({ item: req.body.auctionId })
         .sort({ amount: -1 })
         .exec(function (err, doc) {
           doc.remove();

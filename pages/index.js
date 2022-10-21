@@ -24,7 +24,7 @@ export default function Index() {
         <BeerCounter {...data.beer} />
         <Vipps items={data.vipps} topDonor={data.topDonor} />
       </div>
-      <SilentAuction items={data.auctions} />
+      <SilentAuction items={data.auctions} bids={data.bids} />
     </div>
   );
 }
