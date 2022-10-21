@@ -4,8 +4,7 @@ import SilentAuction from "../components/SilentAuction";
 import Donations from "../components/Donations";
 import BeerCounter from "../components/BeerCounter";
 import { CharityState } from "../models/types";
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
+import { fetcher } from "../lib/helpers";
 
 export default function Index() {
   const { data, error } = useSWR<CharityState>("/api/state", fetcher, {

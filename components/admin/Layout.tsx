@@ -7,6 +7,7 @@ const links = [
   { href: "/admin/vipps", page: "Legg til donasjoner" },
   { href: "/admin/beer", page: "Oppdater antall øl" },
   { href: "/admin/auction", page: "Stilleauksjon" },
+  { href: "/admin/stretchGoals", page: "Stretch Goals" },
 ];
 
 const Layout = ({ children, full = false }) => {

@@ -2,8 +2,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import AuctionItems from "../components/AuctionItems";
 import { CharityState } from "../models/types";
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
+import { fetcher } from "../lib/helpers";
 
 const NavBar = () => (
   <div className="w-full p-10">

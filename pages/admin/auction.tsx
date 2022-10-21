@@ -5,8 +5,7 @@ import Alerts from "../../lib/Alerts";
 import Layout from "../../components/admin/Layout";
 import SetPasswordBox from "../../components/admin/SetPasswordBox";
 import { AuctionOptions, CharityState } from "../../models/types";
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
+import { fetcher, fetchRequest } from "../../lib/helpers";
 
 const Auction = () => {
   const [auctionOptions, setAuctionOptions] = useState<AuctionOptions>(
@@ -21,41 +20,23 @@ const Auction = () => {
     refreshInterval: 5000,
   });
 
-  const fetchRequest = async (
-    url: string,
-    method: string,
-    body: any,
-    handleRes: (res: any) => any
-  ) => {
-    const actualBody = method === "GET" ? null : JSON.stringify({ ...body });
-    const res = await fetch(url, {
-      method: method,
-      headers: {
-        password: state.token,
-        "Content-Type": "application/json",
-      },
-      body: actualBody,
-    });
-    await handleRes(res);
-    if (res.status !== 200) {
-      const json = await res.json();
-      addAlert(
-        `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-        "red"
-      );
-    }
-  };
-
   useEffect(() => {
     if (!state.token) {
       return;
     }
-    fetchRequest("/api/auctionOptions", "GET", {}, (res) => {
-      if (res.status !== 200) {
-        return;
-      }
-      res.json().then((res) => setAuctionOptions(res));
-    });
+    fetchRequest(
+      "/api/auctionOptions",
+      "GET",
+      {},
+      (res) => {
+        if (res.status !== 200) {
+          return;
+        }
+        res.json().then((res) => setAuctionOptions(res));
+      },
+      addAlert,
+      state.token
+    );
   });
 
   if (error) return <div>Failed to load</div>;
@@ -76,26 +57,40 @@ const Auction = () => {
   };
 
   const updateAuctionOptions = async (newOptions: AuctionOptions) => {
-    fetchRequest("/api/auctionOptions", "POST", newOptions, (res) => {
-      setAuctionOptions(newOptions);
-      if (res.ok) {
-        addAlert(`Auksjons-innstillinger er oppdatert`, "green");
-      }
-    });
+    fetchRequest(
+      "/api/auctionOptions",
+      "POST",
+      newOptions,
+      (res) => {
+        setAuctionOptions(newOptions);
+        if (res.ok) {
+          addAlert(`Auksjons-innstillinger er oppdatert`, "green");
+        }
+      },
+      addAlert,
+      state.token
+    );
   };
 
   const deleteBid = async (auctionId: string) => {
     if (auctionId.length === 0) return;
 
-    fetchRequest("/api/bid", "DELETE", { auctionId }, (res) => {
-      if (res.ok) {
-        addAlert(
-          `Budet ble slettet! Det kan ta noen sekunder før lista reloades`,
-          "green"
-        );
-        mutate();
-      }
-    });
+    fetchRequest(
+      "/api/bid",
+      "DELETE",
+      { auctionId },
+      (res) => {
+        if (res.ok) {
+          addAlert(
+            `Budet ble slettet! Det kan ta noen sekunder før lista reloades`,
+            "green"
+          );
+          mutate();
+        }
+      },
+      addAlert,
+      state.token
+    );
   };
 
   const submitDeleteBid = async (e: FormEvent) => {

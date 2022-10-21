@@ -5,8 +5,7 @@ import Alerts from "../../lib/Alerts";
 import Layout from "../../components/admin/Layout";
 import SetPasswordBox from "../../components/admin/SetPasswordBox";
 import { CharityState } from "../../models/types";
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
+import { fetcher } from "../../lib/helpers";
 
 const Beer = () => {
   const [count, setCount] = useState<null | number>();
