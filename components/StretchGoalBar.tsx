@@ -36,11 +36,11 @@ const StretchGoalBar = ({
             className="absolute flex w-full"
             style={{ bottom: `calc(${goalPosition}%)`, left: 0 }}
           >
-            <div className={"border-b border-black w-12 flex-shrink-0"} />
+            <div className={"border-b-2 border-black w-12 flex-shrink-0"} />
             <p
               className={`ml-2 text-sm md:text-2xl ${
                 goalNext ? "text-indigo-400 animate-pulse" : ""
-              } ${goalReached ? "line-through text-green-400" : ""}`}
+              } ${goalReached ? "text-green-400" : ""}`}
               style={{
                 top: "0.5rem",
                 transform: `translateY(${isLowest ? "90" : "50"}%)`,

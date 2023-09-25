@@ -2,6 +2,12 @@ import styles from "./SilentAuction.module.css";
 import Link from "next/link";
 import { Auction, Bid } from "../models/types";
 
+declare module "react" {
+  interface CSSProperties {
+    "--duration"?: string;
+  }
+}
+
 const AuctionCard = ({
   currentBidAmount,
   description,
@@ -39,7 +45,14 @@ const SilentAuction = ({
   return (
     <div className="flex flex-col items-center">
       <div className={styles.wrapper}>
-        <div className={styles.slideshow}>{items}</div>
+        <div
+          className={styles.slideshow}
+          style={{ "--duration": `${items.length * 2.5}s` }}
+        >
+          {items}
+          {items}
+        </div>
+        <span className={styles.fade} />
       </div>
       <Link href="/auksjon" className="font-bold">
         <button className="mb-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
