@@ -4,7 +4,7 @@ import { Donation } from "../models/types";
 const DonationCard = (props) => {
   return (
     <div
-      className={`flex items-center overflow-hidden m-3 rounded-tl-lg rounded-tr-lg rounded-br-lg shadow-md ${animations.wiggle}`}
+      className={`flex items-center overflow-hidden m-3 rounded shadow-md ${animations.wiggle}`}
       style={{ background: "#ff5b24" }}
     >
       <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
@@ -22,7 +22,7 @@ const TopDonation = ({ topDonor }: { topDonor: Donation }) => {
       <div className="font-bold m-1 text-xl mb-2">Største donasjon:</div>
       {topDonor && (
         <div
-          className={`flex items-center overflow-hidden m-3 rounded-tl-lg rounded-tr-lg rounded-br-lg shadow-md ${animations.wiggle}`}
+          className={`flex items-center overflow-hidden m-3 rounded shadow-md ${animations.wiggle}`}
           style={{ background: "#39AC37" }}
         >
           <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
