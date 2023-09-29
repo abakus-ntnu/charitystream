@@ -52,7 +52,7 @@ const getHighestBids = async () => {
   ]);
 };
 
-// export const url = `mongodb://0.0.0.0:27017/${dbname}?retryWrites=true&w=majority`;
+//export const url = `mongodb://0.0.0.0:27017/${dbname}?retryWrites=true&w=majority`;
 export const url = `mongodb+srv://${username}:${password}@cluster.au8e8.mongodb.net/${dbname}?retryWrites=true&w=majority`;
 
 export default async function handler(_, res) {
