@@ -13,14 +13,14 @@ const BeerCounter = ({ beerData }: { beerData: BeerData }) => {
 				width={700}
 			/>
 			<div
-				className="text-center text-3xl md:text-5xl z-10 bg-gray-200 absolute text-black font-extrabold -ml-2 p-1 rounded"
-				style={{ top: "45%" }}
+				className="text-center text-3xl md:text-5xl z-10 bg-gray-200 absolute text-black font-extrabold -ml-2 p-3 rounded"
+				style={{ top: "40%" }}
 			>
 				{count}stk
 			</div>
 			<div
-				className="text-center text-2xl md:text-4xl z-10 bg-gray-200 absolute text-black font-extrabold -ml-2 p-1 rounded"
-				style={{ top: "57%" }}
+				className="text-center text-2xl md:text-4xl z-10 bg-gray-200 absolute text-black font-extrabold -ml-2 p-3 rounded"
+				style={{ top: "60%" }}
 			>
 				{Math.min(count * price, maxDonation)}kr
 			</div>
