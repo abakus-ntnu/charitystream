@@ -19,7 +19,7 @@ const DonationCard = (props) => {
 const TopDonation = ({ topDonor }: { topDonor: Donation }) => {
   return (
     <div>
-      <div className="font-bold m-1 text-xl mb-2">Største donasjon:</div>
+      <div className="font-bold m-1 text-xl mb-2">Største vipps-donasjon:</div>
       {topDonor && (
         <div
           className={`flex items-center overflow-hidden m-3 rounded shadow-md ${animations.wiggle}`}
