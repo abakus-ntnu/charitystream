@@ -50,7 +50,7 @@ export default async function handler(req, res) {
 
         const amount = values[6];
         const firstName = values[14];
-        const lastName = values[14];
+        const lastName = values[15];
 
         const vipps = new Vipps({
           name: `${firstName} ${lastName}`,
