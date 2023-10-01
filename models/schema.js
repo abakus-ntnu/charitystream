@@ -22,6 +22,7 @@ const VippsSchema = new mongoose.Schema(
   {
     name: { type: String, default: "" },
     amount: { type: Number, default: 0 },
+    message: { type: String, default: "" },
   },
   { autoCreate: true, timestamps: true }
 );
