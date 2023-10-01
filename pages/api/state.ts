@@ -9,6 +9,7 @@ import {
   Bid,
   AuctionOption,
   Beer,
+  MatchingGroup,
 } from "../../models/schema.js";
 
 const username = process.env.DATABASE_USER;
@@ -52,11 +53,30 @@ const getHighestBids = async () => {
   ]);
 };
 
-//export const url = `mongodb://0.0.0.0:27017/${dbname}?retryWrites=true&w=majority`;
+const findTopDonors = async () => {
+  const a = await Vipps.aggregate([
+    { $group: { _id: "$name", amount: { $sum: "$amount" } } },
+  ]);
+
+  a.sort((v1, v2) => v2.amount - v1.amount);
+
+  a.forEach((v) => (v.name = v._id));
+
+  return a;
+};
+
+// export const url = `mongodb://0.0.0.0:27017/${dbname}?retryWrites=true&w=majority`;
 export const url = `mongodb+srv://${username}:${password}@cluster.au8e8.mongodb.net/${dbname}?retryWrites=true&w=majority`;
 
 export default async function handler(_, res) {
   mongoose.connect(url);
+
+  if ((await MatchingGroup.count()) == 0) {
+    const s = new MatchingGroup({ fraction: 0.25, max: 25000, name: "AVF" });
+    s.save();
+  }
+
+  console.log(await MatchingGroup.findOne({}));
 
   // Get all the state we need for the page
   const [
@@ -64,19 +84,21 @@ export default async function handler(_, res) {
     streamLink,
     slidoView,
     stretchGoals,
-    topDonor,
+    topDonors,
     auctions,
     bids,
     beer,
+    matchingGroup,
   ] = await Promise.all([
     Vipps.find({}),
     StreamLink.findOne().sort({ date: -1 }).limit(1),
     SlidoView.findOne().sort({ date: -1 }).limit(1),
     StretchGoal.find({}).sort("goal"),
-    Vipps.findOne({}).sort({ amount: -1 }).limit(1),
+    findTopDonors(),
     Auction.find({}),
     getHighestBids(),
     Beer.findOne({}),
+    MatchingGroup.findOne({}),
   ]);
 
   res.statusCode = 200;
@@ -104,8 +126,9 @@ export default async function handler(_, res) {
       streamLink,
       slidoView,
       stretchGoals,
-      topDonor,
+      topDonors,
       beer,
+      matchingGroup,
     })
   );
 }

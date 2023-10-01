@@ -8,6 +8,7 @@ delete mongoose.connection.models["StretchGoal"];
 delete mongoose.connection.models["Bid"];
 delete mongoose.connection.models["AuctionOption"];
 delete mongoose.connection.models["Beer"];
+delete mongoose.connection.models["MatchingGroup"];
 
 const AuctionSchema = new mongoose.Schema(
   {
@@ -83,4 +84,17 @@ const AuctionOptionSchema = new mongoose.Schema(
 export const AuctionOption = mongoose.model(
   "AuctionOption",
   AuctionOptionSchema
+);
+
+const MatchingGroupSchema = new mongoose.Schema(
+  {
+    name: { type: String, default: "" },
+    fraction: { type: Number, default: 1 },
+    max: { type: Number, default: 1000 },
+  },
+  { autoCreate: true }
+);
+export const MatchingGroup = mongoose.model(
+  "MatchingGroup",
+  MatchingGroupSchema
 );

@@ -3,6 +3,9 @@ import State from "../../lib/State";
 import Alerts from "../../lib/Alerts";
 import Layout from "../../components/admin/Layout";
 import SetPasswordBox from "../../components/admin/SetPasswordBox";
+import * as XLSX from "xlsx";
+import { Readable } from "stream";
+XLSX.stream.set_readable(Readable);
 
 const Vipps = () => {
   const [name, setName] = useState<null | string>();
@@ -59,35 +62,97 @@ const Vipps = () => {
   };
 
   const addAllVipps = async (file: HTMLInputElement) => {
-    const reader = new FileReader();
+    const vippsFile = file.files[0];
 
-    reader.onload = async (e) => {
-      const content = e.target.result;
-      const res = await fetch("/api/vipps/addAll", {
-        method: "POST",
-        headers: {
-          password: state.token,
-        },
-        body: content,
-      });
-      if (res.ok) {
-        addAlert("Success", "green");
-      }
-      if (res.status !== 200) {
-        try {
-          const json = await res.json();
-          addAlert(
-            `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-            "red"
-          );
-        } catch (e) {
-          addAlert(`${res.statusText}`, "red");
+    if (vippsFile.name.toLowerCase().endsWith(".csv")) {
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        const content = e.target.result;
+        const res = await fetch("/api/vipps/addAll", {
+          method: "POST",
+          headers: {
+            password: state.token,
+          },
+          body: content,
+        });
+        if (res.ok) {
+          addAlert("Success", "green");
         }
-      }
-      return false;
-    };
+        if (res.status !== 200) {
+          try {
+            const json = await res.json();
+            addAlert(
+              `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
+              "red"
+            );
+          } catch (e) {
+            addAlert(`${res.statusText}`, "red");
+          }
+        }
+      };
+      reader.readAsText(file.files[0]);
+    } else if (vippsFile.name.toLowerCase().endsWith(".xlsx")) {
+      var reader = new FileReader();
+      reader.onload = async (e) => {
+        const wb = XLSX.read(e.target.result);
+        const ws = wb.Sheets[wb.SheetNames[0]];
 
-    reader.readAsText(file.files[0]);
+        ws["!merges"] = [];
+
+        // Data has incorrect !ref-format, so we need to fix it manually
+        // https://docs.sheetjs.com/docs/miscellany/errors#worksheet-only-includes-one-row-of-data
+        function update_sheet_range(ws) {
+          var range = { s: { r: Infinity, c: Infinity }, e: { r: 0, c: 0 } };
+          Object.keys(ws)
+            .filter(function (x) {
+              return x.charAt(0) != "!";
+            })
+            .map(XLSX.utils.decode_cell)
+            .forEach(function (x) {
+              range.s.c = Math.min(range.s.c, x.c);
+              range.s.r = Math.min(range.s.r, x.r);
+              range.e.c = Math.max(range.e.c, x.c);
+              range.e.r = Math.max(range.e.r, x.r);
+            });
+          ws["!ref"] = XLSX.utils.encode_range(range);
+        }
+
+        update_sheet_range(ws);
+
+        let string = XLSX.utils.sheet_to_csv(ws);
+
+        string = string.slice(
+          string.indexOf("\n", string.indexOf("Salgsdato,"))
+        );
+
+        const res = await fetch("/api/vipps/addAll", {
+          method: "POST",
+          headers: {
+            password: state.token,
+          },
+          body: string,
+        });
+        if (res.ok) {
+          addAlert("Success", "green");
+        }
+        if (res.status !== 200) {
+          try {
+            const json = await res.json();
+            addAlert(
+              `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
+              "red"
+            );
+          } catch (e) {
+            addAlert(`${res.statusText}`, "red");
+          }
+        }
+      };
+
+      reader.readAsArrayBuffer(vippsFile);
+    } else {
+      addAlert("Couln't parse file", "red");
+    }
   };
 
   const addAll = async (e: FormEvent<HTMLFormElement>) => {
@@ -187,7 +252,7 @@ const Vipps = () => {
                     id="file"
                     name="file"
                     className="block w-full text-sm text-gray-600 border border-gray-300 cursor-pointer bg-gray-50  focus:outline-none"
-                    accept=".csv"
+                    accept=".csv, .xlsx"
                     required
                   />
                   <button

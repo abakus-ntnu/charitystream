@@ -44,6 +44,7 @@ const SilentAuction = ({
 
   return (
     <div className="flex flex-col items-center">
+      <p className="text-5xl font-medium w-">Legg inn bud på aba.wtf/fest</p>
       <div className={styles.wrapper}>
         <div
           className={styles.slideshow}

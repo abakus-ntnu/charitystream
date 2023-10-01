@@ -9,7 +9,7 @@ const DonationCard = (props) => {
     >
       <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
       <span className="flex justify-between w-full">
-        <span className="p-3 truncate max-w-xs">{props.name} donerte</span>
+        <span className="p-3 truncate max-w-xs">{props.name}</span>
         <span className="p-3 font-bold">{props.amount}kr!!</span>
       </span>
     </div>
@@ -19,7 +19,7 @@ const DonationCard = (props) => {
 const TopDonation = ({ topDonor }: { topDonor: Donation }) => {
   return (
     <div>
-      <div className="font-bold m-1 text-xl mb-2">Største donasjon:</div>
+      <div className="font-bold m-1 text-xl mb-2">Biggest vippser:</div>
       {topDonor && (
         <div
           className={`flex items-center overflow-hidden m-3 rounded shadow-md ${animations.wiggle}`}
@@ -27,7 +27,7 @@ const TopDonation = ({ topDonor }: { topDonor: Donation }) => {
         >
           <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
           <span className="flex justify-between w-full">
-            <span className="p-3">{topDonor.name} donerte</span>
+            <span className="p-3">{topDonor.name}</span>
             <span className="p-3 font-bold">{topDonor.amount}kr!!</span>
           </span>
         </div>

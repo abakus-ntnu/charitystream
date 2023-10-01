@@ -46,11 +46,15 @@ export default async function handler(req, res) {
       }>[] = [{ deleteMany: { filter: {} } }];
 
       for (const row of rows) {
-        const [dateString, brutto, firstName, lastName] = row.split(",");
+        const values = row.split(",");
+
+        const amount = values[6];
+        const firstName = values[14];
+        const lastName = values[15];
 
         const vipps = new Vipps({
           name: `${firstName} ${lastName}`,
-          amount: brutto,
+          amount,
         });
 
         operations.push({
@@ -58,12 +62,11 @@ export default async function handler(req, res) {
             document: vipps,
           },
         });
-        // await vipps.save();
       }
 
       await Vipps.bulkWrite(operations);
 
-      res.status(200).json(Vipps.length);
+      res.status(200).json(await Vipps.count());
 
       break;
     default:

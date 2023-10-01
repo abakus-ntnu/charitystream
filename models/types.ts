@@ -40,7 +40,14 @@ export interface CharityState {
   slidoView: string | null;
   streamLink: string | null;
   stretchGoals: StretchGoal[];
-  topDonor: Donation;
+  topDonors: Donation[];
   totalAmount: number;
   vipps: Donation[];
+  matchingGroup: MatchingGroup;
+}
+
+export interface MatchingGroup {
+  name: string;
+  fraction: number;
+  max: number;
 }
