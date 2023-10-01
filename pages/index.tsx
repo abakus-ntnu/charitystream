@@ -37,10 +37,10 @@ export default function Index() {
             {" "}
             | {data.matchingGroup.name} matcher{" "}
             {maxIsReached
-              ? `til ${calculateMatch() + 2316}kr!`
+              ? `til ${data.totalAmount + calculateMatch() + 6097}kr!`
               : `hver ${Math.round(
                   1 / data.matchingGroup.fraction
-                )}. krone -> ${calculateMatch()}kr`}
+                )}. krone -> ${data.totalAmount + calculateMatch()}kr`}
           </>
         )}
       </p>
