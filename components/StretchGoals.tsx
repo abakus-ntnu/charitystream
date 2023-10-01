@@ -18,6 +18,12 @@ export default function StretchGoals({
     return <p className="text-center">Ingen stretch goals er satt!</p>;
   }
 
+  const calculateMatch = () =>
+    Math.min(
+      Math.floor(totalAmount * matchingGroup.fraction),
+      matchingGroup.max
+    );
+
   return (
     <div className="flex flex-col flex-grow h-full">
       <div
@@ -28,7 +34,7 @@ export default function StretchGoals({
       >
         <div className="w-full h-full py-4">
           <StretchGoalBar
-            totalAmount={totalAmount}
+            totalAmount={totalAmount + calculateMatch()}
             maxAmount={maxAmount}
             stretchGoals={stretchGoals}
           />

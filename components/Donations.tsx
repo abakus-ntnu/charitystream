@@ -5,7 +5,7 @@ type Props = {
   name: string;
   amount: number;
   message: string;
-}
+};
 
 const DonationCard = (props: Props) => {
   return (
@@ -14,12 +14,14 @@ const DonationCard = (props: Props) => {
       style={{ background: "#ff5b24" }}
     >
       <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
-      <div style={{display: "flex", flexDirection: "column"}}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <span className="flex justify-between w-full">
           <span className="p-3 pb-0 truncate max-w-xs">{props.name}</span>
           <span className="p-3 pb-0 font-bold">{props.amount}kr!!</span>
         </span>
-        <span className="p-3 pt-0 opacity-80 line-clamp-1 w-full text-ellipsis truncate max-w-xl">{props.message}</span>
+        <span className="p-3 pt-0 opacity-80 line-clamp-1 w-full text-ellipsis truncate max-w-xl">
+          {props.message}
+        </span>
       </div>
     </div>
   );
