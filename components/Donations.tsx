@@ -1,17 +1,26 @@
 import animations from "../styles/animations.module.css";
 import { Donation } from "../models/types";
 
-const DonationCard = (props) => {
+type Props = {
+  name: string;
+  amount: number;
+  message: string;
+}
+
+const DonationCard = (props: Props) => {
   return (
     <div
       className={`flex items-center overflow-hidden m-3 rounded shadow-md ${animations.wiggle}`}
       style={{ background: "#ff5b24" }}
     >
       <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
-      <span className="flex justify-between w-full">
-        <span className="p-3 truncate max-w-xs">{props.name}</span>
-        <span className="p-3 font-bold">{props.amount}kr!!</span>
-      </span>
+      <div style={{display: "flex", flexDirection: "column"}}>
+        <span className="flex justify-between w-full">
+          <span className="p-3 pb-0 truncate max-w-xs">{props.name}</span>
+          <span className="p-3 pb-0 font-bold">{props.amount}kr!!</span>
+        </span>
+        <span className="p-3 pt-0 opacity-80 line-clamp-1 w-full text-ellipsis truncate max-w-xl">{props.message}</span>
+      </div>
     </div>
   );
 };
@@ -49,6 +58,7 @@ const Donations = ({
       <DonationCard
         name={donation.name}
         amount={donation.amount}
+        message={donation.message}
         key={donation._id}
       />
     ));
