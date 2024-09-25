@@ -2,16 +2,37 @@ import { FormEvent, useContext, useState } from "react";
 import Layout from "../../components/admin/Layout";
 import State from "../../lib/State";
 import { useRouter } from "next/router";
+import Alerts from "../../lib/Alerts";
 
 export default function Admin() {
-  const { setState } = useContext(State);
-  const [token, setToken] = useState<null | string>();
   const router = useRouter();
 
-  const submit = (e: FormEvent) => {
-    e.preventDefault();
-    setState({ token: token });
+  const { setState } = useContext(State);
+  const { addAlert } = useContext(Alerts);
 
+  const [token, setToken] = useState<null | string>();
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    const res = await fetch("/api/verifyCredentials", {
+      method: "POST",
+      headers: {
+        password: token,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status !== 200) {
+      // You done goofed it up
+      const json = await res.json();
+      addAlert(
+        `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
+        "red"
+      );
+      return;
+    }
+
+    setState({ token: token });
     router.push(`/admin/vipps`);
   };
 

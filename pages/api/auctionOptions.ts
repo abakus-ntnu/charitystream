@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 import { AuctionOption } from "../../models/schema.js";
 import { url } from "./state";
+import { authIsValid } from "./utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
-  mongoose.connect(url);
 
-  if (headers.password !== process.env.POST_PASSWORD) {
-    res.status(401).end();
-    return;
-  }
+  // Require auth for all endpoints
+  if (!authIsValid(headers.password, res)) return;
+
+  mongoose.connect(url);
 
   switch (method) {
     case "GET":

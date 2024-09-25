@@ -1,14 +1,13 @@
 import mongoose from "mongoose";
 import { StretchGoal } from "../../models/schema.js";
 import { url } from "./state";
+import { authIsValid } from "./utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
 
-  if (headers.password !== process.env.POST_PASSWORD) {
-    res.status(401).end();
-    return;
-  }
+  // Require auth for all endpoints
+  if (!authIsValid(headers.password, res)) return;
 
   mongoose.connect(url);
 

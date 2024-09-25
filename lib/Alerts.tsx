@@ -11,7 +11,9 @@ export const AlertsProvider = ({ children, value }) => {
   const addAlert = (text: string, color: string) => {
     value.setAlerts([...value.alerts, { color, text }]);
     setTimeout(() => {
-      value.setAlerts(value.alerts.filter((a: Alert) => a.text == text));
+      value.setAlerts(
+        value.alerts.filter((alert: Alert) => alert.text !== text)
+      );
     }, 3000);
   };
   const contextValue = { ...value, addAlert };

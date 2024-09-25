@@ -2,9 +2,13 @@ import mongoose from "mongoose";
 import { Bid, AuctionOption } from "../../models/schema.js";
 import { url } from "./state";
 import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "../../lib/constants";
+import { authIsValid } from "./utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
+
+  // Require auth for all endpoints
+  if (!authIsValid(headers.password, res)) return;
 
   mongoose.connect(url);
 
@@ -38,10 +42,6 @@ export default async function handler(req, res) {
       }
       break;
     case "DELETE": {
-      if (headers.password !== process.env.POST_PASSWORD) {
-        res.status(401).end();
-        return;
-      }
       Bid.findOne({ item: req.body.auctionId })
         .sort({ amount: -1 })
         .exec(function (err, doc) {

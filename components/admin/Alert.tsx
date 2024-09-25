@@ -1,6 +1,6 @@
 export {};
 const Alert = ({ header, text }) => (
-  <div className="flex bg-red-lighter max-w-sm mb-4">
+  <div className="flex bg-red-lighter">
     <div className="w-16 bg-red">
       <div className="p-4"></div>
     </div>
