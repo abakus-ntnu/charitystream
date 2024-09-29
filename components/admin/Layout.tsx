@@ -55,15 +55,12 @@ const Layout = ({ children, full = false }) => {
               full ? "lg:w-5/6 xl:w-4/6" : "lg:w-3/6 xl:w-2/6"
             } mx-auto`}
           >
-            <div className=" sticky top-10 z-50">
+            <div className="fixed bottom-1 left-3 z-50">
               {alerts.map((alert) => (
                 <div
                   key={alert.text}
-                  className={`text-white px-6 py-4 border-0 rounded relative mb-4 bg-${alert.color}-500`}
+                  className={`text-white px-3 py-2 border-0 rounded relative mb-2 bg-${alert.color}-500`}
                 >
-                  <span className="text-xl inline-block mr-5 align-middle">
-                    <i className="fas fa-bell" />
-                  </span>
                   <span className="inline-block align-middle mr-8">
                     {alert.text}
                   </span>
