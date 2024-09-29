@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "../lib/constants";
 import { Auction, Bid, CharityState } from "../models/types";
 import { KeyedMutator } from "swr";
+import { fetchRequest } from "../lib/helpers";
 
 Modal.setAppElement("#__next");
 
@@ -104,16 +105,13 @@ const AuctionItems = ({
   const bid = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (validate(formData)) {
-      const res = await fetch("/api/bid", {
+      const res = await fetchRequest("/api/bid", {
         method: "POST",
-        headers: {
-          "Content-Type": "Application/json",
-        },
-        body: JSON.stringify({
+        body: {
           ...formData,
           item: activeAuction._id,
           description: activeAuction.description,
-        }),
+        },
       });
 
       if (res.status == 200) {

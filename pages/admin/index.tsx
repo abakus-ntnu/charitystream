@@ -3,6 +3,7 @@ import Layout from "../../components/admin/Layout";
 import State from "../../lib/State";
 import { useRouter } from "next/router";
 import Alerts from "../../lib/Alerts";
+import { fetchRequest } from "../../lib/helpers";
 
 export default function Admin() {
   const router = useRouter();
@@ -14,23 +15,13 @@ export default function Admin() {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/verifyCredentials", {
+    const res = await fetchRequest("/api/verifyCredentials", {
       method: "POST",
-      headers: {
-        password: token,
-        "Content-Type": "application/json",
-      },
+      password: token,
+      addAlert,
     });
 
-    if (res.status !== 200) {
-      // You done goofed it up
-      const json = await res.json();
-      addAlert(
-        `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-        "red"
-      );
-      return;
-    }
+    if (res.status !== 200) return;
 
     setState({ token: token });
     router.push(`/admin/vipps`);
