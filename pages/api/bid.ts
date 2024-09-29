@@ -7,9 +7,6 @@ import { authIsValid } from "./utils";
 export default async function handler(req, res) {
   const { method, headers } = req;
 
-  // Require auth for all endpoints
-  if (!authIsValid(headers.password, res)) return;
-
   mongoose.connect(url);
 
   switch (method) {
