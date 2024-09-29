@@ -14,6 +14,13 @@ const Vipps = () => {
   const { state } = useContext(State);
   const { addAlert } = useContext(Alerts);
 
+  if (!state?.token)
+    return (
+      <Layout full>
+        <SetPasswordBox action="legge til donasjoner" />
+      </Layout>
+    );
+
   const addOneVipps = async (
     name: string,
     amount: number
@@ -165,110 +172,98 @@ const Vipps = () => {
 
   return (
     <Layout full>
-      {!state?.token ? (
-        <SetPasswordBox action="legge til donasjoner" />
-      ) : (
-        <>
-          <div
-            className="w-full sm:px-10 sm:py-6
-          bg-white rounded-lg shadow-md lg:shadow-lg"
-          >
-            <h1 className="font-bold text-center text-3xl text-gray-900">
-              Legg til én donasjon:
-            </h1>
-            <div className="w-full">
-              <div className="mt-5 w-full">
-                <form onSubmit={addOne}>
-                  <label
-                    htmlFor="name"
-                    className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-                  >
-                    Navn
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    name="name"
-                    placeholder="navn"
-                    className="block w-full py-3 px-1 mt-2 mb-4
+      <div className="w-full p-2 sm:px-10 sm:py-6">
+        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900">
+          Legg til én donasjon:
+        </h1>
+        <div className="w-full">
+          <div className="mt-5 w-full">
+            <form onSubmit={addOne}>
+              <label
+                htmlFor="name"
+                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
+              >
+                Navn
+              </label>
+              <input
+                id="name"
+                type="text"
+                name="name"
+                placeholder="navn"
+                className="block w-full py-3 px-1 mt-2 mb-4
                   text-gray-800 appearance-none
                   border-b-2 border-gray-100
                   focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                    required
-                    value={name ?? ""}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <label
-                    htmlFor="amount"
-                    className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-                  >
-                    Mengde
-                  </label>
-                  <input
-                    id="amount"
-                    type="number"
-                    name="amount"
-                    placeholder="100kr"
-                    className="block w-full py-3 px-1 mt-2 mb-4
+                required
+                value={name ?? ""}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <label
+                htmlFor="amount"
+                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
+              >
+                Mengde
+              </label>
+              <input
+                id="amount"
+                type="number"
+                name="amount"
+                placeholder="100kr"
+                className="block w-full py-3 px-1 mt-2 mb-4
                     text-gray-800 appearance-none
                     border-b-2 border-gray-100
                     focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                    required
-                    value={amount ?? ""}
-                    onChange={(e) => setAmount(Number(e.target.value))}
-                  />
+                required
+                value={amount ?? ""}
+                onChange={(e) => setAmount(Number(e.target.value))}
+              />
 
-                  <button
-                    type="submit"
-                    className="w-full py-3 mt-10 bg-gray-800 rounded-sm
+              <button
+                type="submit"
+                className="w-full py-3 bg-gray-800 rounded-sm
                   font-medium text-white uppercase
                   focus:outline-none hover:bg-gray-700 hover:shadow-none"
-                  >
-                    Submit
-                  </button>
-                </form>
-              </div>
-            </div>
+              >
+                Submit
+              </button>
+            </form>
           </div>
+        </div>
+      </div>
 
-          <div
-            className="w-full sm:px-10 sm:py-6
-            bg-white rounded-lg shadow-md lg:shadow-lg"
-          >
-            <h1 className="font-bold text-center text-3xl text-gray-900 ">
-              Oppdater alle donasjoner:
-            </h1>
-            <div className="w-full">
-              <div className="mt-5 w-full">
-                <form onSubmit={addAll}>
-                  <label
-                    htmlFor="amount"
-                    className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-                  >
-                    Velg fil
-                  </label>
-                  <input
-                    type="file"
-                    id="file"
-                    name="file"
-                    className="block w-full text-sm text-gray-600 border border-gray-300 cursor-pointer bg-gray-50  focus:outline-none"
-                    accept=".csv, .xlsx"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-full py-3 mt-10 bg-gray-800 rounded-sm
+      <div className="w-full p-2 sm:px-10 sm:py-6 mt-10">
+        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900">
+          Oppdater alle donasjoner:
+        </h1>
+        <div className="w-full">
+          <div className="mt-5 w-full">
+            <form onSubmit={addAll}>
+              <label
+                htmlFor="amount"
+                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
+              >
+                Velg fil
+              </label>
+              <input
+                type="file"
+                id="file"
+                name="file"
+                className="block w-full text-sm text-gray-600 border border-gray-300 cursor-pointer bg-gray-50  focus:outline-none"
+                accept=".csv, .xlsx"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full py-3 mt-4 bg-gray-800 rounded-sm
                     font-medium text-white uppercase
                     focus:outline-none hover:bg-gray-700 hover:shadow-none"
-                  >
-                    Submit
-                  </button>
-                </form>
-              </div>
-            </div>
+              >
+                Submit
+              </button>
+            </form>
           </div>
-        </>
-      )}
+        </div>
+      </div>
     </Layout>
   );
 };

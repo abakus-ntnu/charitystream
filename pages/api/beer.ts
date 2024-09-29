@@ -2,19 +2,18 @@ import mongoose from "mongoose";
 
 import { Beer } from "../../models/schema.js";
 import { url } from "./state";
+import { authIsValid } from "./utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
+
+  // Require auth for all endpoints
+  if (!authIsValid(headers.password, res)) return;
 
   mongoose.connect(url);
 
   switch (method) {
     case "POST": {
-      if (headers.password !== process.env.POST_PASSWORD) {
-        res.status(401).end();
-        return;
-      }
-
       if (req.body.count >= 0) {
         await Beer.findOneAndUpdate({}, { count: req.body.count });
       }
@@ -32,10 +31,6 @@ export default async function handler(req, res) {
     }
 
     case "PATCH": {
-      if (headers.password !== process.env.POST_PASSWORD) {
-        res.status(401).end();
-        return;
-      }
       const beer = await Beer.findOne({});
       const newBeerCount = beer.count + req.body.count;
       await Beer.findOneAndUpdate({}, { count: newBeerCount });
