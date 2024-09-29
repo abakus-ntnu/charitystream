@@ -1,7 +1,14 @@
 import { BeerData } from "../models/types";
 
-const BeerCounter = ({ beerData }: { beerData: BeerData }) => {
-  const { count, price, maxDonation } = beerData;
+type Props = { beerData: BeerData | null };
+
+const BeerCounter = ({ beerData }: Props) => {
+  const { count, price, maxDonation } = beerData ?? {
+    count: 0,
+    price: 0,
+    maxDonation: 10000,
+  };
+
   return (
     <div
       className={

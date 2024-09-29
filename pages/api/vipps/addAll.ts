@@ -1,9 +1,7 @@
-import mongoose from "mongoose";
 import mongodb from "mongodb";
 import Cors from "cors";
 import { Vipps } from "../../../models/schema.js";
-import { url } from "../state";
-import fs from "fs";
+import { authIsValid, connectMongoose } from "../utils";
 
 const cors = Cors();
 
@@ -26,12 +24,9 @@ export default async function handler(req, res) {
 
   await runMiddleware(req, res, cors);
 
-  mongoose.connect(url);
+  if (!authIsValid(headers.password, res)) return;
 
-  if (headers.password !== process.env.POST_PASSWORD) {
-    res.status(401).end();
-    return;
-  }
+  connectMongoose();
 
   switch (method) {
     case "POST":

@@ -26,7 +26,8 @@ export default function Index() {
       data.matchingGroup.max
     );
 
-  const maxIsReached = data.matchingGroup.max == calculateMatch();
+  const maxIsReached =
+    data.matchingGroup && data.matchingGroup.max == calculateMatch();
 
   return (
     <div className="flex flex-col-reverse md:flex-col md:h-screen justify-evenly">
