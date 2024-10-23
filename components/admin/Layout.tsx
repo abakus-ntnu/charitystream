@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import Link from "next/link";
-import Alerts from "../../lib/Alerts";
-import State from "../../lib/State";
 import { useRouter } from "next/router";
+
+import Alerts from "@/lib/Alerts";
+import State from "@/lib/State";
 
 const links = [
   { href: "/admin/vipps", page: "Legg til donasjoner" },

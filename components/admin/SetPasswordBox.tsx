@@ -1,5 +1,6 @@
-import Alert from "./Alert";
 import Link from "next/link";
+
+import Alert from "./Alert";
 
 const SetPasswordBox = ({ action = "gjøre dette" }) => {
   return (

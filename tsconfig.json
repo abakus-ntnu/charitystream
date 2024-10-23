@@ -20,7 +20,7 @@
       "@/models/*": ["./models/*"],
       "@/pages/*": ["./pages/*"],
       "@/api/*": ["./pages/api/*"],
-      "@/astylespi/*": ["./styles/*"]
+      "@/styles/*": ["./styles/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
