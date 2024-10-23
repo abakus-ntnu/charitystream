@@ -6,7 +6,6 @@ const username = process.env.DATABASE_USER;
 const password = process.env.DATABASE_PASSWORD;
 const dbname = "Charity";
 
-// export const url = `mongodb://0.0.0.0:27017/${dbname}?retryWrites=true&w=majority`;
 const url = `${protocol}://${username}:${password}@${hostname}/${dbname}?retryWrites=true&w=majority`;
 
 export const connectMongoose = () => {

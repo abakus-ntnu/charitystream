@@ -1,5 +1,6 @@
-import { StretchGoal } from "../../models/schema.js";
-import { authIsValid, connectMongoose } from "./utils";
+import { StretchGoal } from "@/models/schema.js";
+
+import { authIsValid, connectMongoose } from "@/api/utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;

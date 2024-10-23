@@ -1,7 +1,9 @@
-import mongodb from "mongodb";
 import Cors from "cors";
-import { Vipps } from "../../../models/schema.js";
-import { authIsValid, connectMongoose } from "../utils";
+import mongodb from "mongodb";
+
+import { Vipps } from "@/models/schema.js";
+
+import { authIsValid, connectMongoose } from "@/api/utils";
 
 const cors = Cors();
 

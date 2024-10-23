@@ -32,7 +32,7 @@ const Beer = () => {
     );
 
   const updateBeer = async (count: number): Promise<boolean> => {
-    const res = await fetchRequest("/api/beer", {
+    const res = await fetchRequest("/api/admin/beer", {
       method: "POST",
       password: state.token,
       body: { count },
@@ -45,7 +45,7 @@ const Beer = () => {
   };
 
   const updateBeerPrice = async (price: number): Promise<boolean> => {
-    const res = await fetchRequest("/api/beer", {
+    const res = await fetchRequest("/api/admin/beer", {
       method: "POST",
       password: state.token,
       body: { price },
