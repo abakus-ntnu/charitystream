@@ -1,10 +1,13 @@
 import useSWR from "swr";
-import StretchGoals from "../components/StretchGoals";
-import SilentAuction from "../components/SilentAuction";
-import Donations from "../components/Donations";
-import BeerCounter from "../components/BeerCounter";
-import { CharityState } from "../models/types";
-import { fetcher } from "../lib/helpers";
+
+import BeerCounter from "@/components/BeerCounter";
+import Donations from "@/components/Donations";
+import SilentAuction from "@/components/SilentAuction";
+import StretchGoals from "@/components/StretchGoals";
+
+import { fetcher } from "@/lib/helpers";
+
+import { CharityState } from "@/models/types";
 
 const MadeByWebkom = () => (
   <p className="absolute bottom-0 right-0 text-3xl">
