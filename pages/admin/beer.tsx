@@ -122,7 +122,7 @@ const Beer = () => {
                 id="count"
                 type="number"
                 name="count"
-                placeholder={String(data.beer.count)}
+                placeholder={String(data.beer?.count ?? "")}
                 className="block w-full py-3 px-1 mb-4
                     text-gray-800 appearance-none
                     border-b-2 border-gray-100
@@ -155,7 +155,7 @@ const Beer = () => {
                 id="count"
                 type="number"
                 name="count"
-                placeholder={String(data.beer.price)}
+                placeholder={String(data.beer?.price ?? "")}
                 className="block w-full py-3 px-1 mt-2 mb-4
                     text-gray-800 appearance-none
                     border-b-2 border-gray-100

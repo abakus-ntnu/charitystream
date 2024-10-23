@@ -1,8 +1,5 @@
-import mongoose from "mongoose";
-
 import { Beer } from "../../models/schema.js";
-import { url } from "./state";
-import { authIsValid } from "./utils";
+import { authIsValid, connectMongoose } from "./utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
@@ -10,7 +7,7 @@ export default async function handler(req, res) {
   // Require auth for all endpoints
   if (!authIsValid(headers.password, res)) return;
 
-  mongoose.connect(url);
+  connectMongoose();
 
   switch (method) {
     case "POST": {

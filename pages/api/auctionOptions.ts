@@ -1,7 +1,5 @@
-import mongoose from "mongoose";
 import { AuctionOption } from "../../models/schema.js";
-import { url } from "./state";
-import { authIsValid } from "./utils";
+import { authIsValid, connectMongoose } from "./utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
@@ -9,11 +7,15 @@ export default async function handler(req, res) {
   // Require auth for all endpoints
   if (!authIsValid(headers.password, res)) return;
 
-  mongoose.connect(url);
+  connectMongoose();
 
   switch (method) {
     case "GET":
-      res.status(200).json(await AuctionOption.findOne({}));
+      let auctionOption = await AuctionOption.findOne({});
+      if (!auctionOption) {
+        auctionOption = await AuctionOption.create({});
+      }
+      res.status(200).json(auctionOption);
       break;
     case "POST":
       {

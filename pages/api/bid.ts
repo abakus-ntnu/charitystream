@@ -1,13 +1,11 @@
-import mongoose from "mongoose";
 import { Bid, AuctionOption } from "../../models/schema.js";
-import { url } from "./state";
 import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "../../lib/constants";
-import { authIsValid } from "./utils";
+import { connectMongoose } from "./utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
 
-  mongoose.connect(url);
+  connectMongoose();
 
   switch (method) {
     case "POST":

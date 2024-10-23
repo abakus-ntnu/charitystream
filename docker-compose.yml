@@ -2,8 +2,10 @@ version: "3.7"
 
 services:
   mongo:
-    image: mongo:4.4
+    image: mongo:8.0
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_DATABASE: Charity
+      - MONGO_INITDB_DATABASE=Charity
+      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
