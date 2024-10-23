@@ -30,7 +30,7 @@ const StretchGoals = () => {
 
   const onAddClick = async (e) => {
     e.preventDefault();
-    const res = await fetchRequest("/api/stretchGoals", {
+    const res = await fetchRequest("/api/admin/stretchGoals", {
       method: "POST",
       password: state.token,
       body: { description, goal },
@@ -47,7 +47,7 @@ const StretchGoals = () => {
 
   const onDeleteGoal = async (e) => {
     e.preventDefault();
-    const res = await fetchRequest("/api/stretchGoals", {
+    const res = await fetchRequest("/api/admin/stretchGoals", {
       method: "DELETE",
       password: state.token,
       body: { goalId: selectedGoalId },

@@ -1,5 +1,6 @@
-import { AuctionOption } from "../../models/schema.js";
-import { authIsValid, connectMongoose } from "./utils";
+import { AuctionOption } from "@/models/schema.js";
+
+import { authIsValid, connectMongoose } from "@/pages/api/utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;

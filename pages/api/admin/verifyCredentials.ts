@@ -1,4 +1,4 @@
-import { authIsValid } from "./utils";
+import { authIsValid } from "@/api/utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;

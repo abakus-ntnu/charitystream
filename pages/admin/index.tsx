@@ -15,7 +15,7 @@ export default function Admin() {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    const res = await fetchRequest("/api/verifyCredentials", {
+    const res = await fetchRequest("/api/admin/verifyCredentials", {
       method: "POST",
       password: token,
       addAlert,

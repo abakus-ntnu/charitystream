@@ -1,6 +1,8 @@
 import Cors from "cors";
-import { Vipps } from "../../models/schema.js";
-import { connectMongoose } from "./utils";
+
+import { Vipps } from "@/models/schema.js";
+
+import { connectMongoose } from "@/api/utils";
 
 const cors = Cors();
 

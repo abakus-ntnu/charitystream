@@ -1,6 +1,8 @@
-import { Bid, AuctionOption } from "../../models/schema.js";
-import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "../../lib/constants";
-import { connectMongoose } from "./utils";
+import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "@/lib/constants";
+
+import { AuctionOption, Bid } from "@/models/schema.js";
+
+import { connectMongoose } from "@/api/utils";
 
 export default async function handler(req, res) {
   const { method, headers } = req;
