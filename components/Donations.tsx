@@ -1,5 +1,8 @@
-import animations from "../styles/animations.module.css";
-import { Donation } from "../models/types";
+import Image from "next/image";
+
+import { Donation } from "@/models/types";
+
+import animations from "@/styles/animations.module.css";
 
 type Props = {
   name: string;
@@ -13,7 +16,12 @@ const DonationCard = (props: Props) => {
       className={`flex items-center overflow-hidden m-3 rounded shadow-md ${animations.wiggle}`}
       style={{ background: "#ff5b24" }}
     >
-      <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
+      <Image
+        src="https://i.imgur.com/RVgB3E6.png"
+        alt="Vipps logo"
+        width="50px"
+        height="50px"
+      />
       <div style={{ display: "flex", flexDirection: "column" }}>
         <span className="flex justify-between w-full">
           <span className="p-3 pb-0 truncate max-w-xs">{props.name}</span>
@@ -36,7 +44,12 @@ const TopDonation = ({ topDonor }: { topDonor: Donation }) => {
           className={`flex items-center overflow-hidden m-3 rounded shadow-md ${animations.wiggle}`}
           style={{ background: "#39AC37" }}
         >
-          <img src="https://i.imgur.com/RVgB3E6.png" width="50px" />
+          <Image
+            src="https://i.imgur.com/RVgB3E6.png"
+            width="50px"
+            height="50px"
+            alt="Vipps logo"
+          />
           <span className="flex justify-between w-full">
             <span className="p-3">{topDonor.name}</span>
             <span className="p-3 font-bold">{topDonor.amount}kr!!</span>

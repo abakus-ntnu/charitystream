@@ -1,4 +1,4 @@
-import { StretchGoal } from "../models/types";
+import { StretchGoal } from "@/models/types";
 
 const StretchGoalBar = ({
   totalAmount,
