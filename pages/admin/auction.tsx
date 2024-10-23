@@ -28,24 +28,22 @@ const Auction = () => {
     if (!state?.token) {
       return;
     }
-    fetchRequest(
-      "/api/auctionOptions",
-      "GET",
-      {},
-      (res) => {
-        if (res.status === 401) {
-          // Invalid credentails
-          router.push(`/admin`);
-          return;
-        }
-        if (res.status !== 200) {
-          return;
-        }
-        res.json().then((res) => setAuctionOptions(res));
-      },
-      addAlert,
-      state.token
-    );
+    (async () => {
+      const res = await fetchRequest("/api/auctionOptions", {
+        password: state.token,
+        addAlert,
+      });
+
+      if (res.status === 401) {
+        // Invalid credentails
+        router.push(`/admin`);
+        return;
+      }
+      if (res.status !== 200) {
+        return;
+      }
+      res.json().then((res) => setAuctionOptions(res));
+    })();
   }, [state?.token]);
 
   if (error)
@@ -82,40 +80,33 @@ const Auction = () => {
   };
 
   const updateAuctionOptions = async (newOptions: AuctionOptions) => {
-    fetchRequest(
-      "/api/auctionOptions",
-      "POST",
-      newOptions,
-      (res) => {
-        setAuctionOptions(newOptions);
-        if (res.ok) {
-          addAlert(`Auksjons-innstillinger er oppdatert`, "green");
-        }
-      },
+    const res = await fetchRequest("/api/auctionOptions", {
+      method: "POST",
+      password: state.token,
+      body: newOptions,
       addAlert,
-      state.token
-    );
+    });
+    setAuctionOptions(newOptions);
+    if (res.ok) {
+      addAlert(`Auksjons-innstillinger er oppdatert`, "green");
+    }
   };
 
   const deleteBid = async (auctionId: string) => {
     if (auctionId.length === 0) return;
 
-    fetchRequest(
-      "/api/bid",
-      "DELETE",
-      { auctionId },
-      (res) => {
-        if (res.ok) {
-          addAlert(
-            `Budet ble slettet! Det kan ta noen sekunder før lista reloades`,
-            "green"
-          );
-          mutate();
-        }
-      },
+    const res = await fetchRequest("/api/bid", {
+      method: "DELETE",
+      password: state.token,
+      body: { auctionId },
       addAlert,
-      state.token
+    });
+    if (!res.ok) return;
+    addAlert(
+      `Budet ble slettet! Det kan ta noen sekunder før lista reloades`,
+      "green"
     );
+    mutate();
   };
 
   const submitDeleteBid = async (e: FormEvent) => {
@@ -129,45 +120,37 @@ const Auction = () => {
 
   const onAddAuction = async (e) => {
     e.preventDefault();
-    await fetchRequest(
-      "/api/auctions",
-      "POST",
-      { description },
-      (res) => {
-        if (res.ok) {
-          addAlert(`${description} ble lagt til.`, "green");
-          setDescription("");
-          mutate();
-        }
-      },
+    const res = await fetchRequest("/api/auctions", {
+      method: "POST",
+      password: state.token,
+      body: { description },
       addAlert,
-      state.token
-    );
+    });
+    if (!res.ok) return;
+    addAlert(`${description} ble lagt til.`, "green");
+    setDescription("");
+    mutate();
   };
 
   const onDeleteAuction = async (e) => {
     e.preventDefault();
-    await fetchRequest(
-      "/api/auctions",
-      "DELETE",
-      { auctionId: selectedAuctionId },
-      (res) => {
-        if (res.ok) {
-          addAlert(
-            `${
-              data.auctions.find(
-                (stretchGoal) => stretchGoal._id === selectedAuctionId
-              ).description
-            } ble slettet.`,
-            "green"
-          );
-          setSelectedSelectedAuctionId("");
-          mutate();
-        }
-      },
+    const res = await fetchRequest("/api/auctions", {
+      method: "DELETE",
+      body: { auctionId: selectedAuctionId },
       addAlert,
-      state.token
+      password: state.token,
+    });
+    if (!res.ok) return;
+    addAlert(
+      `${
+        data.auctions.find(
+          (stretchGoal) => stretchGoal._id === selectedAuctionId
+        ).description
+      } ble slettet.`,
+      "green"
     );
+    setSelectedSelectedAuctionId("");
+    mutate();
   };
 
   return (

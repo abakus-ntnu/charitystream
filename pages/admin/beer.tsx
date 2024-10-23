@@ -5,7 +5,7 @@ import Alerts from "../../lib/Alerts";
 import Layout from "../../components/admin/Layout";
 import SetPasswordBox from "../../components/admin/SetPasswordBox";
 import { CharityState } from "../../models/types";
-import { fetcher } from "../../lib/helpers";
+import { fetcher, fetchRequest } from "../../lib/helpers";
 
 const Beer = () => {
   const [count, setCount] = useState<null | number>();
@@ -32,57 +32,29 @@ const Beer = () => {
     );
 
   const updateBeer = async (count: number): Promise<boolean> => {
-    const res = await fetch("/api/beer", {
+    const res = await fetchRequest("/api/beer", {
       method: "POST",
-      headers: {
-        password: state.token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ count }),
+      password: state.token,
+      body: { count },
+      addAlert,
     });
     if (res.ok) {
       addAlert(`Antall øl oppdatert til ${count}!`, "green");
-      return true;
     }
-    if (res.status !== 200) {
-      try {
-        const json = await res.json();
-        addAlert(
-          `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-          "red"
-        );
-      } catch (e) {
-        addAlert(`${res.statusText}`, "red");
-      }
-    }
-    return false;
+    return res.ok;
   };
 
   const updateBeerPrice = async (price: number): Promise<boolean> => {
-    const res = await fetch("/api/beer", {
+    const res = await fetchRequest("/api/beer", {
       method: "POST",
-      headers: {
-        password: state.token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ price }),
+      password: state.token,
+      body: { price },
+      addAlert,
     });
     if (res.ok) {
       addAlert(`Prisen per øl er oppdatert til ${price} kr!`, "green");
-      return true;
     }
-    if (res.status !== 200) {
-      try {
-        const json = await res.json();
-        addAlert(
-          `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-          "red"
-        );
-      } catch (e) {
-        addAlert(`${res.statusText}`, "red");
-      }
-    }
-    return false;
+    return res.ok;
   };
 
   const submit = async (e: FormEvent) => {

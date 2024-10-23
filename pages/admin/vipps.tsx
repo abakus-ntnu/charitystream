@@ -5,6 +5,7 @@ import Layout from "../../components/admin/Layout";
 import SetPasswordBox from "../../components/admin/SetPasswordBox";
 import * as XLSX from "xlsx";
 import { Readable } from "stream";
+import { fetchRequest } from "../../lib/helpers";
 XLSX.stream.set_readable(Readable);
 
 const Vipps = () => {
@@ -25,30 +26,15 @@ const Vipps = () => {
     name: string,
     amount: number
   ): Promise<boolean> => {
-    const res = await fetch("/api/vipps", {
+    const res = await fetchRequest("/api/vipps", {
       method: "POST",
-      headers: {
-        password: state.token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, amount: Number(amount) }),
+      password: state.token,
+      body: { name, amount: Number(amount) },
     });
     if (res.ok) {
       addAlert(`Donasjonen på ${amount}kr fra ${name} ble lagt til!`, "green");
-      return true;
     }
-    if (res.status !== 200) {
-      try {
-        const json = await res.json();
-        addAlert(
-          `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-          "red"
-        );
-      } catch (e) {
-        addAlert(`${res.statusText}`, "red");
-      }
-    }
-    return false;
+    return res.ok;
   };
 
   const addOne = async (e: FormEvent) => {
@@ -76,26 +62,14 @@ const Vipps = () => {
 
       reader.onload = async (e) => {
         const content = e.target.result;
-        const res = await fetch("/api/vipps/addAll", {
+        const res = await fetchRequest("/api/vipps/addAll", {
           method: "POST",
-          headers: {
-            password: state.token,
-          },
+          password: state.token,
           body: content,
+          addAlert,
         });
         if (res.ok) {
           addAlert("Success", "green");
-        }
-        if (res.status !== 200) {
-          try {
-            const json = await res.json();
-            addAlert(
-              `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-              "red"
-            );
-          } catch (e) {
-            addAlert(`${res.statusText}`, "red");
-          }
         }
       };
       reader.readAsText(file.files[0]);
@@ -133,26 +107,13 @@ const Vipps = () => {
           string.indexOf("\n", string.indexOf("Salgsdato,"))
         );
 
-        const res = await fetch("/api/vipps/addAll", {
+        const res = await fetchRequest("/api/vipps/addAll", {
           method: "POST",
-          headers: {
-            password: state.token,
-          },
+          password: state.token,
           body: string,
         });
         if (res.ok) {
           addAlert("Success", "green");
-        }
-        if (res.status !== 200) {
-          try {
-            const json = await res.json();
-            addAlert(
-              `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-              "red"
-            );
-          } catch (e) {
-            addAlert(`${res.statusText}`, "red");
-          }
         }
       };
 

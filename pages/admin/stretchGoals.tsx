@@ -30,48 +30,44 @@ const StretchGoals = () => {
 
   const onAddClick = async (e) => {
     e.preventDefault();
-    await fetchRequest(
-      "/api/stretchGoals",
-      "POST",
-      { description, goal },
-      (res) => {
-        if (res.ok) {
-          addAlert(`${description} ble lagt til for ${goal}`, "green");
-          setDescription("");
-          setGoal(0);
-          mutate();
-        }
-      },
+    const res = await fetchRequest("/api/stretchGoals", {
+      method: "POST",
+      password: state.token,
+      body: { description, goal },
       addAlert,
-      state.token
-    );
+    });
+
+    if (res.ok) {
+      addAlert(`${description} ble lagt til for ${goal}`, "green");
+      setDescription("");
+      setGoal(0);
+      mutate();
+    }
   };
 
   const onDeleteGoal = async (e) => {
     e.preventDefault();
-    await fetchRequest(
-      "/api/stretchGoals",
-      "DELETE",
-      { goalId: selectedGoalId },
-      (res) => {
-        if (res.ok) {
-          addAlert(
-            `${
-              data.stretchGoals.find(
-                (stretchGoal) => stretchGoal._id === selectedGoalId
-              ).description
-            } ble slettet.`,
-            "green"
-          );
-          setDescription("");
-          setGoal(0);
-          setSelectedSelectedGoalId("");
-          mutate();
-        }
-      },
+    const res = await fetchRequest("/api/stretchGoals", {
+      method: "DELETE",
+      password: state.token,
+      body: { goalId: selectedGoalId },
       addAlert,
-      state.token
-    );
+    });
+
+    if (res.ok) {
+      addAlert(
+        `${
+          data.stretchGoals.find(
+            (stretchGoal) => stretchGoal._id === selectedGoalId
+          ).description
+        } ble slettet.`,
+        "green"
+      );
+      setDescription("");
+      setGoal(0);
+      setSelectedSelectedGoalId("");
+      mutate();
+    }
   };
 
   return (
