@@ -1,12 +1,15 @@
-import { useContext, useState, FormEvent, useEffect } from "react";
-import useSWR from "swr";
-import State from "../../lib/State";
-import Alerts from "../../lib/Alerts";
-import Layout from "../../components/admin/Layout";
-import SetPasswordBox from "../../components/admin/SetPasswordBox";
-import { AuctionOptions, CharityState } from "../../models/types";
-import { fetcher, fetchRequest } from "../../lib/helpers";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+
+import Layout from "@/components/admin/Layout";
+import SetPasswordBox from "@/components/admin/SetPasswordBox";
+
+import Alerts from "@/lib/Alerts";
+import { fetcher, fetchRequest } from "@/lib/helpers";
+import State from "@/lib/State";
+
+import { AuctionOptions, CharityState } from "@/models/types";
 
 const Auction = () => {
   const router = useRouter();
@@ -44,7 +47,7 @@ const Auction = () => {
       }
       res.json().then((res) => setAuctionOptions(res));
     })();
-  }, [state?.token]);
+  }, [state?.token, addAlert, router]);
 
   if (error)
     return (

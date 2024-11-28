@@ -1,11 +1,14 @@
-import Layout from "../../components/admin/Layout";
 import { useContext, useState } from "react";
-import Alerts from "../../lib/Alerts";
-import State from "../../lib/State";
 import useSWR from "swr";
-import { CharityState } from "../../models/types";
-import { fetcher, fetchRequest } from "../../lib/helpers";
-import SetPasswordBox from "../../components/admin/SetPasswordBox";
+
+import Layout from "@/components/admin/Layout";
+import SetPasswordBox from "@/components/admin/SetPasswordBox";
+
+import Alerts from "@/lib/Alerts";
+import { fetcher, fetchRequest } from "@/lib/helpers";
+import State from "@/lib/State";
+
+import { CharityState } from "@/models/types";
 
 const StretchGoals = () => {
   const { state } = useContext(State);

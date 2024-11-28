@@ -1,11 +1,14 @@
-import { useContext, useState, FormEvent } from "react";
+import { FormEvent, useContext, useState } from "react";
 import useSWR from "swr";
-import State from "../../lib/State";
-import Alerts from "../../lib/Alerts";
-import Layout from "../../components/admin/Layout";
-import SetPasswordBox from "../../components/admin/SetPasswordBox";
-import { CharityState } from "../../models/types";
-import { fetcher, fetchRequest } from "../../lib/helpers";
+
+import Layout from "@/components/admin/Layout";
+import SetPasswordBox from "@/components/admin/SetPasswordBox";
+
+import Alerts from "@/lib/Alerts";
+import { fetcher, fetchRequest } from "@/lib/helpers";
+import State from "@/lib/State";
+
+import { CharityState } from "@/models/types";
 
 const Beer = () => {
   const [count, setCount] = useState<null | number>();

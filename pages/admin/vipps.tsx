@@ -1,11 +1,14 @@
-import { useContext, useState, FormEvent } from "react";
-import State from "../../lib/State";
-import Alerts from "../../lib/Alerts";
-import Layout from "../../components/admin/Layout";
-import SetPasswordBox from "../../components/admin/SetPasswordBox";
-import * as XLSX from "xlsx";
+import { FormEvent, useContext, useState } from "react";
 import { Readable } from "stream";
-import { fetchRequest } from "../../lib/helpers";
+import * as XLSX from "xlsx";
+
+import Layout from "@/components/admin/Layout";
+import SetPasswordBox from "@/components/admin/SetPasswordBox";
+
+import Alerts from "@/lib/Alerts";
+import { fetchRequest } from "@/lib/helpers";
+import State from "@/lib/State";
+
 XLSX.stream.set_readable(Readable);
 
 const Vipps = () => {
