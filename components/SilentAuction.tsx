@@ -1,6 +1,8 @@
-import styles from "./SilentAuction.module.css";
 import Link from "next/link";
-import { Auction, Bid } from "../models/types";
+
+import { Auction, Bid } from "@/models/types";
+
+import styles from "./SilentAuction.module.css";
 
 declare module "react" {
   interface CSSProperties {

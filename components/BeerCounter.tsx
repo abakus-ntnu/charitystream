@@ -1,4 +1,6 @@
-import { BeerData } from "../models/types";
+import Image from "next/image";
+
+import { BeerData } from "@/models/types";
 
 type Props = { beerData: BeerData | null };
 
@@ -15,11 +17,12 @@ const BeerCounter = ({ beerData }: Props) => {
         "flex align-center justify-center relative animate-[bounce_3s_ease-in-out_infinite] "
       }
     >
-      <img
+      <Image
         className={"max-w-lg z-0 max-w-full "}
-        src="beer.png"
+        src="/beer.png"
         alt="Picture of a beer"
         width={700}
+        height={500}
       />
       <div
         className="text-center text-3xl md:text-5xl z-10 bg-gray-200 absolute text-black font-extrabold -ml-2 p-3 rounded"

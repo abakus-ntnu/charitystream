@@ -1,9 +1,11 @@
 import { useState } from "react";
 import Modal from "react-modal";
-import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "../lib/constants";
-import { Auction, Bid, CharityState } from "../models/types";
 import { KeyedMutator } from "swr";
-import { fetchRequest } from "../lib/helpers";
+
+import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "@/lib/constants";
+import { fetchRequest } from "@/lib/helpers";
+
+import { Auction, Bid, CharityState } from "@/models/types";
 
 Modal.setAppElement("#__next");
 

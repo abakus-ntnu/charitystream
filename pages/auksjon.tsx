@@ -1,8 +1,11 @@
 import Link from "next/link";
 import useSWR from "swr";
-import AuctionItems from "../components/AuctionItems";
-import { CharityState } from "../models/types";
-import { fetcher } from "../lib/helpers";
+
+import AuctionItems from "@/components/AuctionItems";
+
+import { fetcher } from "@/lib/helpers";
+
+import { CharityState } from "@/models/types";
 
 const NavBar = () => (
   <div className="w-full p-10">

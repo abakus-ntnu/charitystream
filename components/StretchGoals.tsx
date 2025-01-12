@@ -1,7 +1,10 @@
-import StretchGoalBar from "./StretchGoalBar";
-import styles from "./StretchGoals.module.css";
 import cx from "classnames";
-import { MatchingGroup, StretchGoal } from "../models/types";
+
+import { MatchingGroup, StretchGoal } from "@/models/types";
+
+import StretchGoalBar from "./StretchGoalBar";
+
+import styles from "./StretchGoals.module.css";
 
 export default function StretchGoals({
   stretchGoals,
