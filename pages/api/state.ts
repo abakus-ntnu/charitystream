@@ -1,15 +1,16 @@
 import {
   Auction,
-  Vipps,
-  StreamLink,
-  SlidoView,
-  StretchGoal,
-  Bid,
   AuctionOption,
   Beer,
+  Bid,
   MatchingGroup,
-} from "../../models/schema.js";
-import { connectMongoose } from "./utils";
+  SlidoView,
+  StreamLink,
+  StretchGoal,
+  Vipps,
+} from "@/models/schema.js";
+
+import { connectMongoose } from "@/api/utils";
 
 const getHighestBids = async () => {
   const auctionOptions = await AuctionOption.findOne({});

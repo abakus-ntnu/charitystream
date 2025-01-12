@@ -26,7 +26,7 @@ const Vipps = () => {
     name: string,
     amount: number
   ): Promise<boolean> => {
-    const res = await fetchRequest("/api/vipps", {
+    const res = await fetchRequest("/api/admin/vipps", {
       method: "POST",
       password: state.token,
       body: { name, amount: Number(amount) },
@@ -62,7 +62,7 @@ const Vipps = () => {
 
       reader.onload = async (e) => {
         const content = e.target.result;
-        const res = await fetchRequest("/api/vipps/addAll", {
+        const res = await fetchRequest("/api/admin/vipps/addAll", {
           method: "POST",
           password: state.token,
           body: content,
@@ -107,7 +107,7 @@ const Vipps = () => {
           string.indexOf("\n", string.indexOf("Salgsdato,"))
         );
 
-        const res = await fetchRequest("/api/vipps/addAll", {
+        const res = await fetchRequest("/api/admin/vipps/addAll", {
           method: "POST",
           password: state.token,
           body: string,

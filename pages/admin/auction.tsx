@@ -29,7 +29,7 @@ const Auction = () => {
       return;
     }
     (async () => {
-      const res = await fetchRequest("/api/auctionOptions", {
+      const res = await fetchRequest("/api/admin/auctionOptions", {
         password: state.token,
         addAlert,
       });
@@ -80,7 +80,7 @@ const Auction = () => {
   };
 
   const updateAuctionOptions = async (newOptions: AuctionOptions) => {
-    const res = await fetchRequest("/api/auctionOptions", {
+    const res = await fetchRequest("/api/admin/auctionOptions", {
       method: "POST",
       password: state.token,
       body: newOptions,
@@ -95,7 +95,7 @@ const Auction = () => {
   const deleteBid = async (auctionId: string) => {
     if (auctionId.length === 0) return;
 
-    const res = await fetchRequest("/api/bid", {
+    const res = await fetchRequest("/api/admin/bid", {
       method: "DELETE",
       password: state.token,
       body: { auctionId },
@@ -120,7 +120,7 @@ const Auction = () => {
 
   const onAddAuction = async (e) => {
     e.preventDefault();
-    const res = await fetchRequest("/api/auctions", {
+    const res = await fetchRequest("/api/admin/auctions", {
       method: "POST",
       password: state.token,
       body: { description },
@@ -134,7 +134,7 @@ const Auction = () => {
 
   const onDeleteAuction = async (e) => {
     e.preventDefault();
-    const res = await fetchRequest("/api/auctions", {
+    const res = await fetchRequest("/api/admin/auctions", {
       method: "DELETE",
       body: { auctionId: selectedAuctionId },
       addAlert,
