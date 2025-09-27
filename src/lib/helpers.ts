@@ -35,3 +35,18 @@ export const fetchRequest = async (
 
   return res;
 };
+
+// New helper utilities
+export const formatCurrency = (value: number | undefined | null) => {
+  if (value == null || isNaN(value as number)) return "0kr";
+  try {
+    return `${Number(value).toLocaleString("no-NO")}kr`;
+  } catch {
+    return `${value}kr`;
+  }
+};
+
+export const percentage = (value: number, total: number) => {
+  if (!total) return 0;
+  return Math.min(100, Math.max(0, (value / total) * 100));
+};

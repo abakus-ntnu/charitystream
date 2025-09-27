@@ -18,13 +18,13 @@ const AuctionCard = ({
   description: string;
 }) => {
   return (
-    <div
-      className="w-48 rounded overflow-hidden shadow-lg m-2 text-center px-3 py-2"
-      style={{ background: "#c0392b" }}
-    >
-      <div className="font-bold text-2xl mb-2">{currentBidAmount},-</div>
-      <hr />
-      <p className="text-white text-base mt-4 mb-4">{description}</p>
+    <div className="w-44 md:w-48 flex-shrink-0 snap-start rounded-xl border border-neutral-700/60 bg-neutral-800/60 transition-colors shadow-md m-2 text-center px-3 py-3 flex flex-col justify-between relative overflow-hidden">
+      <div className="font-bold text-xl md:text-2xl mb-2 text-red-400 tabular-nums drop-shadow-sm">
+        {currentBidAmount},-
+      </div>
+      <p className="text-xs md:text-sm text-neutral-200 leading-snug line-clamp-4">
+        {description}
+      </p>
     </div>
   );
 };
@@ -45,23 +45,30 @@ const SilentAuction = ({
   ));
 
   return (
-    <div className="flex flex-col items-center">
-      <p className="text-5xl font-medium w-">Legg inn bud på aba.wtf/fest</p>
-      <div className={styles.wrapper}>
+    <div className="flex flex-col items-center w-full">
+      <p className="text-lg md:text-xl font-medium mb-4 text-neutral-300 text-center px-2">
+        Legg inn bud på{" "}
+        <Link
+          className="underline decoration-dotted hover:text-red-400 transition-colors"
+          href="https://aba.wtf/fest"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          aba.wtf/fest
+        </Link>
+      </p>
+
+      <div className={`${styles.wrapper} silent-fade-mask hidden md:flex`}>
         <div
           className={styles.slideshow}
-          style={{ "--duration": `${items.length * 2.5}s` }}
+          style={{ "--duration": `${Math.max(items.length, 3) * 3}s` }}
+          aria-label="Løpende auksjonsobjekter"
         >
           {items}
           {items}
         </div>
         <span className={styles.fade} />
       </div>
-      <Link href="/auksjon" className="font-bold">
-        <button className="mb-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
-          Gå til stilleauksjon
-        </button>
-      </Link>
     </div>
   );
 };
