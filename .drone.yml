@@ -20,7 +20,6 @@ steps:
     commands:
       - yarn build
 
-
   - name: prettier
     image: node:20-alpine
     when:
