@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import { KeyedMutator } from "swr";
 
+import Card from "@/components/Card"; // NEW: use shared Card styling
+
 import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "@/lib/constants";
 import { fetchRequest } from "@/lib/helpers";
 
@@ -16,23 +18,44 @@ const AuctionCard = ({
   bid: Bid;
   onClick: () => void;
 }) => {
+  const hasBid = !!bid.amount;
   return (
-    <div
-      className="lg:w-48 w-40 rounded overflow-hidden shadow-lg lg:m-5 m-2 text-center px-3 py-2 cursor-pointer hover:bg-gray-600 bg-gray-800"
+    <Card
+      className={`lg:w-48 w-40 h-56 flex flex-col justify-start items-stretch gap-2 lg:m-5 m-2 cursor-pointer transition duration-200 group hover:-translate-y-1 hover:shadow-lg ${
+        hasBid ? "border-border" : ""
+      }`}
       onClick={onClick}
     >
-      <div className="font-bold text-xl mb-2">{bid.amount},-</div>
-      <hr />
-      <p className="text-white text-base mb-8">{auction.description}</p>
-      {bid.name && <b>Vinner: {bid.name}</b>}
-    </div>
+      <div className="flex items-baseline justify-between">
+        <div className="text-2xl font-extrabold tracking-tight drop-shadow-sm">
+          {bid.amount ? `${bid.amount},-` : "—"}
+        </div>
+        {hasBid && bid.name && (
+          <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full">
+            Leder
+          </span>
+        )}
+      </div>
+      <div className="h-px bg-border/60 my-1" />
+      <p className="text-sm leading-snug flex-1 text-white/90 line-clamp-4">
+        {auction.description}
+      </p>
+      {hasBid && bid.name && (
+        <div
+          className="text-xs text-white/60 mt-auto italic truncate"
+          title={`Vinner: ${bid.name}`}
+        >
+          Vinner: <span className="text-white/80 not-italic">{bid.name}</span>
+        </div>
+      )}
+    </Card>
   );
 };
 
 interface FormData extends Bid {
   error?: {
     name?: string;
-    amount?: number;
+    amount?: number | string; // widen so we can set string error text
   };
 }
 
@@ -58,10 +81,13 @@ const AuctionItems = ({
   const closeModal = () => {
     clearError();
     setModalOpen(false);
+    setActiveAuction(null);
   };
 
-  const openModal = (item) => {
+  const openModal = (item: Auction) => {
     setActiveAuction(item);
+    setFormData({} as FormData);
+    setSuccess("");
     setModalOpen(true);
   };
 
@@ -69,33 +95,40 @@ const AuctionItems = ({
     setFormData({ ...formData, error: undefined });
   };
 
-  const validate = (formData) => {
+  const validate = (data: FormData) => {
     const currentPrice = getActiveBidAmount() + MIN_BID_MODIFIER;
     clearError();
-    if (formData.amount < currentPrice) {
+    if (data.amount == null || isNaN(Number(data.amount))) {
       setFormData({
-        ...formData,
+        ...data,
+        error: { ...data.error, amount: "Du må skrive inn et tall" },
+      });
+      return false;
+    }
+    if (data.amount < currentPrice) {
+      setFormData({
+        ...data,
         error: {
-          ...formData.error,
+          ...data.error,
           amount: `Budet ditt kan ikke være mindre enn ${currentPrice},- kr!`,
         },
       });
       return false;
-    } else if (formData.amount > MAX_BID_AMOUNT) {
+    } else if (data.amount > MAX_BID_AMOUNT) {
       setFormData({
-        ...formData,
+        ...data,
         error: {
-          ...formData.error,
+          ...data.error,
           amount: `Budet ditt kan ikke være større enn ${MAX_BID_AMOUNT},- kr!`,
         },
       });
       return false;
     }
-    if (!formData.name || !formData.name.length || formData.name.length < 3) {
+    if (!data.name || !data.name.length || data.name.length < 3) {
       setFormData({
-        ...formData,
+        ...data,
         error: {
-          ...formData.error,
+          ...data.error,
           name: "Navnet må være lenger enn to bokstaver",
         },
       });
@@ -126,7 +159,7 @@ const AuctionItems = ({
         setSuccess(
           `Budet ditt gikk ikke gjennom :(\n Feilkode: ${
             res.statusText
-          } \n Feilmelding: ${(await res.json()).error}`
+          }\u00A0\n Feilmelding: ${(await res.json()).error}`
         );
       }
       setActiveAuction(null);
@@ -144,15 +177,22 @@ const AuctionItems = ({
       transform: "translate(-50%, -50%)",
       background: "none",
       border: "none",
+      padding: 0,
     },
     overlay: {
-      backgroundColor: "rgba(100,100,100, 0.5)",
+      backgroundColor: "rgba(20,20,20, 0.70)",
+      backdropFilter: "blur(4px)",
     },
-  };
+  } as const;
+
+  const nextMin = Math.max(
+    Math.ceil(getActiveBidAmount() * 1.1),
+    getActiveBidAmount() + MIN_BID_MODIFIER
+  );
 
   return (
     <div>
-      <div className="text-4xl text-center p-5 ">
+      <div className="text-4xl text-center p-5 font-semibold text-shadow-soft">
         Trykk på et auksjonsobjekt for å by!
       </div>
       <div className="flex flex-row flex-wrap justify-evenly">
@@ -171,29 +211,33 @@ const AuctionItems = ({
           style={modalStyles}
           onAfterOpen={activeAuction ? undefined : closeModal}
         >
-          <div className="w-full max-w-xs bg-gray-800 rounded">
+          <div className="w-xs sm:w-sm md:w-md lg:w-lg xl:w-lg 2xl:w-lg">
             {activeAuction ? (
               <form
-                className="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4"
+                className="bg-bg-card border border-border shadow-lg rounded-xl px-6 pt-6 pb-5 flex flex-col gap-4"
                 onSubmit={bid}
               >
-                <div className="text-2xl">By på</div>
-                <div className="text-2xl text-white font-bold italic">
-                  {activeAuction.description}
+                <div className="flex flex-col gap-1">
+                  <div className="text-lg font-medium text-white/70">By på</div>
+                  <div className="text-2xl text-white font-bold italic leading-tight">
+                    {activeAuction.description}
+                  </div>
+                  <p className="text-sm text-white/60">
+                    Nåværende bud:{" "}
+                    <span className="text-white/90">
+                      {getActiveBidAmount()},-
+                    </span>
+                  </p>
                 </div>
-                <p>
-                  Nåværende bud: {getActiveBidAmount()}
-                  ,-
-                </p>
-                <div className="mb-4">
+                <div className="space-y-1">
                   <label
-                    className="block text-white text-lg font-bold mb-2"
+                    className="block text-white text-sm font-semibold"
                     htmlFor="name"
                   >
                     Navn
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="bg-black/30 border border-border rounded px-3 py-2 text-sm w-full outline-none transition"
                     id="name"
                     type="text"
                     placeholder="Ditt ekte navn"
@@ -204,29 +248,22 @@ const AuctionItems = ({
                   />
                   {formData.error && formData.error.name && (
                     <div
-                      className="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3"
+                      className="mt-1 text-sm border border-border rounded px-3 py-2"
                       role="alert"
                     >
-                      <svg
-                        className="fill-current w-4 h-4 mr-2"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z" />
-                      </svg>
-                      <p>{formData.error.name}</p>
+                      {formData.error.name}
                     </div>
                   )}
                 </div>
-                <div className="mb-6">
+                <div className="space-y-1">
                   <label
-                    className="block text-white text-lg font-bold mb-2"
+                    className="block text-white text-sm font-semibold"
                     htmlFor="email"
                   >
                     E-post
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="bg-black/30 border border-border focus:ring-0 rounded px-3 py-2 text-sm w-full outline-none transition"
                     id="email"
                     type="email"
                     value={formData.email || ""}
@@ -236,25 +273,20 @@ const AuctionItems = ({
                     }}
                   />
                 </div>
-                <div className="mb-6">
+                <div className="space-y-1">
                   <label
-                    className="block text-white text-lg font-bold mb-2"
+                    className="block text-white text-sm font-semibold"
                     htmlFor="amount"
                   >
                     Pris
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                    className="bg-black/30 border border-border focus:border-border-accent focus:ring-0 rounded px-3 py-2 text-sm w-full outline-none transition"
                     id="amount"
                     type="number"
                     step="1"
-                    min="0"
-                    placeholder={String(
-                      Math.max(
-                        Math.ceil(getActiveBidAmount() * 1.1),
-                        getActiveBidAmount() + MIN_BID_MODIFIER
-                      )
-                    )}
+                    min={0}
+                    placeholder={String(nextMin)}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -264,30 +296,23 @@ const AuctionItems = ({
                   />
                   {formData.error && formData.error.amount && (
                     <div
-                      className="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3"
+                      className="mt-1 text-sm border border-border rounded px-3 py-2"
                       role="alert"
                     >
-                      <svg
-                        className="fill-current w-4 h-4 mr-2"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z" />
-                      </svg>
-                      <p>{formData.error.amount}</p>
+                      {formData.error.amount}
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3 pt-2">
                   <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-md transition"
                     type="button"
                     onClick={closeModal}
                   >
                     Avbryt
                   </button>
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="flex-1 hover:brightness-110 text-white bg-green-600 font-semibold py-2 rounded-md shadow transition"
                     type="submit"
                   >
                     Send bud
@@ -295,12 +320,12 @@ const AuctionItems = ({
                 </div>
               </form>
             ) : (
-              <div className="flex flex-col justify-evenly items-center text-center w-full max-w-xs bg-gray-600 p-4 shadow-md">
-                <p className="mb-4 text-xl text-white font-bold italic">
+              <div className="flex flex-col justify-evenly items-center text-center bg-bg-card border border-border rounded-xl p-6 shadow-lg gap-4">
+                <p className="text-base text-white font-semibold italic whitespace-pre-line">
                   {success}
                 </p>
                 <button
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="hover:brightness-110 text-white font-semibold py-2 px-5 rounded-md shadow transition"
                   type="button"
                   onClick={closeModal}
                 >

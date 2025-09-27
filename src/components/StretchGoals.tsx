@@ -1,10 +1,6 @@
-import cx from "classnames";
-
 import StretchGoalBar from "@/components/StretchGoalBar";
 
 import { MatchingGroup, StretchGoal } from "@/models/types";
-
-import styles from "./StretchGoals.module.css";
 
 export default function StretchGoals({
   stretchGoals,
@@ -27,22 +23,15 @@ export default function StretchGoals({
       matchingGroup.max
     );
 
+  const effectiveTotal = totalAmount + calculateMatch();
+
   return (
-    <div className="flex flex-col flex-grow h-full">
-      <div
-        className={cx(
-          styles.mobileHeight,
-          "flex items-center flex-grow p-2 overflow-hidden h-full"
-        )}
-      >
-        <div className="w-full h-full py-4">
-          <StretchGoalBar
-            totalAmount={totalAmount + calculateMatch()}
-            maxAmount={maxAmount}
-            stretchGoals={stretchGoals}
-          />
-        </div>
-      </div>
+    <div className="w-full h-96">
+      <StretchGoalBar
+        totalAmount={effectiveTotal}
+        maxAmount={maxAmount}
+        stretchGoals={stretchGoals}
+      />
     </div>
   );
 }

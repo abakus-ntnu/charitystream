@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { formatCurrency } from "@/lib/helpers";
+
 import { BeerData } from "@/models/types";
 
 type Props = { beerData: BeerData | null };
@@ -11,30 +13,27 @@ const BeerCounter = ({ beerData }: Props) => {
     maxDonation: 10000,
   };
 
+  const total = Math.min(count * price, maxDonation);
+
   return (
-    <div
-      className={
-        "flex align-center justify-center relative animate-[bounce_3s_ease-in-out_infinite] "
-      }
-    >
-      <Image
-        className={"max-w-lg z-0 max-w-full "}
-        src="/beer.png"
-        alt="Picture of a beer"
-        width={700}
-        height={500}
-      />
-      <div
-        className="text-center text-3xl md:text-5xl z-10 bg-gray-200 absolute text-black font-extrabold -ml-2 p-3 rounded"
-        style={{ top: "40%" }}
-      >
-        {count}stk
-      </div>
-      <div
-        className="text-center text-2xl md:text-4xl z-10 bg-gray-200 absolute text-black font-extrabold -ml-2 p-3 rounded"
-        style={{ top: "60%" }}
-      >
-        {Math.min(count * price, maxDonation)}kr
+    <div className="flex flex-col items-center w-full">
+      <div className="relative animate-gentle-bounce">
+        <Image
+          className="max-w-[260px] md:max-w-[300px] opacity-90 drop-shadow-xl"
+          src="/beer.png"
+          alt="Illustrasjon av øl som teller antall solgte"
+          width={700}
+          height={500}
+          priority
+        />
+        <div className="absolute left-1/2 -translate-x-1/2 top-[40%] bg-neutral-900/70 px-4 py-2 rounded-full border border-neutral-700 text-center">
+          <span className="text-xl md:text-3xl font-bold">{count} stk</span>
+        </div>
+        <div className="absolute left-1/2 -translate-x-1/2 top-[70%] bg-neutral-900/70 px-4 py-2 rounded-full border border-neutral-700 text-center">
+          <span className="text-lg md:text-2xl font-semibold text-red-400">
+            {formatCurrency(total)}
+          </span>
+        </div>
       </div>
     </div>
   );
