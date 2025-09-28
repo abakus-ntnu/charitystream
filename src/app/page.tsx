@@ -74,7 +74,7 @@ export default function Page() {
       </header>
 
       <main className="flex flex-col gap-8 md:gap-12 px-4 md:px-10 py-6 md:py-10">
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto w-full">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-auto w-full">
           <Card className="col-span-1 flex flex-col">
             <div className="text-sm uppercase tracking-wide text-neutral-400 mb-1 font-semibold">
               Stretch goals
@@ -93,7 +93,7 @@ export default function Page() {
           </Card>
         </section>
 
-        <section className="max-w-7xl mx-auto w-full">
+        <section className="mx-auto w-full">
           <Card className="w-full">
             <SilentAuction auctions={data.auctions} bids={data.bids} />
           </Card>
