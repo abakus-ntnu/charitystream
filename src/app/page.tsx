@@ -30,11 +30,6 @@ export default function Page() {
     );
   };
 
-  const totalWithMatch = data.totalAmount + calculateMatch();
-  const matchDenom = data.matchingGroup?.fraction
-    ? Math.round(1 / data.matchingGroup.fraction)
-    : 0;
-
   return (
     <div className="flex flex-col min-h-screen justify-between md:justify-start relative">
       <header className="w-full px-4 md:px-10 pt-6 md:pt-10 flex flex-col items-center gap-4 text-center">
@@ -42,39 +37,19 @@ export default function Page() {
           Abakus Veldedighetsfest
         </h1>
         <Card className="w-full flex flex-col items-center gap-6 py-6">
-          <div className="flex flex-row flex-wrap justify-center items-start gap-10">
-            <div className="flex flex-col items-center min-w-[140px]">
-              <p className="uppercase tracking-wide text-xs text-neutral-400 mb-1">
-                Totalt donert
-              </p>
-              <p className="text-3xl font-bold">
-                {formatCurrency(data.totalAmount)}
-              </p>
-            </div>
-            {data.matchingGroup && (
-              <div className="flex flex-col items-center min-w-[160px]">
-                <p className="uppercase tracking-wide text-xs text-neutral-400 mb-1">
-                  {data.matchingGroup.name} matcher hver {matchDenom} krone
-                </p>
-                <p className="text-3xl font-semibold">
-                  {formatCurrency(calculateMatch())}
-                </p>
-              </div>
-            )}
-          </div>
           <div className="flex flex-col items-center">
             <p className="uppercase tracking-wide text-xs text-neutral-400 mb-1">
-              Totalt
+              Totalt Donert
             </p>
             <p className="text-4xl md:text-5xl font-semibold">
-              {formatCurrency(totalWithMatch)}
+              {formatCurrency(data.totalAmount)}
             </p>
           </div>
         </Card>
       </header>
 
       <main className="flex flex-col gap-8 md:gap-12 px-4 md:px-10 py-6 md:py-10">
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto w-full">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-auto w-full">
           <Card className="col-span-1 flex flex-col">
             <div className="text-sm uppercase tracking-wide text-neutral-400 mb-1 font-semibold">
               Stretch goals
@@ -93,7 +68,7 @@ export default function Page() {
           </Card>
         </section>
 
-        <section className="max-w-7xl mx-auto w-full">
+        <section className="mx-auto w-full">
           <Card className="w-full">
             <SilentAuction auctions={data.auctions} bids={data.bids} />
           </Card>
