@@ -23,7 +23,7 @@ export default function StretchGoals({
       matchingGroup.max
     );
 
-  const effectiveTotal = totalAmount + calculateMatch();
+  const effectiveTotal = totalAmount;
 
   return (
     <div className="w-full h-96">

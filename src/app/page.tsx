@@ -42,7 +42,7 @@ export default function Page() {
               Totalt Donert
             </p>
             <p className="text-4xl md:text-5xl font-semibold">
-              {formatCurrency(data.totalAmount)}
+              {formatCurrency(data.totalAmount + 10000)}
             </p>
           </div>
         </Card>
@@ -56,7 +56,7 @@ export default function Page() {
             </div>
             <StretchGoals
               stretchGoals={data.stretchGoals}
-              totalAmount={data.totalAmount}
+              totalAmount={data.totalAmount + 10000}
               matchingGroup={data.matchingGroup}
             />
           </Card>
