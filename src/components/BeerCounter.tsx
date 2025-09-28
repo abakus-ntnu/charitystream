@@ -26,14 +26,6 @@ const BeerCounter = ({ beerData }: Props) => {
           height={500}
           priority
         />
-        <div className="absolute left-1/2 -translate-x-1/2 top-[40%] bg-neutral-900/70 px-4 py-2 rounded-full border border-neutral-700 text-center">
-          <span className="text-xl md:text-3xl font-bold">{count} stk</span>
-        </div>
-        <div className="absolute left-1/2 -translate-x-1/2 top-[70%] bg-neutral-900/70 px-4 py-2 rounded-full border border-neutral-700 text-center">
-          <span className="text-lg md:text-2xl font-semibold text-red-400">
-            {formatCurrency(total)}
-          </span>
-        </div>
       </div>
     </div>
   );
