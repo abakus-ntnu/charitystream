@@ -35,11 +35,15 @@ const getHighestBids = async () => {
         name: {
           $first: "$name",
         },
+        email: {
+          $first: "$email",
+        },
       },
     },
     {
       $project: {
         amount: "$amount",
+        email: "$email",
         item: "$_id",
         ...displayNames,
       },

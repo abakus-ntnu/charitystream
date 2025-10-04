@@ -135,10 +135,7 @@ const Page = () => {
 
   return (
     <>
-      <div
-        className="w-full p-2 sm:px-10 sm:py-6
-            bg-white rounded-lg shadow-md lg:shadow-lg"
-      >
+      <div className="w-full p-2 sm:px-10 sm:py-6 bg-white rounded-lg shadow-md lg:shadow-lg text-gray-900">
         <h2 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900">
           Legg til auksjonsobjekt
         </h2>
@@ -169,7 +166,7 @@ const Page = () => {
             </form>
           </div>
         </div>
-        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900 mt-10">
+        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl mt-10">
           Fjern auksjonsobjekt
         </h2>
         <div className="w-full">
@@ -204,7 +201,7 @@ const Page = () => {
             </form>
           </div>
         </div>
-        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900 mt-10">
+        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl mt-10">
           Administrer auksjon
         </h1>
         <button
@@ -244,7 +241,7 @@ const Page = () => {
             ? "Skjul hvem som har gitt bud"
             : "Vis hvem som har gitt bud"}
         </button>
-        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900 mt-10">
+        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl mt-10">
           Fjern høyeste bud
         </h2>
         <div className="w-full">
@@ -282,6 +279,38 @@ const Page = () => {
               </button>
             </form>
           </div>
+        </div>
+        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl mt-10">
+          Vinnere auksjon
+        </h2>
+        <div className="w-full">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr>
+                <th className="border-b p-2">Auksjonsobjekt</th>
+                <th className="border-b p-2">Vinner e-post</th>
+                <th className="border-b p-2">Bud</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.auctions.map((auction) => {
+                const winner = data?.bids.find(
+                  (bid) => bid.item === auction._id
+                );
+                return (
+                  <tr key={auction._id}>
+                    <td className="border-b p-2">{auction.description}</td>
+                    <td className="border-b p-2">
+                      {winner?.email ?? <span>Ingen vinner</span>}
+                    </td>
+                    <td className="border-b p-2">
+                      {winner?.amount ? `${winner.amount} kr` : "-"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

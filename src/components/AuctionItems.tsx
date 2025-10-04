@@ -30,11 +30,6 @@ const AuctionCard = ({
         <div className="text-2xl font-extrabold tracking-tight drop-shadow-sm">
           {bid.amount ? `${bid.amount},-` : "—"}
         </div>
-        {hasBid && bid.name && (
-          <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full">
-            Leder
-          </span>
-        )}
       </div>
       <div className="h-px bg-border/60 my-1" />
       <p className="text-sm leading-snug flex-1 text-white/90 line-clamp-4">
