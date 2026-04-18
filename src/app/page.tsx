@@ -34,7 +34,7 @@ export default function Page() {
     <div className="flex flex-col min-h-screen justify-between md:justify-start relative">
       <header className="w-full px-4 md:px-10 pt-6 md:pt-10 flex flex-col items-center gap-4 text-center">
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-shadow-soft">
-          Abakus Veldedighetsfest
+          Revygalla auksjon
         </h1>
         <Card className="w-full flex flex-col items-center gap-6 py-6">
           <div className="flex flex-col items-center">

@@ -20,7 +20,7 @@ const BeerCounter = ({ beerData }: Props) => {
       <div className="relative animate-gentle-bounce">
         <Image
           className="max-w-[260px] md:max-w-[300px] opacity-90 drop-shadow-xl"
-          src="/beer.png"
+          src="/revylogo.png"
           alt="Illustrasjon av øl som teller antall solgte"
           width={700}
           height={500}
