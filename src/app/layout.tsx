@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Abakus veldedighetsfest",
+  title: "Revygalla auksjon",
   description: "Nettside for Abakus sin veldedighetsfest",
 };
 

@@ -26,7 +26,7 @@ const Layout = ({ children }) => {
       <nav className="bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center flex-wrap gap-5 py-4 justify-center">
-            <h1 className="text-xl mr-4">Veldedighetsfest</h1>
+            <h1 className="text-xl mr-4">Revy jubileum auksjon</h1>
             {state?.token &&
               links.map((link) => {
                 const isActive = pathname === link.href;
