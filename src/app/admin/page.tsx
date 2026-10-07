@@ -3,6 +3,9 @@
 import { FormEvent, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import Button from "@/components/Button";
+import Field from "@/components/Field";
+
 import Alerts from "@/lib/Alerts";
 import { fetchRequest } from "@/lib/helpers";
 import State from "@/lib/State";
@@ -30,45 +33,22 @@ export default function Admin() {
   };
 
   return (
-    <div
-      className="w-full sm:px-10 sm:py-6
-            bg-white rounded-lg shadow-md lg:shadow-lg"
-    >
-      <h2 className="text-center font-semibold text-3xl lg:text-4xl text-gray-800">
-        Login
-      </h2>
-
-      <div>
-        <form onSubmit={submit}>
-          <label
-            htmlFor="passord"
-            className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-          >
-            Dagens passord
-          </label>
+    <div className="w-full max-w-[22rem] mx-auto mt-[12vh] flex flex-col gap-3">
+      <h1 className="page-title text-[2rem] mb-3">Logg inn</h1>
+      <form className="flex flex-col gap-4" onSubmit={submit}>
+        <Field label="Dagens passord" htmlFor="password">
           <input
             id="password"
             type="text"
             name="password"
             placeholder="passord"
-            className="block w-full py-3 px-1 mt-2 mb-4
-                    text-gray-800 appearance-none
-                    border-b-2 border-gray-100
-                    focus:text-gray-500 focus:outline-none focus:border-gray-200"
+            className="input"
             required
             onChange={(e) => setToken(e.target.value)}
           />
-
-          <button
-            type="submit"
-            className="w-full py-3 mt-10 bg-gray-800 rounded-sm
-                    font-medium text-white uppercase
-                    focus:outline-none hover:bg-gray-700 hover:shadow-none"
-          >
-            Submit
-          </button>
-        </form>
-      </div>
+        </Field>
+        <Button type="submit">Logg inn</Button>
+      </form>
     </div>
   );
 }

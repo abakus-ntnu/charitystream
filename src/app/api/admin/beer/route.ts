@@ -12,57 +12,32 @@ function unauthorizedResponse() {
   return new Response("Ugyldig passord :'(", { status: 401 });
 }
 
+function jsonResponse(data: unknown, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+const isAmount = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value) && value >= 0;
+
+// Sets the total spent in the bar
 export async function POST(request: NextRequest) {
   const password = getPasswordFromHeaders(request);
   if (password !== process.env.POST_PASSWORD) return unauthorizedResponse();
   connectMongoose();
   const body = await request.json();
 
-  const existingBeer = await Beer.findOne({});
-  if (!existingBeer) {
-    const beer = new Beer(body);
-    await beer.save();
-    return new Response(JSON.stringify(beer), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (!isAmount(body.spent)) {
+    return jsonResponse({ message: "spent må være et tall, minst 0" }, 400);
   }
-
-  if (body.count >= 0) {
-    await Beer.findOneAndUpdate({}, { count: body.count });
-  }
-  if (body.price) {
-    await Beer.findOneAndUpdate({}, { price: body.price });
-  }
-  if (body.maxDonation) {
-    await Beer.findOneAndUpdate({}, { maxDonation: body.maxDonation });
-  }
-  const beer = await Beer.findOne({});
-  return new Response(JSON.stringify(beer), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
-export async function PATCH(request: NextRequest) {
-  const password = getPasswordFromHeaders(request);
-  if (password !== process.env.POST_PASSWORD) return unauthorizedResponse();
-  connectMongoose();
-  const body = await request.json();
-  const beer = await Beer.findOne({});
-  if (!beer) {
-    return new Response(JSON.stringify({ error: "Beer not found" }), {
-      status: 404,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-  const newBeerCount = beer.count + body.count;
-  await Beer.findOneAndUpdate({}, { count: newBeerCount });
-  const updatedBeer = await Beer.findOne({});
-  return new Response(JSON.stringify(updatedBeer), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  const beer = await Beer.findOneAndUpdate(
+    {},
+    { spent: body.spent },
+    { upsert: true, new: true }
+  );
+  return jsonResponse(beer);
 }
 
 export async function GET(request: NextRequest) {
@@ -70,8 +45,5 @@ export async function GET(request: NextRequest) {
   if (password !== process.env.POST_PASSWORD) return unauthorizedResponse();
   connectMongoose();
   const beer = await Beer.findOne({});
-  return new Response(JSON.stringify({ beer }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return jsonResponse({ beer });
 }

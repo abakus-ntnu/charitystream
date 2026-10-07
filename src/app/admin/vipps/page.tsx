@@ -5,6 +5,10 @@ import { redirect } from "next/navigation";
 import { Readable } from "stream";
 import * as XLSX from "xlsx";
 
+import Section from "@/components/admin/Section";
+import Button from "@/components/Button";
+import Field from "@/components/Field";
+
 import Alerts, { AlertsContextType } from "@/lib/Alerts";
 import { fetchRequest } from "@/lib/helpers";
 import State, { StateContextType } from "@/lib/State";
@@ -146,98 +150,51 @@ const Page = () => {
 
   return (
     <>
-      <div className="w-full p-2 sm:px-10 sm:py-6">
-        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900">
-          Legg til én donasjon:
-        </h1>
-        <div className="w-full">
-          <div className="mt-5 w-full">
-            <form onSubmit={addOne}>
-              <label
-                htmlFor="name"
-                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-              >
-                Navn
-              </label>
-              <input
-                id="name"
-                type="text"
-                name="name"
-                placeholder="navn"
-                className="block w-full py-3 px-1 mt-2 mb-4
-                  text-gray-800 appearance-none
-                  border-b-2 border-gray-100
-                  focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                required
-                value={name ?? ""}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <label
-                htmlFor="amount"
-                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-              >
-                Mengde
-              </label>
-              <input
-                id="amount"
-                type="number"
-                name="amount"
-                placeholder="100kr"
-                className="block w-full py-3 px-1 mt-2 mb-4
-                    text-gray-800 appearance-none
-                    border-b-2 border-gray-100
-                    focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                required
-                value={amount ?? ""}
-                onChange={(e) => setAmount(Number(e.target.value))}
-              />
+      <Section title="Legg til én donasjon">
+        <form className="flex flex-col gap-4" onSubmit={addOne}>
+          <Field label="Navn" htmlFor="name">
+            <input
+              id="name"
+              type="text"
+              name="name"
+              placeholder="navn"
+              className="input"
+              required
+              value={name ?? ""}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Field>
+          <Field label="Mengde" htmlFor="amount">
+            <input
+              id="amount"
+              type="number"
+              name="amount"
+              placeholder="100kr"
+              className="input tabular-nums"
+              required
+              value={amount ?? ""}
+              onChange={(e) => setAmount(Number(e.target.value))}
+            />
+          </Field>
+          <Button type="submit">Legg til donasjon</Button>
+        </form>
+      </Section>
 
-              <button
-                type="submit"
-                className="w-full py-3 bg-gray-800 rounded-sm
-                  font-medium text-white uppercase
-                  focus:outline-none hover:bg-gray-700 hover:shadow-none"
-              >
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full p-2 sm:px-10 sm:py-6 mt-10">
-        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900">
-          Oppdater alle donasjoner:
-        </h1>
-        <div className="w-full">
-          <div className="mt-5 w-full">
-            <form onSubmit={addAll}>
-              <label
-                htmlFor="amount"
-                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-              >
-                Velg fil
-              </label>
-              <input
-                type="file"
-                id="file"
-                name="file"
-                className="block w-full text-sm text-gray-600 border border-gray-300 cursor-pointer bg-gray-50  focus:outline-none"
-                accept=".csv, .xlsx"
-                required
-              />
-              <button
-                type="submit"
-                className="w-full py-3 mt-4 bg-gray-800 rounded-sm
-                    font-medium text-white uppercase
-                    focus:outline-none hover:bg-gray-700 hover:shadow-none"
-              >
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <Section title="Oppdater alle donasjoner">
+        <form className="flex flex-col gap-4" onSubmit={addAll}>
+          <Field label="Velg fil (.csv eller .xlsx)" htmlFor="file">
+            <input
+              type="file"
+              id="file"
+              name="file"
+              className="input cursor-pointer py-2"
+              accept=".csv, .xlsx"
+              required
+            />
+          </Field>
+          <Button type="submit">Last opp</Button>
+        </form>
+      </Section>
     </>
   );
 };

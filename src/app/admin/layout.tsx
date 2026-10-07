@@ -9,7 +9,7 @@ import State, { StateContextType } from "@/lib/State";
 
 const links = [
   { href: "/admin/vipps", page: "Legg til donasjoner" },
-  { href: "/admin/beer", page: "Oppdater antall øl" },
+  { href: "/admin/beer", page: "Baren" },
   { href: "/admin/auction", page: "Stilleauksjon" },
   { href: "/admin/stretchGoals", page: "Stretch Goals" },
   { href: "/", page: "Forlat adminsiden" },
@@ -22,57 +22,59 @@ const Layout = ({ children }) => {
   const pathname = usePathname();
 
   return (
-    <>
-      <nav className="bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center flex-wrap gap-5 py-4 justify-center">
-            <h1 className="text-xl mr-4">Veldedighetsfest</h1>
-            {state?.token &&
-              links.map((link) => {
-                const isActive = pathname === link.href;
-                const base =
-                  link.href === "/"
-                    ? "underline"
-                    : "bg-white text-black hover:bg-gray-400";
-                const active = isActive
-                  ? "bg-slate-400 hover:bg-slate-600"
-                  : "";
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`px-3 py-1 rounded-md text-large font-medium ${base} ${active}`}
-                  >
-                    {link.page}
-                  </Link>
-                );
-              })}
-          </div>
-        </div>
-      </nav>
-      <div
-        className="bg-gray-300 font-sans antialiased w-full flex"
-        style={{ minHeight: "100vh" }}
-      >
-        <div className={`container mx-auto my-10`}>
-          <div>
-            <div className="fixed bottom-1 left-3 z-50">
-              {alerts.map((alert: Alert) => (
-                <div
-                  key={alert.text}
-                  className={`text-white px-3 py-2 border-0 rounded relative mb-2 bg-${alert.color}-500`}
+    <div className="min-h-screen flex flex-col">
+      <nav className="w-full max-w-content mx-auto px-4 md:px-8 py-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-3">
+        <Link href="/admin" className="logo">
+          Abakus<span className="logo__accent">Admin</span>
+        </Link>
+        {state?.token && (
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {links.map((link) => {
+              const isActive = pathname === link.href;
+              const tone =
+                link.href === "/"
+                  ? "text-red-5 hover:underline"
+                  : isActive
+                  ? "text-text"
+                  : "text-text-dim hover:text-text";
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`text-sm font-semibold whitespace-nowrap transition-colors ${tone} ${
+                    isActive
+                      ? "underline underline-offset-8 decoration-2 decoration-red-5"
+                      : ""
+                  }`}
                 >
-                  <span className="inline-block align-middle mr-8">
-                    {alert.text}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="bg-white  shadow-xl">{children}</div>
+                  {link.page}
+                </Link>
+              );
+            })}
           </div>
-        </div>
+        )}
+      </nav>
+      <main className="flex-1 w-full max-w-content mx-auto px-4 md:px-8 pb-10">
+        {children}
+      </main>
+      <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
+        {alerts.map((alert: Alert) => (
+          <div
+            key={alert.text}
+            role="status"
+            className="flex items-stretch gap-4 bg-panel pr-5 max-w-sm animate-pop-in"
+          >
+            <div
+              className={`w-2 flex-shrink-0 ${
+                alert.color === "green" ? "bg-green-6" : "bg-red-5"
+              }`}
+            />
+            <span className="py-3 text-sm font-semibold">{alert.text}</span>
+          </div>
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 

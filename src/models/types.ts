@@ -24,9 +24,11 @@ export interface Bid {
 }
 
 export interface BeerData {
-  count: number;
-  price: number;
-  maxDonation: number;
+  // total spent in the bar
+  spent: number;
+  // what HS adds to the donations: the amount spent, capped at matchLimit
+  hsMatch: number;
+  matchLimit: number;
 }
 
 export interface AuctionOptions {

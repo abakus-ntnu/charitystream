@@ -4,6 +4,10 @@ import { FormEvent, useContext, useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import useSWR from "swr";
 
+import Section from "@/components/admin/Section";
+import Button from "@/components/Button";
+import Field from "@/components/Field";
+
 import Alerts, { AlertsContextType } from "@/lib/Alerts";
 import { fetcher, fetchRequest } from "@/lib/helpers";
 import State, { StateContextType } from "@/lib/State";
@@ -135,161 +139,114 @@ const Page = () => {
 
   return (
     <>
-      <div className="w-full p-2 sm:px-10 sm:py-6 bg-white rounded-lg shadow-md lg:shadow-lg text-gray-900">
-        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900">
-          Legg til auksjonsobjekt
-        </h2>
-        <div className="w-full">
-          <div className="w-full">
-            <form>
-              <input
-                id="description"
-                type="text"
-                name="description"
-                placeholder="Beskrivelse"
-                className="block w-full py-3 px-1 mt-2 mb-4
-                    text-gray-800 appearance-none
-                    border-b-2 border-gray-100
-                    focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                required
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <button
-                onClick={onAddAuction}
-                className="w-full py-3 bg-gray-800 rounded-sm
-                    font-medium text-white uppercase
-                    focus:outline-none hover:bg-gray-700 hover:shadow-none"
-              >
-                Legg til auksjonsobjekt
-              </button>
-            </form>
-          </div>
+      <Section title="Legg til auksjonsobjekt">
+        <form className="flex flex-col gap-4">
+          <Field label="Beskrivelse" htmlFor="description">
+            <input
+              id="description"
+              type="text"
+              name="description"
+              placeholder="Beskrivelse"
+              className="input"
+              required
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Field>
+          <Button type="submit" onClick={onAddAuction}>
+            Legg til auksjonsobjekt
+          </Button>
+        </form>
+      </Section>
+
+      <Section title="Fjern auksjonsobjekt">
+        <form className="flex flex-col gap-4">
+          <select
+            className="input"
+            aria-label="Auksjonsobjekt"
+            onChange={(e) => {
+              setSelectedSelectedAuctionId(e.target.value);
+            }}
+          >
+            <option>-- Velg Auksjonsobjekt --</option>
+            {data?.auctions.map((auction) => {
+              return (
+                <option value={auction._id} key={auction._id}>
+                  {auction.description}
+                </option>
+              );
+            })}
+          </select>
+          <Button type="submit" variant="secondary" onClick={onDeleteAuction}>
+            Fjern auksjonsobjekt
+          </Button>
+        </form>
+      </Section>
+
+      <Section title="Administrer auksjon">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Button
+            variant={auctionOptions.freezeBidding ? "gold" : "secondary"}
+            disabled={auctionOptions.freezeBidding == null}
+            onClick={() => {
+              toggleFreezeBids();
+            }}
+          >
+            {auctionOptions.freezeBidding == null
+              ? "Laster inn"
+              : auctionOptions.freezeBidding
+              ? "Tillat bud"
+              : "Frys bud"}
+          </Button>
+          <Button
+            variant={auctionOptions.displayWinners ? "gold" : "secondary"}
+            disabled={auctionOptions.displayWinners == null}
+            onClick={() => {
+              toggleShowBiddders();
+            }}
+          >
+            {auctionOptions.displayWinners == null
+              ? "Laster inn"
+              : auctionOptions.displayWinners
+              ? "Skjul hvem som har gitt bud"
+              : "Vis hvem som har gitt bud"}
+          </Button>
         </div>
-        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl mt-10">
-          Fjern auksjonsobjekt
-        </h2>
-        <div className="w-full">
-          <div className="w-full">
-            <form>
-              <select
-                className="block w-full py-3 px-1 mt-2 mb-4
-                    text-gray-800 appearance-none
-                    border-b-2 border-gray-100
-                    focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                onChange={(e) => {
-                  setSelectedSelectedAuctionId(e.target.value);
-                }}
-              >
-                <option>-- Velg Auksjonsobjekt --</option>
-                {data?.auctions.map((auction) => {
-                  return (
-                    <option value={auction._id} key={auction._id}>
-                      {auction.description}
-                    </option>
-                  );
-                })}
-              </select>
-              <button
-                onClick={onDeleteAuction}
-                className="w-full py-3 bg-gray-800 rounded-sm
-                    font-medium text-white uppercase
-                    focus:outline-none hover:bg-gray-700 hover:shadow-none"
-              >
-                Fjern Auksjonsobjekt
-              </button>
-            </form>
-          </div>
-        </div>
-        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl mt-10">
-          Administrer auksjon
-        </h1>
-        <button
-          className={`w-full py-3 mt-2 mr-1/12 bg-gray-${
-            auctionOptions.freezeBidding ? "600" : "800"
-          } rounded-sm
-                    font-medium text-white uppercase
-                    focus:outline-none hover:bg-gray-${
-                      auctionOptions.freezeBidding ? "500" : "700"
-                    } hover:shadow-none`}
-          onClick={() => {
-            toggleFreezeBids();
-          }}
-        >
-          {auctionOptions.freezeBidding == null
-            ? "Laster inn"
-            : auctionOptions.freezeBidding
-            ? "Tillat bud"
-            : "Frys bud"}
-        </button>
-        <button
-          type="submit"
-          className={`w-full py-3 mt-3 bg-gray-${
-            auctionOptions.displayWinners ? "600" : "800"
-          } rounded-sm
-                    font-medium text-white uppercase
-                    focus:outline-none hover:bg-gray-${
-                      auctionOptions.displayWinners ? "500" : "700"
-                    } hover:shadow-none`}
-          onClick={() => {
-            toggleShowBiddders();
-          }}
-        >
-          {auctionOptions.displayWinners == null
-            ? "Laster inn"
-            : auctionOptions.displayWinners
-            ? "Skjul hvem som har gitt bud"
-            : "Vis hvem som har gitt bud"}
-        </button>
-        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl mt-10">
-          Fjern høyeste bud
-        </h2>
-        <div className="w-full">
-          <div className="w-full">
-            <form onSubmit={submitDeleteBid}>
-              <select
-                className="block w-full py-3 px-1 mb-4
-                    text-gray-800 appearance-none
-                    border-b-2 border-gray-100
-                    focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                onChange={(e) => {
-                  setBidToDelete(e.target.value);
-                }}
-              >
-                <option>-- Velg et bud --</option>
-                {data?.bids.map((bid) => {
-                  const auction = data?.auctions.find(
-                    (a) => a._id === bid.item
-                  );
-                  return (
-                    <option value={auction?._id} key={auction?._id ?? bid.item}>
-                      {bid.amount}kr &nbsp; - &nbsp;{" "}
-                      {auction?.description ?? "-"}
-                    </option>
-                  );
-                })}
-              </select>
-              <button
-                type="submit"
-                className="w-full py-3 bg-gray-800 rounded-sm
-                    font-medium text-white uppercase
-                    focus:outline-none hover:bg-gray-700 hover:shadow-none"
-              >
-                Fjern bud
-              </button>
-            </form>
-          </div>
-        </div>
-        <h2 className="font-bold sm:text-center text-2xl sm:text-3xl mt-10">
-          Vinnere auksjon
-        </h2>
-        <div className="w-full">
-          <table className="w-full text-left border-collapse">
+      </Section>
+
+      <Section title="Fjern høyeste bud">
+        <form className="flex flex-col gap-4" onSubmit={submitDeleteBid}>
+          <select
+            className="input"
+            aria-label="Bud"
+            onChange={(e) => {
+              setBidToDelete(e.target.value);
+            }}
+          >
+            <option>-- Velg et bud --</option>
+            {data?.bids.map((bid) => {
+              const auction = data?.auctions.find((a) => a._id === bid.item);
+              return (
+                <option value={auction?._id} key={auction?._id ?? bid.item}>
+                  {bid.amount}kr &nbsp; - &nbsp; {auction?.description ?? "-"}
+                </option>
+              );
+            })}
+          </select>
+          <Button type="submit" variant="secondary">
+            Fjern bud
+          </Button>
+        </form>
+      </Section>
+
+      <Section title="Vinnere auksjon">
+        <div className="w-full overflow-x-auto">
+          <table className="table">
             <thead>
               <tr>
-                <th className="border-b p-2">Auksjonsobjekt</th>
-                <th className="border-b p-2">Vinner e-post</th>
-                <th className="border-b p-2">Bud</th>
+                <th>Auksjonsobjekt</th>
+                <th>Vinner e-post</th>
+                <th className="th--right">Bud</th>
               </tr>
             </thead>
             <tbody>
@@ -299,12 +256,20 @@ const Page = () => {
                 );
                 return (
                   <tr key={auction._id}>
-                    <td className="border-b p-2">{auction.description}</td>
-                    <td className="border-b p-2">
-                      {winner?.email ?? <span>Ingen vinner</span>}
+                    <td>{auction.description}</td>
+                    <td>
+                      {winner?.email ?? (
+                        <span className="text-text-faint">Ingen vinner</span>
+                      )}
                     </td>
-                    <td className="border-b p-2">
-                      {winner?.amount ? `${winner.amount} kr` : "-"}
+                    <td className="td--right">
+                      {winner?.amount ? (
+                        <span className="font-semibold text-gold">
+                          {winner.amount} kr
+                        </span>
+                      ) : (
+                        <span className="text-text-faint">-</span>
+                      )}
                     </td>
                   </tr>
                 );
@@ -312,7 +277,7 @@ const Page = () => {
             </tbody>
           </table>
         </div>
-      </div>
+      </Section>
     </>
   );
 };

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { HS_MATCH_LIMIT } from "@/lib/constants";
+
 import {
   Auction,
   AuctionOption,
@@ -98,14 +100,13 @@ export async function GET(request: NextRequest) {
     MatchingGroup.findOne({}),
   ]);
 
-  const beerDonation =
-    beer && beer.count && beer.price ? beer.count * beer.price : 0;
-  const beerMaxDonation = beer && beer.maxDonation ? beer.maxDonation : 0;
+  const barSpent = beer?.spent ?? 0;
+  const hsMatch = Math.min(barSpent, HS_MATCH_LIMIT);
   const totalAmount =
     bids.reduce((a, b) => {
       return a + b.amount;
     }, 0) +
-    (beerDonation < beerMaxDonation ? beerDonation : beerMaxDonation) +
+    hsMatch +
     vipps.reduce((a, b) => {
       return a + b.amount;
     }, 0);
@@ -119,7 +120,7 @@ export async function GET(request: NextRequest) {
     slidoView,
     stretchGoals,
     topDonors,
-    beer,
+    beer: { spent: barSpent, hsMatch, matchLimit: HS_MATCH_LIMIT },
     matchingGroup,
   });
 }

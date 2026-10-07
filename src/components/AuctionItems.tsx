@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { KeyedMutator } from "swr";
 
-import Card from "@/components/Card"; // NEW: use shared Card styling
+import Button from "@/components/Button";
+import Field from "@/components/Field";
 
 import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "@/lib/constants";
 import { fetchRequest } from "@/lib/helpers";
@@ -20,30 +21,38 @@ const AuctionCard = ({
 }) => {
   const hasBid = !!bid.amount;
   return (
-    <Card
-      className={`lg:w-48 w-40 h-56 flex flex-col justify-start items-stretch gap-2 lg:m-5 m-2 cursor-pointer transition duration-200 group hover:-translate-y-1 hover:shadow-lg ${
-        hasBid ? "border-border" : ""
-      }`}
+    <button
+      type="button"
+      className="group w-full h-56 flex flex-col items-stretch gap-3 p-5 text-left bg-panel cursor-pointer transition-colors hover:bg-panel-hover focus-visible:bg-panel-hover focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2"
       onClick={onClick}
     >
-      <div className="flex items-baseline justify-between">
-        <div className="text-2xl font-extrabold tracking-tight drop-shadow-sm">
-          {bid.amount ? `${bid.amount},-` : "—"}
-        </div>
+      <div className="eyebrow">{hasBid ? "Høyeste bud" : "Ingen bud"}</div>
+      <div
+        className={`text-3xl font-extrabold tabular-nums leading-none ${
+          hasBid ? "text-gold" : "text-text-faint"
+        }`}
+      >
+        {hasBid ? `${bid.amount},-` : "—"}
       </div>
-      <div className="h-px bg-border/60 my-1" />
-      <p className="text-sm leading-snug flex-1 text-white/90 line-clamp-4">
+      <p className="text-base font-semibold leading-snug flex-1 line-clamp-3 transition-colors group-hover:text-red-5">
         {auction.description}
       </p>
-      {hasBid && bid.name && (
-        <div
-          className="text-xs text-white/60 mt-auto italic truncate"
-          title={`Vinner: ${bid.name}`}
-        >
-          Vinner: <span className="text-white/80 not-italic">{bid.name}</span>
-        </div>
-      )}
-    </Card>
+      <div className="flex items-baseline justify-between gap-3 text-sm">
+        {hasBid && bid.name ? (
+          <span
+            className="text-text-faint truncate"
+            title={`Vinner: ${bid.name}`}
+          >
+            Vinner: <span className="text-text-dim">{bid.name}</span>
+          </span>
+        ) : (
+          <span />
+        )}
+        <span className="font-semibold text-red-5 whitespace-nowrap group-hover:underline">
+          By →
+        </span>
+      </div>
+    </button>
   );
 };
 
@@ -67,6 +76,11 @@ const AuctionItems = ({
   const [activeAuction, setActiveAuction] = useState<Auction | null>(null);
   const [formData, setFormData] = useState<FormData>({} as FormData);
   const [success, setSuccess] = useState("");
+
+  // Hide the rest of the app from screen readers while the modal is open
+  useEffect(() => {
+    Modal.setAppElement("#app-root");
+  }, []);
 
   const getActiveBidAmount = () =>
     activeAuction
@@ -172,11 +186,13 @@ const AuctionItems = ({
       transform: "translate(-50%, -50%)",
       background: "none",
       border: "none",
+      borderRadius: 0,
       padding: 0,
+      width: "min(calc(100vw - 2rem), 32rem)",
     },
     overlay: {
-      backgroundColor: "rgba(20,20,20, 0.70)",
-      backdropFilter: "blur(4px)",
+      backgroundColor: "rgba(17, 17, 17, 0.85)",
+      zIndex: 50,
     },
   } as const;
 
@@ -186,11 +202,9 @@ const AuctionItems = ({
   );
 
   return (
-    <div>
-      <div className="text-4xl text-center p-5 font-semibold text-shadow-soft">
-        Trykk på et auksjonsobjekt for å by!
-      </div>
-      <div className="flex flex-row flex-wrap justify-evenly">
+    <div className="flex flex-col gap-6">
+      <h1 className="page-title">Trykk på et auksjonsobjekt for å by!</h1>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-3">
         {auctions.map((auction) => (
           <AuctionCard
             key={auction._id}
@@ -199,138 +213,95 @@ const AuctionItems = ({
             onClick={() => openModal(auction)}
           />
         ))}
-        <Modal
-          isOpen={modalOpen}
-          shouldCloseOnOverlayClick={true}
-          onRequestClose={closeModal}
-          style={modalStyles}
-          onAfterOpen={activeAuction ? undefined : closeModal}
-        >
-          <div className="w-xs sm:w-sm md:w-md lg:w-lg xl:w-lg 2xl:w-lg">
-            {activeAuction ? (
-              <form
-                className="bg-bg-card border border-border shadow-lg rounded-xl px-6 pt-6 pb-5 flex flex-col gap-4"
-                onSubmit={bid}
-              >
-                <div className="flex flex-col gap-1">
-                  <div className="text-lg font-medium text-white/70">By på</div>
-                  <div className="text-2xl text-white font-bold italic leading-tight">
-                    {activeAuction.description}
-                  </div>
-                  <p className="text-sm text-white/60">
-                    Nåværende bud:{" "}
-                    <span className="text-white/90">
-                      {getActiveBidAmount()},-
-                    </span>
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <label
-                    className="block text-white text-sm font-semibold"
-                    htmlFor="name"
-                  >
-                    Navn
-                  </label>
-                  <input
-                    className="bg-black/30 border border-border rounded px-3 py-2 text-sm w-full outline-none transition"
-                    id="name"
-                    type="text"
-                    placeholder="Ditt ekte navn"
-                    value={formData.name || ""}
-                    onChange={(e) => {
-                      setFormData({ ...formData, name: e.target.value });
-                    }}
-                  />
-                  {formData.error && formData.error.name && (
-                    <div
-                      className="mt-1 text-sm border border-border rounded px-3 py-2"
-                      role="alert"
-                    >
-                      {formData.error.name}
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <label
-                    className="block text-white text-sm font-semibold"
-                    htmlFor="email"
-                  >
-                    E-post
-                  </label>
-                  <input
-                    className="bg-black/30 border border-border focus:ring-0 rounded px-3 py-2 text-sm w-full outline-none transition"
-                    id="email"
-                    type="email"
-                    value={formData.email || ""}
-                    placeholder="ola@nordmann.no"
-                    onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value });
-                    }}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label
-                    className="block text-white text-sm font-semibold"
-                    htmlFor="amount"
-                  >
-                    Pris
-                  </label>
-                  <input
-                    className="bg-black/30 border border-border focus:border-border-accent focus:ring-0 rounded px-3 py-2 text-sm w-full outline-none transition"
-                    id="amount"
-                    type="number"
-                    step="1"
-                    min={0}
-                    placeholder={String(nextMin)}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        amount: Number(e.target.value),
-                      })
-                    }
-                  />
-                  {formData.error && formData.error.amount && (
-                    <div
-                      className="mt-1 text-sm border border-border rounded px-3 py-2"
-                      role="alert"
-                    >
-                      {formData.error.amount}
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-center justify-between gap-3 pt-2">
-                  <button
-                    className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-md transition"
-                    type="button"
-                    onClick={closeModal}
-                  >
-                    Avbryt
-                  </button>
-                  <button
-                    className="flex-1 hover:brightness-110 text-white bg-green-600 font-semibold py-2 rounded-md shadow transition"
-                    type="submit"
-                  >
-                    Send bud
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="flex flex-col justify-evenly items-center text-center bg-bg-card border border-border rounded-xl p-6 shadow-lg gap-4">
-                <p className="text-base text-white font-semibold italic whitespace-pre-line">
-                  {success}
-                </p>
-                <button
-                  className="hover:brightness-110 text-white font-semibold py-2 px-5 rounded-md shadow transition"
-                  type="button"
-                  onClick={closeModal}
-                >
-                  Lukk
-                </button>
-              </div>
-            )}
-          </div>
-        </Modal>
       </div>
+      <Modal
+        isOpen={modalOpen}
+        shouldCloseOnOverlayClick={true}
+        onRequestClose={closeModal}
+        style={modalStyles}
+        onAfterOpen={activeAuction ? undefined : closeModal}
+      >
+        {activeAuction ? (
+          <form
+            className="bg-panel p-6 flex flex-col gap-5 animate-pop-in"
+            onSubmit={bid}
+          >
+            <div className="flex flex-col gap-1">
+              <div className="eyebrow">By på</div>
+              <div className="text-2xl font-extrabold leading-tight">
+                {activeAuction.description}
+              </div>
+              <p className="text-sm text-text-faint">
+                Nåværende bud:{" "}
+                <span className="font-bold text-gold tabular-nums">
+                  {getActiveBidAmount()},-
+                </span>
+              </p>
+            </div>
+            <Field label="Navn" htmlFor="name" error={formData.error?.name}>
+              <input
+                className="input"
+                id="name"
+                type="text"
+                placeholder="Ditt ekte navn"
+                value={formData.name || ""}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                }}
+              />
+            </Field>
+            <Field label="E-post" htmlFor="email">
+              <input
+                className="input"
+                id="email"
+                type="email"
+                value={formData.email || ""}
+                placeholder="ola@nordmann.no"
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                }}
+              />
+            </Field>
+            <Field label="Pris" htmlFor="amount" error={formData.error?.amount}>
+              <input
+                className="input tabular-nums"
+                id="amount"
+                type="number"
+                step="1"
+                min={0}
+                placeholder={String(nextMin)}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    amount: Number(e.target.value),
+                  })
+                }
+              />
+            </Field>
+            <div className="flex items-center gap-3 pt-1">
+              <Button
+                variant="secondary"
+                className="flex-1"
+                onClick={closeModal}
+              >
+                Avbryt
+              </Button>
+              <Button type="submit" className="flex-1">
+                Send bud
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <div className="flex flex-col items-start bg-panel p-6 gap-5 animate-pop-in">
+            <p className="text-base font-semibold whitespace-pre-line">
+              {success}
+            </p>
+            <Button variant="secondary" onClick={closeModal}>
+              Lukk
+            </Button>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

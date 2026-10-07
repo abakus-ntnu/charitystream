@@ -1,36 +1,103 @@
-.wrapper {
+.art {
+  display: block;
   width: 100%;
-  max-height: 225px;
-  display: flex;
-  position: relative;
-  overflow: hidden;
+  height: auto;
 }
 
-.wrapper .slideshow {
-  display: flex;
-  width: fit-content;
-  animation: moveSlideshow linear infinite;
-  animation-duration: var(--duration);
+.art g {
+  transform-box: fill-box;
 }
 
-.wrapper .fade {
-  background: linear-gradient(
-    90deg,
-    #222222b0,
-    transparent 5%,
-    transparent 95%,
-    #222222b0
-  );
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+/* the gavel pivots on the end of its handle */
+.gavel {
+  transform-origin: 100% 50%;
+  transform: rotate(18deg);
+  animation: gavel-strike 2.4s ease-in-out infinite;
 }
 
-@keyframes moveSlideshow {
-  0% {
-    transform: translate3d(0, 0, 0);
+@keyframes gavel-strike {
+  0%,
+  45% {
+    transform: rotate(18deg);
   }
+  55% {
+    transform: rotate(26deg);
+  }
+  62% {
+    transform: rotate(-14deg);
+    animation-timing-function: ease-out;
+  }
+  72%,
   100% {
+    transform: rotate(18deg);
+  }
+}
+
+.sparks {
+  opacity: 0;
+  animation: sparks 2.4s step-end infinite;
+}
+
+@keyframes sparks {
+  62% {
+    opacity: 1;
+  }
+  67% {
+    opacity: 0;
+  }
+}
+
+/* carousel: two identical sets slide left, so the loop is seamless */
+
+/* grows to fill the card when it sits next to the taller casino card */
+.viewport {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: slide var(--duration) linear infinite;
+}
+
+.viewport:hover .track {
+  animation-play-state: paused;
+}
+
+.set {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0 0.75rem 0 0;
+  list-style: none;
+}
+
+@keyframes slide {
+  to {
     transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gavel,
+  .sparks {
+    animation: none;
+  }
+
+  .track {
+    animation: none;
+  }
+
+  .viewport {
+    overflow-x: auto;
   }
 }

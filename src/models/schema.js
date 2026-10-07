@@ -66,9 +66,8 @@ export const Bid = mongoose.model("Bid", BidSchema);
 
 const BeerSchema = new mongoose.Schema(
   {
-    count: { type: Number, default: 0 },
-    price: { type: Number, default: 0 },
-    maxDonation: { type: Number, default: 20000 },
+    // total spent in the bar, in kr
+    spent: { type: Number, default: 0 },
   },
   { autoCreate: true }
 );

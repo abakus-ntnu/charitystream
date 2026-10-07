@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { formatCurrency } from "@/lib/helpers";
 
 import { Auction, Bid } from "@/models/types";
 
@@ -10,22 +10,73 @@ declare module "react" {
   }
 }
 
+const BID_URL = "https://aba.wtf/fest";
+
+// Enough cards per loop to fill wide screens without gaps
+const MIN_CARDS_PER_LOOP = 8;
+const SECONDS_PER_CARD = 5;
+
+// A gavel striking its block, in the style of azart-lounge's game art
+const GavelArt = () => (
+  <svg className={styles.art} viewBox="0 0 120 120" aria-hidden="true">
+    <g shapeRendering="crispEdges">
+      <rect x="20" y="92" width="56" height="8" fill="#8f7119" />
+      <rect x="24" y="88" width="48" height="4" fill="#c9a227" />
+    </g>
+    <g className={styles.sparks} fill="#c9a227">
+      <rect x="44" y="70" width="4" height="10" />
+      <rect x="26" y="74" width="4" height="9" transform="rotate(-50 28 78)" />
+      <rect x="62" y="74" width="4" height="9" transform="rotate(50 64 78)" />
+    </g>
+    <g className={styles.gavel} shapeRendering="crispEdges">
+      <rect x="58" y="52" width="46" height="6" fill="#b21c17" />
+      <rect x="34" y="40" width="24" height="32" fill="#c9a227" />
+      <rect x="34" y="40" width="24" height="4" fill="#8f7119" />
+      <rect x="34" y="68" width="24" height="4" fill="#8f7119" />
+    </g>
+  </svg>
+);
+
 const AuctionCard = ({
-  currentBidAmount,
-  description,
+  auction,
+  bid,
+  hottest,
 }: {
-  currentBidAmount: number;
-  description: string;
+  auction: Auction;
+  bid?: Bid;
+  hottest: boolean;
 }) => {
+  const hasBid = !!bid?.amount;
   return (
-    <div className="w-44 md:w-48 flex-shrink-0 snap-start rounded-xl border border-neutral-700/60 bg-neutral-800/60 transition-colors shadow-md m-2 text-center px-3 py-3 flex flex-col justify-between relative overflow-hidden">
-      <div className="font-bold text-xl md:text-2xl mb-2 text-red-400 tabular-nums drop-shadow-sm">
-        {currentBidAmount},-
+    <li className="w-60 min-h-40 flex-shrink-0 flex flex-col gap-2 p-4 bg-ink-alt relative">
+      {hottest && <span className="absolute inset-y-0 left-0 w-1 bg-gold" />}
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="eyebrow">
+          {hasBid ? "Høyeste bud" : "Ingen bud ennå"}
+        </span>
+        {hottest && <span className="eyebrow text-gold">Mest budt</span>}
       </div>
-      <p className="text-xs md:text-sm text-neutral-200 leading-snug line-clamp-4">
-        {description}
+      <div
+        key={bid?.amount ?? 0}
+        className={`text-2xl font-extrabold tabular-nums leading-none ${
+          hasBid ? "text-gold animate-bump origin-left" : "text-text-faint"
+        }`}
+      >
+        {hasBid ? formatCurrency(bid.amount) : "—"}
+      </div>
+      <p className="m-0 flex-1 text-sm font-semibold leading-snug line-clamp-2">
+        {auction.description}
       </p>
-    </div>
+      <div className="text-xs text-text-faint truncate">
+        {bid?.name ? (
+          <>
+            Leder: <span className="text-text-dim">{bid.name}</span>
+          </>
+        ) : (
+          !hasBid && "Bli den første til å by!"
+        )}
+      </div>
+    </li>
   );
 };
 
@@ -36,39 +87,69 @@ const SilentAuction = ({
   auctions: Auction[];
   bids: Bid[];
 }) => {
-  const items = auctions.map((item, index) => (
-    <AuctionCard
-      key={index}
-      description={item.description}
-      currentBidAmount={bids.find((bid) => bid.item === item._id)?.amount ?? 0}
-    />
-  ));
+  const bidFor = (auction: Auction) =>
+    bids.find((bid) => bid.item === auction._id);
+  const highestBid = Math.max(
+    0,
+    ...auctions.map((a) => bidFor(a)?.amount ?? 0)
+  );
+
+  const repeats = Math.ceil(MIN_CARDS_PER_LOOP / Math.max(auctions.length, 1));
+  const loop = Array.from({ length: repeats }, () => auctions).flat();
+  const renderLoop = (copy: number) =>
+    loop.map((auction, i) => {
+      const bid = bidFor(auction);
+      return (
+        <AuctionCard
+          key={`${copy}-${i}`}
+          auction={auction}
+          bid={bid}
+          hottest={highestBid > 0 && bid?.amount === highestBid}
+        />
+      );
+    });
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <p className="text-lg md:text-xl font-medium mb-4 text-neutral-300 text-center px-2">
-        Legg inn bud på{" "}
-        <Link
-          className="underline decoration-dotted hover:text-red-400 transition-colors"
-          href="https://aba.wtf/fest"
+    <div className="flex flex-col gap-6 h-full p-5 md:p-6 bg-panel">
+      <div className="grid grid-cols-[5rem_1fr] md:grid-cols-[7rem_1fr_auto] items-center gap-x-6 gap-y-4">
+        <span className="block bg-ink-alt">
+          <GavelArt />
+        </span>
+        <div className="flex flex-col gap-1 min-w-0">
+          <span className="eyebrow">Stilleauksjon</span>
+          <h2 className="m-0 text-xl md:text-2xl font-extrabold">
+            By på unike premier
+          </h2>
+        </div>
+        <a
+          className="col-span-2 md:col-span-1 justify-self-start md:justify-self-end button button--gold no-underline whitespace-nowrap"
+          href={BID_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
-          aba.wtf/fest
-        </Link>
-      </p>
-
-      <div className={`${styles.wrapper} silent-fade-mask hidden md:flex`}>
-        <div
-          className={styles.slideshow}
-          style={{ "--duration": `${Math.max(items.length, 3) * 3}s` }}
-          aria-label="Løpende auksjonsobjekter"
-        >
-          {items}
-          {items}
-        </div>
-        <span className={styles.fade} />
+          By på aba.wtf/fest →
+        </a>
       </div>
+
+      {auctions.length === 0 ? (
+        <p className="m-0 text-sm text-text-faint">
+          Auksjonsobjektene kommer snart!
+        </p>
+      ) : (
+        <div className={styles.viewport}>
+          <div
+            className={styles.track}
+            style={{ "--duration": `${loop.length * SECONDS_PER_CARD}s` }}
+          >
+            <ul className={styles.set} aria-label="Auksjonsobjekter">
+              {renderLoop(0)}
+            </ul>
+            <ul className={styles.set} aria-hidden="true">
+              {renderLoop(1)}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

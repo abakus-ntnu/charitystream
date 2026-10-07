@@ -1,0 +1,171 @@
+/* pixel art motion, styled after the game illustrations in azart-lounge */
+
+.art g,
+.art rect,
+.art text {
+  transform-box: fill-box;
+}
+
+.beer {
+  transition: transform 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bubble {
+  opacity: 0;
+  animation: bubble-rise linear infinite;
+}
+
+@keyframes bubble-rise {
+  10% {
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(1px, -27px);
+  }
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(0, -54px);
+    opacity: 0;
+  }
+}
+
+.lever {
+  transform-origin: 50% 100%;
+}
+
+.leverPull {
+  animation: lever-pull 1.4s ease-in-out;
+}
+
+@keyframes lever-pull {
+  15%,
+  75% {
+    transform: rotate(-30deg);
+  }
+}
+
+.stream {
+  transform-origin: 50% 0;
+  transform: translateY(0) scaleY(0);
+}
+
+.streamPour {
+  animation: stream-pour 1.4s ease-in-out;
+}
+
+@keyframes stream-pour {
+  0% {
+    transform: translateY(0) scaleY(0);
+  }
+  20%,
+  75% {
+    transform: translateY(0) scaleY(1);
+  }
+  100% {
+    transform: translateY(77px) scaleY(0);
+  }
+}
+
+.foam {
+  transform-origin: 50% 100%;
+}
+
+.foamPuff {
+  animation: foam-puff 1.4s ease-out;
+}
+
+@keyframes foam-puff {
+  40% {
+    transform: scale(1.04, 1.4);
+  }
+}
+
+.splash {
+  opacity: 0;
+  animation: splash 0.8s ease-out 0.3s;
+}
+
+@keyframes splash {
+  30% {
+    opacity: 1;
+    transform: translate(var(--dx), -6px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--dx) * 2), 2px);
+  }
+}
+
+.popup {
+  opacity: 0;
+  font-family: var(--font-onest), sans-serif;
+  animation: popup 1.6s ease-out 0.2s;
+}
+
+@keyframes popup {
+  15% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+}
+
+.abaku {
+  transform-origin: 50% 100%;
+  animation: abaku-idle 2.4s ease-in-out infinite;
+}
+
+@keyframes abaku-idle {
+  50% {
+    transform: scale(1.03, 0.96);
+  }
+}
+
+.abakuHop {
+  transform-origin: 50% 100%;
+  animation: abaku-hop 0.6s ease-out 0.35s;
+}
+
+@keyframes abaku-hop {
+  15% {
+    transform: scale(1.12, 0.85);
+  }
+  50% {
+    transform: translateY(-14px) scale(0.92, 1.1);
+  }
+  85% {
+    transform: translateY(0) scale(1.1, 0.88);
+  }
+}
+
+.miniBeer {
+  transform-origin: 0% 100%;
+  transform: rotate(calc(var(--drunk) * 40deg));
+  transition: transform 1.6s ease-out;
+}
+
+.stars {
+  transform-origin: 50% 50%;
+  animation: stars 1.6s linear infinite;
+}
+
+@keyframes stars {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

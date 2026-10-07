@@ -1,0 +1,65 @@
+.mark {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: transform 0.5s ease-out;
+}
+
+.banner:is(:hover, :focus-visible) .mark {
+  transform: rotate(360deg);
+}
+
+.burst {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: burst 0.5s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+@keyframes burst {
+  from {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* recent crash points, styled like the history chips in azart-lounge */
+
+.history {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, black 85%, transparent);
+}
+
+.chip {
+  flex: none;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, currentColor 16%, var(--color-ink-alt));
+}
+
+.chipGray {
+  color: var(--color-text-dim);
+}
+
+.chipGreen {
+  color: var(--color-green-6);
+}
+
+.chipGold {
+  color: var(--color-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    transition: none;
+  }
+
+  .burst {
+    animation: none;
+  }
+}
