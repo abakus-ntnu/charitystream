@@ -17,8 +17,10 @@ export interface StretchGoal {
 }
 
 export interface Bid {
-  name: string;
-  email: string;
+  // hidden from the public until an admin chooses to show bidders
+  name?: string;
+  // only sent to admins
+  email?: string;
   item: string;
   amount: number;
 }

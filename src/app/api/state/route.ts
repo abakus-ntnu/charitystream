@@ -4,9 +4,7 @@ import { HS_MATCH_LIMIT } from "@/lib/constants";
 
 import {
   Auction,
-  AuctionOption,
   Beer,
-  Bid,
   MatchingGroup,
   SlidoView,
   StreamLink,
@@ -14,49 +12,8 @@ import {
   Vipps,
 } from "@/models/schema.js";
 
+import { getHighestBids } from "@/api/highestBids";
 import { connectMongoose } from "@/api/utils";
-
-const getHighestBids = async () => {
-  const auctionOptions = await AuctionOption.findOne({});
-  if (!auctionOptions) {
-    return [];
-  }
-  const displayNames = { name: auctionOptions.displayWinners ? 1 : undefined };
-  return Bid.aggregate([
-    {
-      $sort: {
-        amount: -1,
-      },
-    },
-    {
-      $group: {
-        _id: "$item",
-        amount: {
-          $max: "$amount",
-        },
-        name: {
-          $first: "$name",
-        },
-        email: {
-          $first: "$email",
-        },
-      },
-    },
-    {
-      $project: {
-        amount: "$amount",
-        email: "$email",
-        item: "$_id",
-        ...displayNames,
-      },
-    },
-    {
-      $sort: {
-        id: 1,
-      },
-    },
-  ]);
-};
 
 const findTopDonors = async () => {
   const a = await Vipps.aggregate([

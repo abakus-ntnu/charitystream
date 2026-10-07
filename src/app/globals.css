@@ -40,6 +40,11 @@
   a {
     color: inherit;
   }
+
+  /* react-modal: keep the page behind an open dialog still */
+  .ReactModal__Body--open {
+    overflow: hidden;
+  }
 }
 
 *::-webkit-scrollbar {

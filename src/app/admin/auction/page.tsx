@@ -12,7 +12,7 @@ import Alerts, { AlertsContextType } from "@/lib/Alerts";
 import { fetcher, fetchRequest } from "@/lib/helpers";
 import State, { StateContextType } from "@/lib/State";
 
-import { AuctionOptions, CharityState } from "@/models/types";
+import { AuctionOptions, Bid, CharityState } from "@/models/types";
 
 const Page = () => {
   const router = useRouter();
@@ -29,6 +29,13 @@ const Page = () => {
   const { data, mutate } = useSWR<CharityState>("/api/state", fetcher, {
     refreshInterval: 5000,
   });
+  // the public state leaves out who bid; admins get the winners' contact details here
+  const { data: winners } = useSWR<Bid[]>(
+    state?.token ? ["/api/admin/bids", state.token] : null,
+    ([url, password]: [string, string]) =>
+      fetchRequest(url, { password }).then((res) => res.json()),
+    { refreshInterval: 5000 }
+  );
 
   if (!state?.token) {
     redirect(`/admin`);
@@ -245,21 +252,25 @@ const Page = () => {
             <thead>
               <tr>
                 <th>Auksjonsobjekt</th>
-                <th>Vinner e-post</th>
+                <th>Vinner</th>
+                <th>E-post</th>
                 <th className="th--right">Bud</th>
               </tr>
             </thead>
             <tbody>
               {data?.auctions.map((auction) => {
-                const winner = data?.bids.find(
-                  (bid) => bid.item === auction._id
-                );
+                const winner = winners?.find((bid) => bid.item === auction._id);
                 return (
                   <tr key={auction._id}>
                     <td>{auction.description}</td>
                     <td>
-                      {winner?.email ?? (
+                      {winner?.name || (
                         <span className="text-text-faint">Ingen vinner</span>
+                      )}
+                    </td>
+                    <td>
+                      {winner?.email || (
+                        <span className="text-text-faint">-</span>
                       )}
                     </td>
                     <td className="td--right">
