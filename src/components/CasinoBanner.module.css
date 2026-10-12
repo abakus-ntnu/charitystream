@@ -8,50 +8,19 @@
   transform: rotate(360deg);
 }
 
-.burst {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: burst 0.5s cubic-bezier(0.2, 1.4, 0.4, 1);
+.trophy svg {
+  display: block;
+  animation: trophy-bob 2.4s ease-in-out infinite;
 }
 
-@keyframes burst {
-  from {
-    transform: scale(0.3);
-    opacity: 0;
+@keyframes trophy-bob {
+  50% {
+    transform: translateY(-0.2rem);
   }
 }
 
-/* recent crash points, styled like the history chips in azart-lounge */
-
-.history {
-  display: flex;
-  gap: 0.35rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, black 85%, transparent);
-}
-
-.chip {
-  flex: none;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  background: color-mix(in srgb, currentColor 16%, var(--color-ink-alt));
-}
-
-.chipGray {
-  color: var(--color-text-dim);
-}
-
-.chipGreen {
-  color: var(--color-green-6);
-}
-
-.chipGold {
-  color: var(--color-gold);
+.qr {
+  image-rendering: pixelated;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -59,7 +28,7 @@
     transition: none;
   }
 
-  .burst {
+  .trophy svg {
     animation: none;
   }
 }
