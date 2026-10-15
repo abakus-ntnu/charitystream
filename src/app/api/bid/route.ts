@@ -50,7 +50,7 @@ export async function DELETE(request: NextRequest) {
     .sort({ amount: -1 })
     .exec();
   if (highestBid) {
-    await highestBid.remove();
+    await highestBid.deleteOne();
   }
   return new Response(`Deleted highest bid for item ${body.item}`, {
     status: 200,

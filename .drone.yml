@@ -9,7 +9,7 @@ steps:
     when:
       event: [pull_request]
     commands:
-      - yarn install
+      - pnpm install
 
   - name: build
     image: node:20-alpine
@@ -18,7 +18,7 @@ steps:
     depends_on:
       - setup
     commands:
-      - yarn build
+      - pnpm build
 
   - name: prettier
     image: node:20-alpine
@@ -27,7 +27,7 @@ steps:
     depends_on:
       - setup
     commands:
-      - yarn ci-prettier
+      - pnpm ci-prettier
 
   - name: lint
     image: node:20-alpine
@@ -36,4 +36,4 @@ steps:
     depends_on:
       - setup
     commands:
-      - yarn ci-lint
+      - pnpm ci-lint

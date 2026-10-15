@@ -2,13 +2,13 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN yarn install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN yarn build
+RUN pnpm build
 
 FROM node:22-alpine AS runner
 

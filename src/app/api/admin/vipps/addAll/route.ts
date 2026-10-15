@@ -1,4 +1,4 @@
-import mongodb from "mongodb";
+import { AnyBulkWriteOperation } from "mongoose";
 
 import { Vipps } from "@/models/schema.js";
 
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
   rows.shift();
 
-  const operations: mongodb.AnyBulkWriteOperation<{
+  const operations: AnyBulkWriteOperation<{
     name: string;
     amount: number;
     message?: string;

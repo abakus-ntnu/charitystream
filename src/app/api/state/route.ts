@@ -30,7 +30,7 @@ const findTopDonors = async () => {
 export async function GET(request: NextRequest) {
   connectMongoose();
 
-  if ((await MatchingGroup.count()) == 0) {
+  if ((await MatchingGroup.countDocuments()) == 0) {
     const s = new MatchingGroup({ fraction: 0.25, max: 25000, name: "AVF" });
     s.save();
   }
