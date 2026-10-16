@@ -24,6 +24,18 @@ const TARGETS = {
 
 type Target = keyof typeof TARGETS;
 
+type SpleisStatus = {
+  webhookEnabled: boolean;
+  tokenSet: boolean;
+  lastAttemptAt?: string;
+  lastSuccessAt?: string;
+  lastMessage?: string;
+  lastError?: string | null;
+};
+
+const formatTime = (time?: string) =>
+  time ? new Date(time).toLocaleString("no-NO") : "aldri";
+
 const HoldButton = ({ onComplete }: { onComplete: () => void }) => {
   const [holdStart, setHoldStart] = useState<number>();
   const [now, setNow] = useState(0);
@@ -159,12 +171,11 @@ const Page = () => {
   const { state } = useContext(State) as StateContextType;
   const { addAlert } = useContext(Alerts) as AlertsContextType;
 
-  const { data: spleis, mutate: mutateSpleis } = useSWR<{
-    webhookEnabled: boolean;
-  }>(
+  const { data: spleis, mutate: mutateSpleis } = useSWR<SpleisStatus>(
     state?.token ? ["/api/admin/spleis", state.token] : null,
     (url: string, password: string) =>
-      fetchRequest(url, { password }).then((res) => res.json())
+      fetchRequest(url, { password }).then((res) => res.json()),
+    { refreshInterval: (data) => (data?.webhookEnabled ? 0 : 15_000) }
   );
 
   useEffect(() => {
@@ -182,7 +193,7 @@ const Page = () => {
       addAlert,
     });
     if (res.ok) {
-      mutateSpleis({ webhookEnabled });
+      mutateSpleis();
       addAlert(
         webhookEnabled
           ? "Spleis-donasjoner kommer nå via webhook"
@@ -215,6 +226,36 @@ const Page = () => {
             ? "Webhook er på: Spleis sender hver donasjon til oss. CSV-hentingen er av."
             : "Webhook er av: donasjoner hentes fra Spleis-CSV omtrent hvert minutt."}
         </p>
+        {spleis && !spleis.webhookEnabled && (
+          <>
+            <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+              <dt className="text-text-dim">Token</dt>
+              <dd className={`m-0 ${spleis.tokenSet ? "" : "text-red-5"}`}>
+                {spleis.tokenSet ? "Satt" : "Mangler SPLEIS_USER_TOKEN"}
+              </dd>
+              <dt className="text-text-dim">Siste forsøk</dt>
+              <dd className={`m-0 ${spleis.lastError ? "text-red-5" : ""}`}>
+                {formatTime(spleis.lastAttemptAt)}
+                {spleis.lastMessage &&
+                  ` · ${spleis.lastError ? "Feilet" : "OK"}: ${
+                    spleis.lastMessage
+                  }`}
+              </dd>
+              <dt className="text-text-dim">Siste vellykkede</dt>
+              <dd className="m-0">{formatTime(spleis.lastSuccessAt)}</dd>
+            </dl>
+            {spleis.lastError && (
+              <details>
+                <summary className="cursor-pointer text-sm text-text-dim">
+                  Vis feilmelding
+                </summary>
+                <pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap break-all bg-ink-alt p-3 text-xs font-mono">
+                  {spleis.lastError}
+                </pre>
+              </details>
+            )}
+          </>
+        )}
         <Button
           variant={spleis?.webhookEnabled ? "gold" : "secondary"}
           disabled={spleis == null}

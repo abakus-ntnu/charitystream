@@ -11,8 +11,15 @@ export async function GET(request: NextRequest) {
     return unauthorized();
   }
   connectMongoose();
-  const sync = await SpleisSync.findById("spleis");
-  return NextResponse.json({ webhookEnabled: !!sync?.webhookEnabled });
+  const sync = await SpleisSync.findById(
+    "spleis",
+    "-_id webhookEnabled lastAttemptAt lastSuccessAt lastMessage lastError"
+  ).lean();
+  return NextResponse.json({
+    ...sync,
+    webhookEnabled: !!sync?.webhookEnabled,
+    tokenSet: !!process.env.SPLEIS_USER_TOKEN,
+  });
 }
 
 export async function POST(request: NextRequest) {
