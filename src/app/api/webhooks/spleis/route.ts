@@ -1,20 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createHash, timingSafeEqual } from "node:crypto";
 
-import { Vipps } from "@/models/schema.js";
+import { SpleisSync, Vipps } from "@/models/schema.js";
 
-import { connectMongoose } from "@/api/utils";
-
-const sha256 = (value: string) => createHash("sha256").update(value).digest();
-
-const secretIsValid = (secret: string | null) => {
-  const expected = process.env.SPLEIS_WEBHOOK_SECRET;
-  if (!expected || !secret) return false;
-  return timingSafeEqual(sha256(secret), sha256(expected));
-};
+import { connectMongoose, secretMatches } from "@/api/utils";
 
 export async function POST(request: NextRequest) {
-  if (!secretIsValid(request.nextUrl.searchParams.get("secret"))) {
+  if (
+    !secretMatches(
+      request.nextUrl.searchParams.get("secret"),
+      process.env.SPLEIS_WEBHOOK_SECRET
+    )
+  ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -30,6 +26,9 @@ export async function POST(request: NextRequest) {
   }
 
   connectMongoose();
+  if (!(await SpleisSync.exists({ _id: "spleis", webhookEnabled: true }))) {
+    return NextResponse.json({ ignored: true });
+  }
   await Vipps.init();
 
   try {

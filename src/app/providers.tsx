@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import Modal from "react-modal";
 
 import { AlertsProvider } from "@/lib/Alerts";
 import { StateProvider } from "@/lib/State";
@@ -10,6 +11,11 @@ type Alert = { text: string; color: string };
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [state, setState] = useState<{ token: string | null }>({ token: null });
+
+  // Hide the rest of the app from screen readers while a dialog is open
+  useEffect(() => {
+    Modal.setAppElement("#app-root");
+  }, []);
 
   useEffect(() => {
     try {

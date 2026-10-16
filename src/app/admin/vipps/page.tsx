@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useContext, useState } from "react";
-import { redirect } from "next/navigation";
 
 import Section from "@/components/admin/Section";
 import Button from "@/components/Button";
@@ -17,10 +16,6 @@ const Page = () => {
 
   const { state } = useContext(State) as StateContextType;
   const { addAlert } = useContext(Alerts) as AlertsContextType;
-
-  if (!state?.token) {
-    redirect(`/admin`);
-  }
 
   const addOneVipps = async (
     name: string,

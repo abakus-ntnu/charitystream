@@ -15,6 +15,7 @@ export const useCountUp = (target: number) => {
     if (target === previous.current) return;
     const increased = target > previous.current;
     previous.current = target;
+    if (increased) setBumps((b) => b + 1);
 
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -22,18 +23,16 @@ export const useCountUp = (target: number) => {
     if (!increased || reduceMotion) {
       shownRef.current = target;
       setShown(target);
-      if (increased) setBumps((b) => b + 1);
       return;
     }
 
-    setBumps((b) => b + 1);
     const from = shownRef.current;
     const start = performance.now();
     let frame = 0;
     const step = (now: number) => {
       const f = Math.min((now - start) / COUNT_UP_MS, 1);
       shownRef.current = from + (target - from) * (1 - (1 - f) ** 3);
-      setShown(shownRef.current);
+      setShown(Math.round(shownRef.current));
       if (f < 1) frame = requestAnimationFrame(step);
     };
     frame = requestAnimationFrame(step);

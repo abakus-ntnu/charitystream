@@ -39,7 +39,7 @@ export default function Admin() {
         <Field label="Dagens passord" htmlFor="password">
           <input
             id="password"
-            type="text"
+            type="password"
             name="password"
             placeholder="passord"
             className="input"

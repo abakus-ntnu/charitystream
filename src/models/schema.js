@@ -9,6 +9,7 @@ delete mongoose.connection.models["Bid"];
 delete mongoose.connection.models["AuctionOption"];
 delete mongoose.connection.models["Beer"];
 delete mongoose.connection.models["MatchingGroup"];
+delete mongoose.connection.models["SpleisSync"];
 
 const AuctionSchema = new mongoose.Schema(
   {
@@ -99,3 +100,13 @@ export const MatchingGroup = mongoose.model(
   "MatchingGroup",
   MatchingGroupSchema
 );
+
+const SpleisSyncSchema = new mongoose.Schema(
+  {
+    _id: String,
+    nextSyncAt: Date,
+    webhookEnabled: Boolean,
+  },
+  { autoCreate: true }
+);
+export const SpleisSync = mongoose.model("SpleisSync", SpleisSyncSchema);

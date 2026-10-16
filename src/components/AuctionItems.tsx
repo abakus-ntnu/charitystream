@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Modal from "react-modal";
+import React, { useState } from "react";
 import { KeyedMutator } from "swr";
 
 import BidDialog from "@/components/BidDialog";
@@ -89,11 +88,6 @@ const AuctionItems = ({
   bids: Bid[];
 }) => {
   const [active, setActive] = useState<Auction | null>(null);
-
-  // Hide the rest of the app from screen readers while the dialog is open
-  useEffect(() => {
-    Modal.setAppElement("#app-root");
-  }, []);
 
   const bidFor = (auction: Auction) =>
     bids.find((bid) => bid.item === auction._id);

@@ -84,10 +84,9 @@ type Props = { beerData: BeerData | null };
 const BeerCounter = ({ beerData }: Props) => {
   const spent = beerData?.spent ?? 0;
   const hsMatch = beerData?.hsMatch ?? 0;
-  const matchLimit = beerData?.matchLimit ?? HS_MATCH_LIMIT;
 
   // the glass fills up as HS's match approaches its limit
-  const fill = matchLimit > 0 ? Math.min(hsMatch / matchLimit, 1) : 0;
+  const fill = Math.min(hsMatch / HS_MATCH_LIMIT, 1);
   const full = fill >= 1;
 
   const clipId = `beer-clip-${useId().replace(/:/g, "")}`;
@@ -116,9 +115,7 @@ const BeerCounter = ({ beerData }: Props) => {
 
   return (
     <div className="flex flex-col h-full gap-6">
-      <div className="flex items-baseline justify-between gap-4">
-        {full && <div className="eyebrow text-gold">Maks nådd!</div>}
-      </div>
+      {full && <div className="eyebrow text-gold">Maks nådd!</div>}
 
       <div className="flex-1 flex items-center justify-center">
         <svg

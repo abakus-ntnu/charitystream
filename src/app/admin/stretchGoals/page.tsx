@@ -1,7 +1,6 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { redirect } from "next/navigation";
 import useSWR from "swr";
 
 import Section from "@/components/admin/Section";
@@ -9,7 +8,7 @@ import Button from "@/components/Button";
 import Field from "@/components/Field";
 
 import Alerts, { AlertsContextType } from "@/lib/Alerts";
-import { fetcher, fetchRequest } from "@/lib/helpers";
+import { fetcher, fetchRequest, formatCurrency } from "@/lib/helpers";
 import State, { StateContextType } from "@/lib/State";
 
 import { CharityState } from "@/models/types";
@@ -25,10 +24,6 @@ const Page = () => {
   const [description, setDescription] = useState("");
   const [goal, setGoal] = useState(0);
   const [selectedGoalId, setSelectedSelectedGoalId] = useState("");
-
-  if (!state?.token) {
-    redirect(`/admin`);
-  }
 
   const onAddClick = async (e) => {
     e.preventDefault();
@@ -119,7 +114,8 @@ const Page = () => {
             {data?.stretchGoals.map((stretchGoal) => {
               return (
                 <option value={stretchGoal._id} key={stretchGoal._id}>
-                  {stretchGoal.goal}kr &nbsp; - &nbsp; {stretchGoal.description}
+                  {formatCurrency(stretchGoal.goal)} &nbsp; - &nbsp;{" "}
+                  {stretchGoal.description}
                 </option>
               );
             })}
