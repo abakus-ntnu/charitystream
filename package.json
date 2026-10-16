@@ -2,13 +2,17 @@
   "name": "abakus-charitystream",
   "version": "1.0.0",
   "license": "MIT",
+  "packageManager": "pnpm@10.12.2",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --fix",
+    "lint": "eslint . --fix",
     "prettier": "prettier '**/*.{js,ts,tsx,css,md}' --write",
-    "ci-lint": "next lint",
+    "ci-lint": "eslint .",
     "ci-prettier": "prettier '**/*.{js,ts,tsx,css,md}' --check"
   },
   "dependencies": {
