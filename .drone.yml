@@ -5,14 +5,14 @@ name: default
 
 steps:
   - name: setup
-    image: node:20-alpine
+    image: node:26-alpine
     when:
       event: [pull_request]
     commands:
       - pnpm install
 
   - name: build
-    image: node:20-alpine
+    image: node:26-alpine
     when:
       event: [pull_request]
     depends_on:
@@ -21,7 +21,7 @@ steps:
       - pnpm build
 
   - name: prettier
-    image: node:20-alpine
+    image: node:26-alpine
     when:
       event: [pull_request]
     depends_on:
@@ -30,7 +30,7 @@ steps:
       - pnpm ci-prettier
 
   - name: lint
-    image: node:20-alpine
+    image: node:26-alpine
     when:
       event: [pull_request]
     depends_on:
