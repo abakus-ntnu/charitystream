@@ -170,14 +170,14 @@ const BidDialog = ({ auction, bid, onClose, onBidPlaced }: Props) => {
                 {auction.description}
               </h2>
             </div>
-            <button
-              type="button"
-              className="button button--ghost -mr-3 -mt-2 px-3 py-1 text-2xl leading-none"
+            <Button
+              variant="ghost"
+              className="-mr-3 -mt-2 px-3 py-1 text-2xl leading-none"
               onClick={onClose}
               aria-label="Lukk"
             >
               ×
-            </button>
+            </Button>
           </div>
 
           <div className="flex items-end justify-between gap-4 p-4 bg-ink-alt">
@@ -204,11 +204,11 @@ const BidDialog = ({ auction, bid, onClose, onBidPlaced }: Props) => {
           <Field label="Ditt bud" htmlFor="amount" error={errors.amount}>
             <div className="flex flex-wrap gap-2">
               {quickBids(min).map((quick) => (
-                <button
+                <Button
                   key={quick}
-                  type="button"
+                  variant="secondary"
                   aria-pressed={Number(amount) === quick}
-                  className={`button button--secondary flex-1 px-3 py-2 tabular-nums ${
+                  className={`flex-1 px-3 py-2 tabular-nums ${
                     Number(amount) === quick
                       ? "text-gold shadow-[inset_0_0_0_2px_var(--color-gold)]"
                       : ""
@@ -216,7 +216,7 @@ const BidDialog = ({ auction, bid, onClose, onBidPlaced }: Props) => {
                   onClick={() => setAmount(String(quick))}
                 >
                   {formatCurrency(quick)}
-                </button>
+                </Button>
               ))}
             </div>
             <div className="relative">

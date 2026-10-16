@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { createHash, timingSafeEqual } from "node:crypto";
 
 const protocol = process.env.DATABASE_PROTOCOL;
 const hostname = process.env.DATABASE_HOSTNAME;
@@ -14,6 +15,13 @@ export const connectMongoose = () => {
   });
 };
 
-export const authIsValid = (password: string) => {
-  return password === process.env.POST_PASSWORD;
-};
+const sha256 = (value: string) => createHash("sha256").update(value).digest();
+
+export const secretMatches = (value: unknown, expected: string | undefined) =>
+  typeof value === "string" &&
+  !!value &&
+  !!expected &&
+  timingSafeEqual(sha256(value), sha256(expected));
+
+export const authIsValid = (password: string) =>
+  secretMatches(password, process.env.POST_PASSWORD);

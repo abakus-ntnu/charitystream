@@ -28,9 +28,8 @@ export interface Bid {
 export interface BeerData {
   // total spent in the bar
   spent: number;
-  // what HS adds to the donations: the amount spent, capped at matchLimit
+  // what HS adds to the donations: the amount spent, capped at HS_MATCH_LIMIT
   hsMatch: number;
-  matchLimit: number;
 }
 
 export interface AuctionOptions {
@@ -48,11 +47,4 @@ export interface CharityState {
   topDonors: Donation[];
   totalAmount: number;
   vipps: Donation[];
-  matchingGroup: MatchingGroup;
-}
-
-export interface MatchingGroup {
-  name: string;
-  fraction: number;
-  max: number;
 }

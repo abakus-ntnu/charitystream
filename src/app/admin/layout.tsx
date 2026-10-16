@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 import Alerts, { Alert, AlertsContextType } from "@/lib/Alerts";
 import State, { StateContextType } from "@/lib/State";
@@ -12,6 +12,7 @@ const links = [
   { href: "/admin/beer", page: "Baren" },
   { href: "/admin/auction", page: "Stilleauksjon" },
   { href: "/admin/stretchGoals", page: "Stretch Goals" },
+  { href: "/admin/nuke", page: "Nuke" },
   { href: "/", page: "Forlat adminsiden" },
 ];
 
@@ -20,6 +21,10 @@ const Layout = ({ children }) => {
   const { state } = useContext(State) as StateContextType;
 
   const pathname = usePathname();
+
+  if (!state?.token && pathname !== "/admin") {
+    redirect(`/admin`);
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

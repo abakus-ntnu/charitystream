@@ -97,17 +97,6 @@
     letter-spacing: 0.04em;
   }
 
-  .back-link {
-    color: var(--color-red-5);
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: none;
-  }
-
-  .back-link:hover {
-    text-decoration: underline;
-  }
-
   .button {
     font-family: inherit;
     font-weight: 600;

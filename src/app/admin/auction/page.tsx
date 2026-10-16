@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useContext, useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
 import Section from "@/components/admin/Section";
@@ -9,7 +9,7 @@ import Button from "@/components/Button";
 import Field from "@/components/Field";
 
 import Alerts, { AlertsContextType } from "@/lib/Alerts";
-import { fetcher, fetchRequest } from "@/lib/helpers";
+import { fetcher, fetchRequest, formatCurrency } from "@/lib/helpers";
 import State, { StateContextType } from "@/lib/State";
 
 import { AuctionOptions, Bid, CharityState } from "@/models/types";
@@ -36,10 +36,6 @@ const Page = () => {
       fetchRequest(url, { password }).then((res) => res.json()),
     { refreshInterval: 5000 }
   );
-
-  if (!state?.token) {
-    redirect(`/admin`);
-  }
 
   useEffect(() => {
     if (!state?.token) {
@@ -235,7 +231,8 @@ const Page = () => {
               const auction = data?.auctions.find((a) => a._id === bid.item);
               return (
                 <option value={auction?._id} key={auction?._id ?? bid.item}>
-                  {bid.amount}kr &nbsp; - &nbsp; {auction?.description ?? "-"}
+                  {formatCurrency(bid.amount)} &nbsp; - &nbsp;{" "}
+                  {auction?.description ?? "-"}
                 </option>
               );
             })}
@@ -276,7 +273,7 @@ const Page = () => {
                     <td className="td--right">
                       {winner?.amount ? (
                         <span className="font-semibold text-gold">
-                          {winner.amount} kr
+                          {formatCurrency(winner.amount)}
                         </span>
                       ) : (
                         <span className="text-text-faint">-</span>
