@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { formatCurrency } from "@/lib/helpers";
 
 import { Donation } from "@/models/types";
@@ -11,23 +9,14 @@ type Props = {
 
 const DonationCard = (props: Props) => {
   return (
-    <li className="group flex items-start gap-3 rounded-lg p-3 pr-4 border border-neutral-700/60 bg-neutral-800/40 transition-colors shadow-sm">
-      <Image
-        src="https://i.imgur.com/RVgB3E6.png"
-        className="mt-1 flex-shrink-0 opacity-90 transition-transform"
-        alt="Vipps logo"
-        width={25}
-        height={25}
-      />
-      <div className="flex flex-col w-full min-w-0">
-        <div className="flex justify-between w-full text-sm md:text-base">
-          <span className="font-medium truncate max-w-[50%]" title={props.name}>
-            {props.name}
-          </span>
-          <span className="font-semibold text-red-400 tabular-nums ml-4">
-            {formatCurrency(props.amount)}
-          </span>
-        </div>
+    <li className="flex items-center gap-3 py-2.5 border-b border-border-dim last:border-b-0 animate-pop-in">
+      <div className="flex justify-between w-full min-w-0 text-sm md:text-base">
+        <span className="font-medium truncate" title={props.name}>
+          {props.name}
+        </span>
+        <span className="font-bold text-green-6 tabular-nums ml-4 whitespace-nowrap">
+          {formatCurrency(props.amount)}
+        </span>
       </div>
     </li>
   );
@@ -36,28 +25,19 @@ const DonationCard = (props: Props) => {
 const TopDonation = ({ topDonor }: { topDonor: Donation }) => {
   if (!topDonor) return null;
   return (
-    <div className="mb-4">
-      <div className="text-sm uppercase tracking-wide text-neutral-400 mb-1 font-semibold">
-        Største vippser
-      </div>
-      <div className="flex items-center rounded-lg p-3 pl-2 border border-emerald-500/50 bg-emerald-600/20">
-        <Image
-          src="https://i.imgur.com/RVgB3E6.png"
-          className="m-2 mr-3"
-          width={28}
-          height={28}
-          alt="Vipps logo"
-        />
-        <div className="flex justify-between w-full items-center text-sm md:text-base">
-          <span
-            className="font-semibold truncate max-w-[55%]"
-            title={topDonor.name}
-          >
-            {topDonor.name}
-          </span>
-          <span className="font-bold text-emerald-300 ml-4 tabular-nums">
-            {formatCurrency(topDonor.amount)}
-          </span>
+    <div className="mb-6">
+      <div className="eyebrow mb-2">Største vippser</div>
+      <div className="flex items-stretch gap-4 bg-ink-alt">
+        <div className="w-2 flex-shrink-0 bg-gold" />
+        <div className="flex items-center gap-3 py-3 pr-4 w-full min-w-0">
+          <div className="flex justify-between items-baseline w-full min-w-0">
+            <span className="font-bold text-lg truncate" title={topDonor.name}>
+              {topDonor.name}
+            </span>
+            <span className="font-extrabold text-xl text-gold ml-4 tabular-nums whitespace-nowrap">
+              {formatCurrency(topDonor.amount)}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -76,11 +56,9 @@ const Donations = ({
   return (
     <div className="flex flex-col h-full max-w-full">
       <TopDonation topDonor={topDonor} />
-      <div className="text-sm uppercase tracking-wide text-neutral-400 mb-1 font-semibold">
-        Siste transaksjoner
-      </div>
+      <div className="eyebrow mb-1">Siste transaksjoner</div>
       <ol
-        className="donation-grid flex-1 overflow-y-auto"
+        className="flex flex-col flex-1 overflow-y-auto"
         aria-label="Nyeste Vipps-donasjoner"
       >
         {vipps.map((donation) => (
@@ -92,7 +70,7 @@ const Donations = ({
         ))}
       </ol>
       {donations.length === 0 && (
-        <p className="text-center text-sm mt-4 opacity-70">
+        <p className="text-sm mt-4 text-text-faint">
           Ingen Vipps-donasjoner er registrert enda! :(
         </p>
       )}

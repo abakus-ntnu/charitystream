@@ -1,7 +1,6 @@
 import React from "react";
 
-const base =
-  "rounded-xl border shadow-md p-4 relative overflow-hidden bg-bg-card border-border";
+const base = "p-5 relative overflow-hidden bg-panel";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;

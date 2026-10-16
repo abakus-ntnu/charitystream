@@ -2,14 +2,14 @@
 
 import { FormEvent, useContext, useState } from "react";
 import { redirect } from "next/navigation";
-import { Readable } from "stream";
-import * as XLSX from "xlsx";
+
+import Section from "@/components/admin/Section";
+import Button from "@/components/Button";
+import Field from "@/components/Field";
 
 import Alerts, { AlertsContextType } from "@/lib/Alerts";
 import { fetchRequest } from "@/lib/helpers";
 import State, { StateContextType } from "@/lib/State";
-
-XLSX.stream.set_readable(Readable);
 
 const Page = () => {
   const [name, setName] = useState<null | string>();
@@ -54,190 +54,37 @@ const Page = () => {
     }
   };
 
-  const addAllVipps = async (file: HTMLInputElement) => {
-    const fileList = file.files;
-    if (!fileList || fileList.length === 0) {
-      addAlert && addAlert("Ingen fil valgt", "red");
-      return;
-    }
-    const vippsFile = fileList[0];
-
-    if (vippsFile.name.toLowerCase().endsWith(".csv")) {
-      const reader = new FileReader();
-
-      reader.onload = async (e) => {
-        const content = e?.target && (e.target as any).result;
-        if (!content) {
-          addAlert && addAlert("Kunne ikke lese fil", "red");
-          return;
-        }
-        const res = await fetchRequest("/api/admin/vipps/addAll", {
-          method: "POST",
-          password: state.token ?? undefined,
-          body: content,
-          addAlert,
-        });
-        if (res.ok) {
-          addAlert && addAlert("Success", "green");
-        }
-      };
-      reader.readAsText(vippsFile);
-    } else if (vippsFile.name.toLowerCase().endsWith(".xlsx")) {
-      var reader = new FileReader();
-      reader.onload = async (e) => {
-        const resBuf = e?.target && (e.target as any).result;
-        if (!resBuf) {
-          addAlert && addAlert("Kunne ikke lese fil", "red");
-          return;
-        }
-        const wb = XLSX.read(resBuf);
-        const ws = wb.Sheets[wb.SheetNames[0]];
-
-        ws["!merges"] = [];
-
-        // Data has incorrect !ref-format, so we need to fix it manually
-        // https://docs.sheetjs.com/docs/miscellany/errors#worksheet-only-includes-one-row-of-data
-        function update_sheet_range(ws) {
-          var range = { s: { r: Infinity, c: Infinity }, e: { r: 0, c: 0 } };
-          Object.keys(ws)
-            .filter(function (x) {
-              return x.charAt(0) != "!";
-            })
-            .map(XLSX.utils.decode_cell)
-            .forEach(function (x) {
-              range.s.c = Math.min(range.s.c, x.c);
-              range.s.r = Math.min(range.s.r, x.r);
-              range.e.c = Math.max(range.e.c, x.c);
-              range.e.r = Math.max(range.e.r, x.r);
-            });
-          ws["!ref"] = XLSX.utils.encode_range(range);
-        }
-
-        update_sheet_range(ws);
-
-        let string = XLSX.utils.sheet_to_csv(ws);
-
-        string = string.slice(
-          string.indexOf("\n", string.indexOf("Salgsdato,"))
-        );
-
-        const res = await fetchRequest("/api/admin/vipps/addAll", {
-          method: "POST",
-          password: state.token ?? undefined,
-          body: string,
-        });
-        if (res.ok) {
-          addAlert && addAlert("Success", "green");
-        }
-      };
-
-      reader.readAsArrayBuffer(vippsFile);
-    } else {
-      addAlert && addAlert("Couln't parse file", "red");
-    }
-  };
-
-  const addAll = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const file = (e.currentTarget as any).file as HTMLInputElement;
-    addAllVipps(file);
-  };
-
   return (
     <>
-      <div className="w-full p-2 sm:px-10 sm:py-6">
-        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900">
-          Legg til én donasjon:
-        </h1>
-        <div className="w-full">
-          <div className="mt-5 w-full">
-            <form onSubmit={addOne}>
-              <label
-                htmlFor="name"
-                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-              >
-                Navn
-              </label>
-              <input
-                id="name"
-                type="text"
-                name="name"
-                placeholder="navn"
-                className="block w-full py-3 px-1 mt-2 mb-4
-                  text-gray-800 appearance-none
-                  border-b-2 border-gray-100
-                  focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                required
-                value={name ?? ""}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <label
-                htmlFor="amount"
-                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-              >
-                Mengde
-              </label>
-              <input
-                id="amount"
-                type="number"
-                name="amount"
-                placeholder="100kr"
-                className="block w-full py-3 px-1 mt-2 mb-4
-                    text-gray-800 appearance-none
-                    border-b-2 border-gray-100
-                    focus:text-gray-700 focus:outline-none focus:border-gray-200"
-                required
-                value={amount ?? ""}
-                onChange={(e) => setAmount(Number(e.target.value))}
-              />
-
-              <button
-                type="submit"
-                className="w-full py-3 bg-gray-800 rounded-sm
-                  font-medium text-white uppercase
-                  focus:outline-none hover:bg-gray-700 hover:shadow-none"
-              >
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full p-2 sm:px-10 sm:py-6 mt-10">
-        <h1 className="font-bold sm:text-center text-2xl sm:text-3xl text-gray-900">
-          Oppdater alle donasjoner:
-        </h1>
-        <div className="w-full">
-          <div className="mt-5 w-full">
-            <form onSubmit={addAll}>
-              <label
-                htmlFor="amount"
-                className="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-              >
-                Velg fil
-              </label>
-              <input
-                type="file"
-                id="file"
-                name="file"
-                className="block w-full text-sm text-gray-600 border border-gray-300 cursor-pointer bg-gray-50  focus:outline-none"
-                accept=".csv, .xlsx"
-                required
-              />
-              <button
-                type="submit"
-                className="w-full py-3 mt-4 bg-gray-800 rounded-sm
-                    font-medium text-white uppercase
-                    focus:outline-none hover:bg-gray-700 hover:shadow-none"
-              >
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <Section title="Legg til én donasjon">
+        <form className="flex flex-col gap-4" onSubmit={addOne}>
+          <Field label="Navn" htmlFor="name">
+            <input
+              id="name"
+              type="text"
+              name="name"
+              placeholder="navn"
+              className="input"
+              required
+              value={name ?? ""}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Field>
+          <Field label="Mengde" htmlFor="amount">
+            <input
+              id="amount"
+              type="number"
+              name="amount"
+              placeholder="100kr"
+              className="input tabular-nums"
+              required
+              value={amount ?? ""}
+              onChange={(e) => setAmount(Number(e.target.value))}
+            />
+          </Field>
+          <Button type="submit">Legg til donasjon</Button>
+        </form>
+      </Section>
     </>
   );
 };

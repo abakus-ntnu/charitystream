@@ -3,13 +3,13 @@
 ## Setup
 
 ```sh
-$ yarn # Install
-$ yarn dev # Run dev server
+$ pnpm i # Install
+$ pnpm dev # Run dev server
 ```
 
 This project uses `prettier` and `eslint`.
 
 ```sh
-$ yarn lint # Check linting
-$ yarn prettier # Format all files with prettier
+$ pnpm lint # Check linting
+$ pnpm prettier # Format all files with prettier
 ```

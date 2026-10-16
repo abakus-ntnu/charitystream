@@ -10,13 +10,11 @@ import { fetcher } from "@/lib/helpers";
 import { CharityState } from "@/models/types";
 
 const NavBar = () => (
-  <div className="w-full p-10">
-    <Link href="/">
-      <button className="mb-2 mt-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
-        ← Tilbake til hovedsiden
-      </button>
+  <nav className="w-full max-w-content mx-auto px-4 md:px-8 py-6 flex flex-wrap items-center justify-between gap-4">
+    <Link href="/" className="logo">
+      Abakus<span className="logo__accent">Veldedighetsfest</span>
     </Link>
-  </div>
+  </nav>
 );
 
 export default function AuctionItemsPage() {
@@ -24,13 +22,23 @@ export default function AuctionItemsPage() {
     refreshInterval: 5000,
   });
 
-  if (error) return <div>Failed to load</div>;
-  if (!data) return <div>Loading...</div>;
+  if (error)
+    return <div className="p-8 text-center eyebrow">Kunne ikke laste data</div>;
+  if (!data)
+    return (
+      <div className="p-8 text-center eyebrow animate-pulse">Laster...</div>
+    );
 
   return (
-    <div>
+    <div className="min-h-screen">
       <NavBar />
-      <AuctionItems mutate={mutate} auctions={data.auctions} bids={data.bids} />
+      <main className="w-full max-w-content mx-auto px-4 md:px-8 pb-10">
+        <AuctionItems
+          mutate={mutate}
+          auctions={data.auctions}
+          bids={data.bids}
+        />
+      </main>
     </div>
   );
 }

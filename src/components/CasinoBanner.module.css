@@ -1,0 +1,34 @@
+.mark {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: transform 0.5s ease-out;
+}
+
+.banner:is(:hover, :focus-visible) .mark {
+  transform: rotate(360deg);
+}
+
+.trophy svg {
+  display: block;
+  animation: trophy-bob 2.4s ease-in-out infinite;
+}
+
+@keyframes trophy-bob {
+  50% {
+    transform: translateY(-0.2rem);
+  }
+}
+
+.qr {
+  image-rendering: pixelated;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    transition: none;
+  }
+
+  .trophy svg {
+    animation: none;
+  }
+}

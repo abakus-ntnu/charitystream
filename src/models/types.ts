@@ -17,16 +17,20 @@ export interface StretchGoal {
 }
 
 export interface Bid {
-  name: string;
-  email: string;
+  // hidden from the public until an admin chooses to show bidders
+  name?: string;
+  // only sent to admins
+  email?: string;
   item: string;
   amount: number;
 }
 
 export interface BeerData {
-  count: number;
-  price: number;
-  maxDonation: number;
+  // total spent in the bar
+  spent: number;
+  // what HS adds to the donations: the amount spent, capped at matchLimit
+  hsMatch: number;
+  matchLimit: number;
 }
 
 export interface AuctionOptions {

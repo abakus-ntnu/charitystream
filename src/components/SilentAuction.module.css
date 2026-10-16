@@ -1,36 +1,49 @@
-.wrapper {
-  width: 100%;
-  max-height: 225px;
+/* carousel: two identical sets slide left, so the loop is seamless */
+
+/* grows to fill the card when it sits next to the taller casino card */
+.viewport {
+  flex: 1;
   display: flex;
-  position: relative;
   overflow: hidden;
-}
-
-.wrapper .slideshow {
-  display: flex;
-  width: fit-content;
-  animation: moveSlideshow linear infinite;
-  animation-duration: var(--duration);
-}
-
-.wrapper .fade {
-  background: linear-gradient(
+  mask-image: linear-gradient(
     90deg,
-    #222222b0,
-    transparent 5%,
-    transparent 95%,
-    #222222b0
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
   );
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
 }
 
-@keyframes moveSlideshow {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
+.track {
+  display: flex;
+  width: max-content;
+  animation: slide var(--duration) linear infinite;
+}
+
+.viewport:hover .track {
+  animation-play-state: paused;
+}
+
+.set {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0 0.75rem 0 0;
+  list-style: none;
+}
+
+@keyframes slide {
+  to {
     transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+
+  .viewport {
+    overflow-x: auto;
   }
 }

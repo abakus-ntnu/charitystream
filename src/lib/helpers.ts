@@ -23,14 +23,13 @@ export const fetchRequest = async (
     body: actualBody,
   });
 
-  if (res.status !== 200) {
+  // only read the body for the alert, so callers without one can read it themselves
+  if (res.status !== 200 && addAlert) {
     const json = await res.json();
-    if (addAlert) {
-      addAlert(
-        `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
-        "red"
-      );
-    }
+    addAlert(
+      `${res.statusText}: ${json?.message || JSON.stringify(json)}`,
+      "red"
+    );
   }
 
   return res;

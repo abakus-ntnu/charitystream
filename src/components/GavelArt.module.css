@@ -1,0 +1,55 @@
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.art g {
+  transform-box: fill-box;
+}
+
+/* the gavel pivots on the end of its handle */
+.gavel {
+  transform-origin: 100% 50%;
+  transform: rotate(18deg);
+  animation: gavel-strike 2.4s ease-in-out infinite;
+}
+
+@keyframes gavel-strike {
+  0%,
+  45% {
+    transform: rotate(18deg);
+  }
+  55% {
+    transform: rotate(26deg);
+  }
+  62% {
+    transform: rotate(-14deg);
+    animation-timing-function: ease-out;
+  }
+  72%,
+  100% {
+    transform: rotate(18deg);
+  }
+}
+
+.sparks {
+  opacity: 0;
+  animation: sparks 2.4s step-end infinite;
+}
+
+@keyframes sparks {
+  62% {
+    opacity: 1;
+  }
+  67% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gavel,
+  .sparks {
+    animation: none;
+  }
+}

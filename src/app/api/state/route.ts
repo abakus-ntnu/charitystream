@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { HS_MATCH_LIMIT } from "@/lib/constants";
+
 import {
   Auction,
-  AuctionOption,
   Beer,
-  Bid,
   MatchingGroup,
   SlidoView,
   StreamLink,
@@ -12,49 +12,8 @@ import {
   Vipps,
 } from "@/models/schema.js";
 
+import { getHighestBids } from "@/api/highestBids";
 import { connectMongoose } from "@/api/utils";
-
-const getHighestBids = async () => {
-  const auctionOptions = await AuctionOption.findOne({});
-  if (!auctionOptions) {
-    return [];
-  }
-  const displayNames = { name: auctionOptions.displayWinners ? 1 : undefined };
-  return Bid.aggregate([
-    {
-      $sort: {
-        amount: -1,
-      },
-    },
-    {
-      $group: {
-        _id: "$item",
-        amount: {
-          $max: "$amount",
-        },
-        name: {
-          $first: "$name",
-        },
-        email: {
-          $first: "$email",
-        },
-      },
-    },
-    {
-      $project: {
-        amount: "$amount",
-        email: "$email",
-        item: "$_id",
-        ...displayNames,
-      },
-    },
-    {
-      $sort: {
-        id: 1,
-      },
-    },
-  ]);
-};
 
 const findTopDonors = async () => {
   const a = await Vipps.aggregate([
@@ -71,7 +30,7 @@ const findTopDonors = async () => {
 export async function GET(request: NextRequest) {
   connectMongoose();
 
-  if ((await MatchingGroup.count()) == 0) {
+  if ((await MatchingGroup.countDocuments()) == 0) {
     const s = new MatchingGroup({ fraction: 0.25, max: 25000, name: "AVF" });
     s.save();
   }
@@ -98,14 +57,13 @@ export async function GET(request: NextRequest) {
     MatchingGroup.findOne({}),
   ]);
 
-  const beerDonation =
-    beer && beer.count && beer.price ? beer.count * beer.price : 0;
-  const beerMaxDonation = beer && beer.maxDonation ? beer.maxDonation : 0;
+  const barSpent = beer?.spent ?? 0;
+  const hsMatch = Math.min(barSpent, HS_MATCH_LIMIT);
   const totalAmount =
     bids.reduce((a, b) => {
       return a + b.amount;
     }, 0) +
-    (beerDonation < beerMaxDonation ? beerDonation : beerMaxDonation) +
+    hsMatch +
     vipps.reduce((a, b) => {
       return a + b.amount;
     }, 0);
@@ -119,7 +77,7 @@ export async function GET(request: NextRequest) {
     slidoView,
     stretchGoals,
     topDonors,
-    beer,
+    beer: { spent: barSpent, hsMatch, matchLimit: HS_MATCH_LIMIT },
     matchingGroup,
   });
 }

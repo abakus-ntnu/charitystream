@@ -1,58 +1,83 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { KeyedMutator } from "swr";
 
-import Card from "@/components/Card"; // NEW: use shared Card styling
+import BidDialog from "@/components/BidDialog";
+import GavelArt from "@/components/GavelArt";
 
-import { MAX_BID_AMOUNT, MIN_BID_MODIFIER } from "@/lib/constants";
-import { fetchRequest } from "@/lib/helpers";
+import { MIN_BID_MODIFIER } from "@/lib/constants";
+import { formatCurrency } from "@/lib/helpers";
 
 import { Auction, Bid, CharityState } from "@/models/types";
+
+const TAG = "px-2 py-0.5 text-xs font-bold uppercase tracking-wide";
 
 const AuctionCard = ({
   auction,
   bid,
+  hottest,
   onClick,
 }: {
   auction: Auction;
-  bid: Bid;
+  bid?: Bid;
+  hottest: boolean;
   onClick: () => void;
 }) => {
-  const hasBid = !!bid.amount;
+  const hasBid = !!bid?.amount;
+  const min = (bid?.amount ?? 0) + MIN_BID_MODIFIER;
   return (
-    <Card
-      className={`lg:w-48 w-40 h-56 flex flex-col justify-start items-stretch gap-2 lg:m-5 m-2 cursor-pointer transition duration-200 group hover:-translate-y-1 hover:shadow-lg ${
-        hasBid ? "border-border" : ""
-      }`}
-      onClick={onClick}
-    >
-      <div className="flex items-baseline justify-between">
-        <div className="text-2xl font-extrabold tracking-tight drop-shadow-sm">
-          {bid.amount ? `${bid.amount},-` : "—"}
+    <li className="flex">
+      <button
+        type="button"
+        className="group relative w-full min-h-64 flex flex-col gap-4 p-5 text-left bg-panel cursor-pointer transition duration-200 hover:-translate-y-1 hover:bg-panel-hover hover:shadow-[inset_0_0_0_1px_var(--color-border)] focus-visible:bg-panel-hover focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2 motion-reduce:hover:translate-y-0"
+        onClick={onClick}
+      >
+        {hottest && <span className="absolute inset-x-0 top-0 h-1 bg-gold" />}
+        <div className="flex items-center justify-between gap-3">
+          {hottest && (
+            <span className={`${TAG} bg-gold text-ink`}>Mest budt</span>
+          )}
+          {!hasBid && (
+            <span className={`${TAG} bg-green-6/15 text-green-6`}>
+              Ingen bud ennå
+            </span>
+          )}
         </div>
-      </div>
-      <div className="h-px bg-border/60 my-1" />
-      <p className="text-sm leading-snug flex-1 text-white/90 line-clamp-4">
-        {auction.description}
-      </p>
-      {hasBid && bid.name && (
-        <div
-          className="text-xs text-white/60 mt-auto italic truncate"
-          title={`Vinner: ${bid.name}`}
-        >
-          Vinner: <span className="text-white/80 not-italic">{bid.name}</span>
+
+        <p className="m-0 flex-1 text-lg font-bold leading-snug line-clamp-3">
+          {auction.description}
+        </p>
+
+        <div className="flex flex-col gap-1">
+          <span className="eyebrow text-sm">
+            {hasBid ? "Høyeste bud" : "Startbud"}
+          </span>
+          <span
+            key={bid?.amount ?? 0}
+            className={`text-3xl font-extrabold tabular-nums leading-none origin-left ${
+              hasBid ? "text-gold animate-bump" : ""
+            }`}
+          >
+            {formatCurrency(hasBid ? bid.amount : min)}
+          </span>
+          <span className="text-xs text-text-faint truncate">
+            {bid?.name && (
+              <>
+                Leder: <span className="text-text-dim">{bid.name}</span>
+              </>
+            )}
+          </span>
         </div>
-      )}
-    </Card>
+
+        <div className="flex justify-end pt-3 border-t border-border-dim text-sm">
+          <span className="font-bold text-red-5 whitespace-nowrap transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+            By nå →
+          </span>
+        </div>
+      </button>
+    </li>
   );
 };
-
-interface FormData extends Bid {
-  error?: {
-    name?: string;
-    amount?: number | string; // widen so we can set string error text
-  };
-}
 
 const AuctionItems = ({
   mutate,
@@ -63,274 +88,59 @@ const AuctionItems = ({
   auctions: Auction[];
   bids: Bid[];
 }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [activeAuction, setActiveAuction] = useState<Auction | null>(null);
-  const [formData, setFormData] = useState<FormData>({} as FormData);
-  const [success, setSuccess] = useState("");
+  const [active, setActive] = useState<Auction | null>(null);
 
-  const getActiveBidAmount = () =>
-    activeAuction
-      ? bids.find((bid) => bid.item === activeAuction._id)?.amount ?? 0
-      : 0;
+  // Hide the rest of the app from screen readers while the dialog is open
+  useEffect(() => {
+    Modal.setAppElement("#app-root");
+  }, []);
 
-  const closeModal = () => {
-    clearError();
-    setModalOpen(false);
-    setActiveAuction(null);
-  };
-
-  const openModal = (item: Auction) => {
-    setActiveAuction(item);
-    setFormData({} as FormData);
-    setSuccess("");
-    setModalOpen(true);
-  };
-
-  const clearError = () => {
-    setFormData({ ...formData, error: undefined });
-  };
-
-  const validate = (data: FormData) => {
-    const currentPrice = getActiveBidAmount() + MIN_BID_MODIFIER;
-    clearError();
-    if (data.amount == null || isNaN(Number(data.amount))) {
-      setFormData({
-        ...data,
-        error: { ...data.error, amount: "Du må skrive inn et tall" },
-      });
-      return false;
-    }
-    if (data.amount < currentPrice) {
-      setFormData({
-        ...data,
-        error: {
-          ...data.error,
-          amount: `Budet ditt kan ikke være mindre enn ${currentPrice},- kr!`,
-        },
-      });
-      return false;
-    } else if (data.amount > MAX_BID_AMOUNT) {
-      setFormData({
-        ...data,
-        error: {
-          ...data.error,
-          amount: `Budet ditt kan ikke være større enn ${MAX_BID_AMOUNT},- kr!`,
-        },
-      });
-      return false;
-    }
-    if (!data.name || !data.name.length || data.name.length < 3) {
-      setFormData({
-        ...data,
-        error: {
-          ...data.error,
-          name: "Navnet må være lenger enn to bokstaver",
-        },
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const bid = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    if (!activeAuction) return;
-    if (validate(formData)) {
-      const res = await fetchRequest("/api/bid", {
-        method: "POST",
-        body: {
-          ...formData,
-          item: activeAuction._id,
-          description: activeAuction.description,
-        },
-      });
-
-      if (res.status == 200) {
-        setSuccess(
-          `Ditt bud på ${formData.amount} til ${activeAuction.description} ble registrert!`
-        );
-        await mutate();
-      } else {
-        setSuccess(
-          `Budet ditt gikk ikke gjennom :(\n Feilkode: ${
-            res.statusText
-          }\u00A0\n Feilmelding: ${(await res.json()).error}`
-        );
-      }
-      setActiveAuction(null);
-      clearError();
-    }
-  };
-
-  const modalStyles = {
-    content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      background: "none",
-      border: "none",
-      padding: 0,
-    },
-    overlay: {
-      backgroundColor: "rgba(20,20,20, 0.70)",
-      backdropFilter: "blur(4px)",
-    },
-  } as const;
-
-  const nextMin = Math.max(
-    Math.ceil(getActiveBidAmount() * 1.1),
-    getActiveBidAmount() + MIN_BID_MODIFIER
+  const bidFor = (auction: Auction) =>
+    bids.find((bid) => bid.item === auction._id);
+  const highestBid = Math.max(
+    0,
+    ...auctions.map((a) => bidFor(a)?.amount ?? 0)
   );
 
   return (
-    <div>
-      <div className="text-4xl text-center p-5 font-semibold text-shadow-soft">
-        Trykk på et auksjonsobjekt for å by!
-      </div>
-      <div className="flex flex-row flex-wrap justify-evenly">
-        {auctions.map((auction) => (
-          <AuctionCard
-            key={auction._id}
-            auction={auction}
-            bid={bids.find((bid) => bid.item === auction._id) ?? ({} as Bid)}
-            onClick={() => openModal(auction)}
-          />
-        ))}
-        <Modal
-          isOpen={modalOpen}
-          shouldCloseOnOverlayClick={true}
-          onRequestClose={closeModal}
-          style={modalStyles}
-          onAfterOpen={activeAuction ? undefined : closeModal}
-        >
-          <div className="w-xs sm:w-sm md:w-md lg:w-lg xl:w-lg 2xl:w-lg">
-            {activeAuction ? (
-              <form
-                className="bg-bg-card border border-border shadow-lg rounded-xl px-6 pt-6 pb-5 flex flex-col gap-4"
-                onSubmit={bid}
-              >
-                <div className="flex flex-col gap-1">
-                  <div className="text-lg font-medium text-white/70">By på</div>
-                  <div className="text-2xl text-white font-bold italic leading-tight">
-                    {activeAuction.description}
-                  </div>
-                  <p className="text-sm text-white/60">
-                    Nåværende bud:{" "}
-                    <span className="text-white/90">
-                      {getActiveBidAmount()},-
-                    </span>
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <label
-                    className="block text-white text-sm font-semibold"
-                    htmlFor="name"
-                  >
-                    Navn
-                  </label>
-                  <input
-                    className="bg-black/30 border border-border rounded px-3 py-2 text-sm w-full outline-none transition"
-                    id="name"
-                    type="text"
-                    placeholder="Ditt ekte navn"
-                    value={formData.name || ""}
-                    onChange={(e) => {
-                      setFormData({ ...formData, name: e.target.value });
-                    }}
-                  />
-                  {formData.error && formData.error.name && (
-                    <div
-                      className="mt-1 text-sm border border-border rounded px-3 py-2"
-                      role="alert"
-                    >
-                      {formData.error.name}
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <label
-                    className="block text-white text-sm font-semibold"
-                    htmlFor="email"
-                  >
-                    E-post
-                  </label>
-                  <input
-                    className="bg-black/30 border border-border focus:ring-0 rounded px-3 py-2 text-sm w-full outline-none transition"
-                    id="email"
-                    type="email"
-                    value={formData.email || ""}
-                    placeholder="ola@nordmann.no"
-                    onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value });
-                    }}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label
-                    className="block text-white text-sm font-semibold"
-                    htmlFor="amount"
-                  >
-                    Pris
-                  </label>
-                  <input
-                    className="bg-black/30 border border-border focus:border-border-accent focus:ring-0 rounded px-3 py-2 text-sm w-full outline-none transition"
-                    id="amount"
-                    type="number"
-                    step="1"
-                    min={0}
-                    placeholder={String(nextMin)}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        amount: Number(e.target.value),
-                      })
-                    }
-                  />
-                  {formData.error && formData.error.amount && (
-                    <div
-                      className="mt-1 text-sm border border-border rounded px-3 py-2"
-                      role="alert"
-                    >
-                      {formData.error.amount}
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-center justify-between gap-3 pt-2">
-                  <button
-                    className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-md transition"
-                    type="button"
-                    onClick={closeModal}
-                  >
-                    Avbryt
-                  </button>
-                  <button
-                    className="flex-1 hover:brightness-110 text-white bg-green-600 font-semibold py-2 rounded-md shadow transition"
-                    type="submit"
-                  >
-                    Send bud
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="flex flex-col justify-evenly items-center text-center bg-bg-card border border-border rounded-xl p-6 shadow-lg gap-4">
-                <p className="text-base text-white font-semibold italic whitespace-pre-line">
-                  {success}
-                </p>
-                <button
-                  className="hover:brightness-110 text-white font-semibold py-2 px-5 rounded-md shadow transition"
-                  type="button"
-                  onClick={closeModal}
-                >
-                  Lukk
-                </button>
-              </div>
-            )}
-          </div>
-        </Modal>
-      </div>
+    <div className="flex flex-col gap-8">
+      <section className="grid grid-cols-[5rem_1fr] md:grid-cols-[9rem_1fr] items-center gap-x-6 gap-y-6 p-5 md:p-8 bg-panel border-t-4 border-gold">
+        <span className="block bg-ink-alt">
+          <GavelArt />
+        </span>
+        <div className="flex flex-col gap-2 min-w-0">
+          <span className="eyebrow">Stilleauksjon</span>
+          <h1 className="m-0 text-2xl md:text-4xl font-extrabold leading-tight">
+            By på unike premier
+          </h1>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="m-0 text-xl font-extrabold">Premiene</h2>
+
+        <ul className="m-0 p-0 list-none grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-4">
+          {auctions.map((auction) => {
+            const bid = bidFor(auction);
+            return (
+              <AuctionCard
+                key={auction._id}
+                auction={auction}
+                bid={bid}
+                hottest={highestBid > 0 && bid?.amount === highestBid}
+                onClick={() => setActive(auction)}
+              />
+            );
+          })}
+        </ul>
+      </section>
+
+      <BidDialog
+        auction={active}
+        bid={active ? bidFor(active) : undefined}
+        onClose={() => setActive(null)}
+        onBidPlaced={() => mutate()}
+      />
     </div>
   );
 };

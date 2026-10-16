@@ -5,35 +5,35 @@ name: default
 
 steps:
   - name: setup
-    image: node:20-alpine
+    image: node:24-alpine
     when:
       event: [pull_request]
     commands:
-      - yarn install
+      - corepack enable && pnpm install
 
   - name: build
-    image: node:20-alpine
+    image: node:24-alpine
     when:
       event: [pull_request]
     depends_on:
       - setup
     commands:
-      - yarn build
+      - corepack enable && pnpm build
 
   - name: prettier
-    image: node:20-alpine
+    image: node:24-alpine
     when:
       event: [pull_request]
     depends_on:
       - setup
     commands:
-      - yarn ci-prettier
+      - corepack enable && pnpm ci-prettier
 
   - name: lint
-    image: node:20-alpine
+    image: node:24-alpine
     when:
       event: [pull_request]
     depends_on:
       - setup
     commands:
-      - yarn ci-lint
+      - corepack enable && pnpm ci-lint

@@ -23,6 +23,7 @@ const VippsSchema = new mongoose.Schema(
     name: { type: String, default: "" },
     amount: { type: Number, default: 0 },
     message: { type: String, default: "" },
+    spleisTransactionId: { type: String, unique: true, sparse: true },
   },
   { autoCreate: true, timestamps: true }
 );
@@ -66,9 +67,8 @@ export const Bid = mongoose.model("Bid", BidSchema);
 
 const BeerSchema = new mongoose.Schema(
   {
-    count: { type: Number, default: 0 },
-    price: { type: Number, default: 0 },
-    maxDonation: { type: Number, default: 20000 },
+    // total spent in the bar, in kr
+    spent: { type: Number, default: 0 },
   },
   { autoCreate: true }
 );
