@@ -23,6 +23,7 @@ const VippsSchema = new mongoose.Schema(
     name: { type: String, default: "" },
     amount: { type: Number, default: 0 },
     message: { type: String, default: "" },
+    spleisTransactionId: { type: String, unique: true, sparse: true },
   },
   { autoCreate: true, timestamps: true }
 );
