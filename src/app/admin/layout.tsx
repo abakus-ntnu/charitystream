@@ -12,7 +12,7 @@ const links = [
   { href: "/admin/beer", page: "Baren" },
   { href: "/admin/auction", page: "Stilleauksjon" },
   { href: "/admin/stretchGoals", page: "Stretch Goals" },
-  { href: "/admin/nuke", page: "Nuke" },
+  { href: "/admin/sysop", page: "Sysop" },
   { href: "/", page: "Forlat adminsiden" },
 ];
 

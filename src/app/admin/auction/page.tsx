@@ -32,7 +32,7 @@ const Page = () => {
   // the public state leaves out who bid; admins get the winners' contact details here
   const { data: winners } = useSWR<Bid[]>(
     state?.token ? ["/api/admin/bids", state.token] : null,
-    ([url, password]: [string, string]) =>
+    (url: string, password: string) =>
       fetchRequest(url, { password }).then((res) => res.json()),
     { refreshInterval: 5000 }
   );

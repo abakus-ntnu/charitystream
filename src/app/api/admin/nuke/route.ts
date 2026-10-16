@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { Auction, Beer, Bid, Vipps } from "@/models/schema.js";
+import { Auction, Beer, Bid, StretchGoal, Vipps } from "@/models/schema.js";
 
 import { authIsValid, connectMongoose, secretMatches } from "@/api/utils";
 
@@ -12,7 +12,12 @@ const TARGETS = {
   auctions: nukeAuctions,
   beer: () => Beer.deleteMany({}),
   all: () =>
-    Promise.all([Vipps.deleteMany({}), nukeAuctions(), Beer.deleteMany({})]),
+    Promise.all([
+      Vipps.deleteMany({}),
+      nukeAuctions(),
+      Beer.deleteMany({}),
+      StretchGoal.deleteMany({}),
+    ]),
 };
 
 export async function POST(request: NextRequest) {
