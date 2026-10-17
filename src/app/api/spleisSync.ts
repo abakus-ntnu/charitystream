@@ -17,7 +17,7 @@ const claimSync = async () => {
       {
         _id: "spleis",
         nextSyncAt: { $not: { $gt: now } },
-        webhookEnabled: { $ne: true },
+        mode: { $in: [null, "poll"] },
       },
       { nextSyncAt: new Date(now.getTime() + delay) },
       { upsert: true }
@@ -40,6 +40,35 @@ const record = (message: string, error?: string) => {
       ...(!error && { lastSuccessAt: now }),
     }
   );
+};
+
+export const importSpleisCsv = async (text: string, source: string) => {
+  const donations = parseSpleisCsv(text);
+  if (!donations) {
+    await record(`${source}: mottok ikke Spleis-CSV`, text.slice(0, 3000));
+    return null;
+  }
+  const now = new Date();
+  await Vipps.bulkWrite(
+    donations.map(({ key, name, message, amount }) => ({
+      updateOne: {
+        filter: { spleisTransactionId: key },
+        update: {
+          $setOnInsert: {
+            name,
+            message,
+            amount,
+            createdAt: now,
+            updatedAt: now,
+          },
+        },
+        upsert: true,
+      },
+    })),
+    { timestamps: false }
+  );
+  await record(`${donations.length} donasjoner i CSV (${source})`);
+  return donations.length;
 };
 
 const describeResponse = (res: Response, body: string) =>
@@ -65,8 +94,7 @@ export const syncSpleisIfDue = async () => {
       cache: "no-store",
     });
     const text = await res.text();
-    const donations = res.ok ? parseSpleisCsv(text) : null;
-    if (!donations) {
+    if (!res.ok) {
       const page = text.match(/<title>([^<]*)<\/title>/i)?.[1] ?? text;
       const message = `HTTP ${res.status}: ${page
         .replace(/\s+/g, " ")
@@ -76,29 +104,7 @@ export const syncSpleisIfDue = async () => {
       await record(message, describeResponse(res, text));
       return;
     }
-
-    if (donations.length > 0) {
-      await Vipps.bulkWrite([
-        ...donations.map(({ key, name, message, amount }) => ({
-          updateOne: {
-            filter: { spleisTransactionId: key },
-            update: { $setOnInsert: { name, message, amount } },
-            upsert: true,
-          },
-        })),
-        {
-          deleteMany: {
-            filter: {
-              spleisTransactionId: {
-                $regex: /^csv:/,
-                $nin: donations.map(({ key }) => key),
-              },
-            },
-          },
-        },
-      ]);
-    }
-    await record(`${donations.length} donasjoner i CSV`);
+    await importSpleisCsv(text, "poll");
   } catch (error) {
     await record(
       String(error),

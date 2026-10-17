@@ -49,6 +49,27 @@ const Page = () => {
     }
   };
 
+  const uploadCsv = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const file = new FormData(form).get("file");
+    if (!(file instanceof File) || !file.size) {
+      addAlert("Ingen fil valgt", "red");
+      return;
+    }
+    const res = await fetchRequest("/api/admin/spleis/csv", {
+      method: "POST",
+      password: state.token ?? undefined,
+      body: { csv: await file.text(), source: "opplastet" },
+      addAlert,
+    });
+    if (res.ok) {
+      const { count } = await res.json();
+      addAlert(`Spleis-CSV lastet opp: ${count} donasjoner`, "green");
+      form.reset();
+    }
+  };
+
   return (
     <>
       <Section title="Legg til én donasjon">
@@ -78,6 +99,29 @@ const Page = () => {
             />
           </Field>
           <Button type="submit">Legg til donasjon</Button>
+        </form>
+      </Section>
+
+      <Section title="Last opp Spleis-CSV (fallback)">
+        <p className="m-0 text-text-dim">
+          Bare hvis Poll og Script ikke fungerer. Last ned rewards-info.csv fra
+          Spleis og last den opp her. Donasjoner som allerede er lagt inn telles
+          ikke dobbelt.
+        </p>
+        <form className="flex flex-col gap-4" onSubmit={uploadCsv}>
+          <Field label="Spleis-CSV" htmlFor="file">
+            <input
+              id="file"
+              type="file"
+              name="file"
+              accept=".csv,text/csv"
+              className="input cursor-pointer py-2"
+              required
+            />
+          </Field>
+          <Button type="submit" variant="secondary">
+            Last opp
+          </Button>
         </form>
       </Section>
     </>
