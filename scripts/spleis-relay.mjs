@@ -8,6 +8,7 @@ if (!SITE_URL || !POST_PASSWORD || !SPLEIS_USER_TOKEN) {
 }
 
 const relay = async () => {
+  const fetchedAt = Date.now();
   const spleis = await fetch(CSV_URL, {
     headers: { cookie: `spleis-user-token=${SPLEIS_USER_TOKEN}` },
   });
@@ -19,7 +20,7 @@ const relay = async () => {
   const site = await fetch(new URL("/api/admin/spleis/csv", SITE_URL), {
     method: "POST",
     headers: { password: POST_PASSWORD, "content-type": "application/json" },
-    body: JSON.stringify({ csv, source: "script" }),
+    body: JSON.stringify({ csv, source: "script", fetchedAt }),
   });
   const reply = await site.text();
   if (!site.ok) throw new Error(`Site HTTP ${site.status}: ${reply}`);

@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { Auction, Beer, Bid, StretchGoal, Vipps } from "@/models/schema.js";
+import {
+  Auction,
+  Beer,
+  Bid,
+  SpleisSnapshot,
+  StretchGoal,
+  Vipps,
+} from "@/models/schema.js";
 
 import { authIsValid, connectMongoose, secretMatches } from "@/api/utils";
 
@@ -14,6 +21,7 @@ const TARGETS = {
   all: () =>
     Promise.all([
       Vipps.deleteMany({}),
+      SpleisSnapshot.deleteMany({}),
       nukeAuctions(),
       Beer.deleteMany({}),
       StretchGoal.deleteMany({}),

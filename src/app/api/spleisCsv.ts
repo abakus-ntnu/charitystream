@@ -1,5 +1,3 @@
-import { createHash } from "node:crypto";
-
 const parseCsv = (text: string) => {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -31,34 +29,42 @@ const parseCsv = (text: string) => {
   return rows;
 };
 
-export type SpleisDonation = {
-  key: string;
-  name: string;
-  message: string;
-  amount: number;
-};
-
-// Returns null when the response isn't the Spleis CSV, e.g. a login page after the cookie expired
-export const parseSpleisCsv = (text: string): SpleisDonation[] | null => {
+export const parseSpleisCsv = (text: string) => {
   const [header, ...lines] = parseCsv(text.replace(/^\uFEFF/, ""));
-  const [giver, hilsen, belop] = ["giver", "hilsen", "beløp"].map(
+  const [giver, hilsen, belop, dato] = ["giver", "hilsen", "beløp", "dato"].map(
     (column) => header?.indexOf(column) ?? -1
   );
   if (giver < 0 || hilsen < 0 || belop < 0) return null;
 
-  const seen = new Map<string, number>();
   return lines
     .filter((row) => row.length === header.length)
     .map((row) => {
-      const raw = row.join(";");
-      const count = (seen.get(raw) ?? 0) + 1;
-      seen.set(raw, count);
-      const hash = createHash("sha256").update(raw).digest("hex");
-      return {
-        key: `csv:${hash}:${count}`,
+      const donation = {
         name: row[giver].trim().slice(0, 100),
         message: row[hilsen].trim().slice(0, 500),
         amount: Number(row[belop].replace(",", ".")),
+        donatedAt: null as Date | null,
+      };
+      const [, day, month, year, hour, minute] =
+        row[dato]?.match(
+          /(\d{1,2})\.\s*([a-zæøå]{3})\D*?(\d{4})\D+(\d{1,2}):(\d{2})/i
+        ) ?? [];
+      const monthIndex = "jan feb mar apr mai jun jul aug sep okt nov des"
+        .split(" ")
+        .indexOf(month?.toLowerCase() ?? "");
+      if (monthIndex < 0) return donation;
+
+      const local = Date.UTC(+year, monthIndex, +day, +hour, +minute);
+      const offset = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Europe/Oslo",
+        timeZoneName: "shortOffset",
+      })
+        .formatToParts(local)
+        .find((part) => part.type === "timeZoneName")
+        ?.value.slice(3);
+      return {
+        ...donation,
+        donatedAt: new Date(local - Number(offset || 0) * 3_600_000),
       };
     })
     .filter(

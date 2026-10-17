@@ -6,6 +6,7 @@ import {
   Auction,
   Beer,
   SlidoView,
+  SpleisSnapshot,
   StreamLink,
   StretchGoal,
   Vipps,
@@ -15,67 +16,73 @@ import { getHighestBids } from "@/api/highestBids";
 import { syncSpleisIfDue } from "@/api/spleisSync";
 import { connectMongoose } from "@/api/utils";
 
-const findTopDonors = () =>
-  Vipps.aggregate([
+const donationStats = async () => {
+  const [stats] = await Vipps.aggregate([
     {
-      $group: {
-        _id: "$name",
-        amount: { $sum: "$amount" },
-        firstAt: { $min: "$createdAt" },
+      $unionWith: {
+        coll: SpleisSnapshot.collection.name,
+        pipeline: [
+          { $unwind: "$donations" },
+          { $replaceRoot: { newRoot: "$donations" } },
+        ],
       },
     },
-    { $sort: { amount: -1, firstAt: 1, _id: 1 } },
-    { $limit: 1 },
-    { $addFields: { name: "$_id" } },
+    {
+      $facet: {
+        latest: [{ $sort: { createdAt: -1, _id: -1 } }, { $limit: 10 }],
+        total: [{ $group: { _id: null, total: { $sum: "$amount" } } }],
+        topDonors: [
+          { $match: { name: { $nin: ["", null] } } },
+          {
+            $group: {
+              _id: "$name",
+              amount: { $sum: "$amount" },
+              firstAt: { $min: "$createdAt" },
+            },
+          },
+          { $sort: { amount: -1, firstAt: 1, _id: 1 } },
+          { $limit: 1 },
+          { $addFields: { name: "$_id" } },
+        ],
+      },
+    },
   ]);
-
-const sumVipps = async () => {
-  const [sum] = await Vipps.aggregate([
-    { $group: { _id: null, total: { $sum: "$amount" } } },
-  ]);
-  return sum?.total ?? 0;
+  return {
+    latest: stats.latest,
+    total: stats.total[0]?.total ?? 0,
+    topDonors: stats.topDonors,
+  };
 };
 
 export async function GET(request: NextRequest) {
   connectMongoose();
   after(syncSpleisIfDue);
 
-  const [
-    vipps,
-    vippsTotal,
-    streamLink,
-    slidoView,
-    stretchGoals,
-    topDonors,
-    auctions,
-    bids,
-    beer,
-  ] = await Promise.all([
-    Vipps.find().sort({ _id: -1 }).limit(10).lean(),
-    sumVipps(),
-    StreamLink.findOne().sort({ date: -1 }).limit(1),
-    SlidoView.findOne().sort({ date: -1 }).limit(1),
-    StretchGoal.find({}).sort("goal"),
-    findTopDonors(),
-    Auction.find({}),
-    getHighestBids(),
-    Beer.findOne({}),
-  ]);
+  const [donations, streamLink, slidoView, stretchGoals, auctions, bids, beer] =
+    await Promise.all([
+      donationStats(),
+      StreamLink.findOne().sort({ date: -1 }).limit(1),
+      SlidoView.findOne().sort({ date: -1 }).limit(1),
+      StretchGoal.find({}).sort("goal"),
+      Auction.find({}),
+      getHighestBids(),
+      Beer.findOne({}),
+    ]);
 
   const barSpent = beer?.spent ?? 0;
   const hsMatch = Math.min(barSpent, HS_MATCH_LIMIT);
   const totalAmount =
-    bids.reduce((a, b) => a + b.amount, 0) + hsMatch + vippsTotal;
+    bids.reduce((a, b) => a + b.amount, 0) + hsMatch + donations.total;
 
   return NextResponse.json({
     bids,
     auctions,
     totalAmount,
-    vipps: vipps.reverse(),
+    vipps: donations.latest.reverse(),
     streamLink,
     slidoView,
     stretchGoals,
-    topDonors,
+    topDonors: donations.topDonors,
     beer: { spent: barSpent, hsMatch },
   });
 }

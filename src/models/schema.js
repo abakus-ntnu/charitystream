@@ -10,6 +10,7 @@ delete mongoose.connection.models["AuctionOption"];
 delete mongoose.connection.models["Beer"];
 delete mongoose.connection.models["MatchingGroup"];
 delete mongoose.connection.models["SpleisSync"];
+delete mongoose.connection.models["SpleisSnapshot"];
 
 const AuctionSchema = new mongoose.Schema(
   {
@@ -114,3 +115,24 @@ const SpleisSyncSchema = new mongoose.Schema(
   { autoCreate: true }
 );
 export const SpleisSync = mongoose.model("SpleisSync", SpleisSyncSchema);
+
+const SpleisSnapshotSchema = new mongoose.Schema(
+  {
+    _id: String,
+    fetchedAt: Date,
+    donations: [
+      {
+        _id: String,
+        name: String,
+        message: String,
+        amount: Number,
+        createdAt: Date,
+      },
+    ],
+  },
+  { autoCreate: true }
+);
+export const SpleisSnapshot = mongoose.model(
+  "SpleisSnapshot",
+  SpleisSnapshotSchema
+);

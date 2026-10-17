@@ -41,9 +41,7 @@ export async function POST(request: NextRequest) {
     { upsert: true }
   );
   if (mode !== "webhook") {
-    await Vipps.deleteMany({
-      spleisTransactionId: { $exists: true, $not: /^csv:/ },
-    });
+    await Vipps.deleteMany({ spleisTransactionId: { $exists: true } });
   }
   return NextResponse.json({ mode });
 }
