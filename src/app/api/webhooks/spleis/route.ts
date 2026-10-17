@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   connectMongoose();
-  if (!(await SpleisSync.exists({ _id: "spleis", webhookEnabled: true }))) {
+  if (!(await SpleisSync.exists({ _id: "spleis", mode: "webhook" }))) {
     return NextResponse.json({ ignored: true });
   }
   await Vipps.init();

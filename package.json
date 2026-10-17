@@ -13,7 +13,8 @@
     "lint": "eslint . --fix",
     "prettier": "prettier '**/*.{js,ts,tsx,css,md}' --write",
     "ci-lint": "eslint .",
-    "ci-prettier": "prettier '**/*.{js,ts,tsx,css,md}' --check"
+    "ci-prettier": "prettier '**/*.{js,ts,tsx,css,md}' --check",
+    "spleis-relay": "node --env-file=.env scripts/spleis-relay.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.13",

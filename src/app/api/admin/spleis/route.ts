@@ -13,11 +13,11 @@ export async function GET(request: NextRequest) {
   connectMongoose();
   const sync = await SpleisSync.findById(
     "spleis",
-    "-_id webhookEnabled lastAttemptAt lastSuccessAt lastMessage lastError"
+    "-_id mode lastAttemptAt lastSuccessAt lastMessage lastError"
   ).lean();
   return NextResponse.json({
     ...sync,
-    webhookEnabled: !!sync?.webhookEnabled,
+    mode: sync?.mode ?? "poll",
     tokenSet: !!process.env.SPLEIS_USER_TOKEN,
   });
 }
@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
   if (!authIsValid(request.headers.get("password") || "")) {
     return unauthorized();
   }
-  const { webhookEnabled } = await request.json().catch(() => ({}));
-  if (typeof webhookEnabled !== "boolean") {
+  const { mode } = await request.json().catch(() => ({}));
+  if (!SpleisSync.schema.path("mode").options.enum.includes(mode)) {
     return NextResponse.json(
-      { message: "webhookEnabled må være true eller false" },
+      { message: "mode må være webhook, poll eller script" },
       { status: 400 }
     );
   }
@@ -37,16 +37,13 @@ export async function POST(request: NextRequest) {
   connectMongoose();
   await SpleisSync.updateOne(
     { _id: "spleis" },
-    webhookEnabled
-      ? { webhookEnabled }
-      : { webhookEnabled, $unset: { nextSyncAt: 1 } },
+    { mode, $unset: { nextSyncAt: 1 } },
     { upsert: true }
   );
-  if (!webhookEnabled) {
-    // The CSV is the full list, so webhook rows would be counted twice once it resumes
+  if (mode !== "webhook") {
     await Vipps.deleteMany({
       spleisTransactionId: { $exists: true, $not: /^csv:/ },
     });
   }
-  return NextResponse.json({ webhookEnabled });
+  return NextResponse.json({ mode });
 }

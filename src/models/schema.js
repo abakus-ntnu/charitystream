@@ -105,7 +105,7 @@ const SpleisSyncSchema = new mongoose.Schema(
   {
     _id: String,
     nextSyncAt: Date,
-    webhookEnabled: Boolean,
+    mode: { type: String, enum: ["webhook", "poll", "script"] },
     lastAttemptAt: Date,
     lastSuccessAt: Date,
     lastMessage: String,

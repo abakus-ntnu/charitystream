@@ -24,8 +24,32 @@ const TARGETS = {
 
 type Target = keyof typeof TARGETS;
 
+const MODES = {
+  webhook: {
+    label: "Webhook",
+    description: "Spleis sender hver donasjon til oss.",
+    confirm:
+      "Gjør dette bare når Spleis har bekreftet at webhooken er satt opp, ellers kommer ikke nye donasjoner inn.",
+  },
+  poll: {
+    label: "Poll",
+    description: "Serveren henter Spleis-CSV omtrent hvert minutt.",
+    confirm:
+      "Serveren henter CSV-en selv. På Vercel blokkeres dette av Cloudflare.",
+  },
+  script: {
+    label: "Script",
+    description:
+      "pnpm spleis-relay på en maskin henter Spleis-CSV og sender den hit.",
+    confirm:
+      "Serveren slutter å hente selv. Start pnpm spleis-relay på en maskin som ikke blokkeres av Cloudflare.",
+  },
+};
+
+type Mode = keyof typeof MODES;
+
 type SpleisStatus = {
-  webhookEnabled: boolean;
+  mode: Mode;
   tokenSet: boolean;
   lastAttemptAt?: string;
   lastSuccessAt?: string;
@@ -166,7 +190,7 @@ const Page = () => {
     () => setPending((p) => p && { ...p, step: p.step + 1 }),
     []
   );
-  const [confirmingToggle, setConfirmingToggle] = useState(false);
+  const [confirmingMode, setConfirmingMode] = useState<Mode>();
 
   const { state } = useContext(State) as StateContextType;
   const { addAlert } = useContext(Alerts) as AlertsContextType;
@@ -175,31 +199,24 @@ const Page = () => {
     state?.token ? ["/api/admin/spleis", state.token] : null,
     (url: string, password: string) =>
       fetchRequest(url, { password }).then((res) => res.json()),
-    { refreshInterval: (data) => (data?.webhookEnabled ? 0 : 15_000) }
+    { refreshInterval: (data) => (data?.mode === "webhook" ? 0 : 15_000) }
   );
 
   useEffect(() => {
     Modal.setAppElement("#app-root");
   }, []);
 
-  const toggleWebhook = async () => {
-    setConfirmingToggle(false);
-    if (!spleis) return;
-    const webhookEnabled = !spleis.webhookEnabled;
+  const changeMode = async (mode: Mode) => {
+    setConfirmingMode(undefined);
     const res = await fetchRequest("/api/admin/spleis", {
       method: "POST",
       password: state.token ?? undefined,
-      body: { webhookEnabled },
+      body: { mode },
       addAlert,
     });
     if (res.ok) {
       mutateSpleis();
-      addAlert(
-        webhookEnabled
-          ? "Spleis-donasjoner kommer nå via webhook"
-          : "Spleis-donasjoner hentes nå fra CSV",
-        "green"
-      );
+      addAlert(`Spleis-integrasjon: ${MODES[mode].label}`, "green");
     }
   };
 
@@ -219,20 +236,33 @@ const Page = () => {
   return (
     <>
       <Section title="Donasjoner: Integrasjon">
+        <div className="grid grid-cols-3 gap-2">
+          {(Object.keys(MODES) as Mode[]).map((mode) => (
+            <Button
+              key={mode}
+              variant={spleis?.mode === mode ? "gold" : "secondary"}
+              disabled={spleis == null}
+              aria-pressed={spleis?.mode === mode}
+              onClick={() => spleis?.mode !== mode && setConfirmingMode(mode)}
+            >
+              {MODES[mode].label}
+            </Button>
+          ))}
+        </div>
         <p className="m-0 text-text-dim">
-          {spleis == null
-            ? "Laster inn"
-            : spleis.webhookEnabled
-            ? "Webhook er på: Spleis sender hver donasjon til oss. CSV-hentingen er av."
-            : "Webhook er av: donasjoner hentes fra Spleis-CSV omtrent hvert minutt."}
+          {spleis == null ? "Laster inn" : MODES[spleis.mode].description}
         </p>
-        {spleis && !spleis.webhookEnabled && (
+        {spleis && spleis.mode !== "webhook" && (
           <>
             <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-              <dt className="text-text-dim">Token</dt>
-              <dd className={`m-0 ${spleis.tokenSet ? "" : "text-red-5"}`}>
-                {spleis.tokenSet ? "Satt" : "Mangler SPLEIS_USER_TOKEN"}
-              </dd>
+              {spleis.mode === "poll" && (
+                <>
+                  <dt className="text-text-dim">Token</dt>
+                  <dd className={`m-0 ${spleis.tokenSet ? "" : "text-red-5"}`}>
+                    {spleis.tokenSet ? "Satt" : "Mangler SPLEIS_USER_TOKEN"}
+                  </dd>
+                </>
+              )}
               <dt className="text-text-dim">Siste forsøk</dt>
               <dd className={`m-0 ${spleis.lastError ? "text-red-5" : ""}`}>
                 {formatTime(spleis.lastAttemptAt)}
@@ -256,44 +286,43 @@ const Page = () => {
             )}
           </>
         )}
-        <Button
-          variant={spleis?.webhookEnabled ? "gold" : "secondary"}
-          disabled={spleis == null}
-          onClick={() => setConfirmingToggle(true)}
-        >
-          {spleis?.webhookEnabled ? "Skru av webhook" : "Skru på webhook"}
-        </Button>
       </Section>
 
       <Modal
-        isOpen={confirmingToggle}
-        onRequestClose={() => setConfirmingToggle(false)}
-        contentLabel="Bekreft webhook-endring"
+        isOpen={!!confirmingMode}
+        onRequestClose={() => setConfirmingMode(undefined)}
+        contentLabel="Bekreft endring av integrasjon"
         overlayClassName="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm"
         className="w-full max-w-lg outline-none"
       >
-        <div className="flex flex-col gap-4 p-6 md:p-8 bg-panel border-t-4 border-gold animate-pop-in">
-          <span className="eyebrow text-gold">
-            {spleis?.webhookEnabled ? "Skru av webhook?" : "Skru på webhook?"}
-          </span>
-          <p className="m-0 text-lg font-semibold">
-            {spleis?.webhookEnabled
-              ? "Webhook-donasjonene slettes og hentes på nytt fra Spleis-CSV i løpet av et minutt."
-              : "CSV-hentingen stopper. Gjør dette bare når Spleis har bekreftet at webhooken er satt opp, ellers kommer ikke nye donasjoner inn."}
-          </p>
-          <div className="flex gap-3">
-            <Button
-              variant="secondary"
-              className="flex-1"
-              onClick={() => setConfirmingToggle(false)}
-            >
-              Avbryt
-            </Button>
-            <Button variant="gold" className="flex-1" onClick={toggleWebhook}>
-              {spleis?.webhookEnabled ? "Skru av" : "Skru på"}
-            </Button>
+        {confirmingMode && (
+          <div className="flex flex-col gap-4 p-6 md:p-8 bg-panel border-t-4 border-gold animate-pop-in">
+            <span className="eyebrow text-gold">
+              Bytt til {MODES[confirmingMode].label}?
+            </span>
+            <p className="m-0 text-lg font-semibold">
+              {MODES[confirmingMode].confirm}
+              {spleis?.mode === "webhook" &&
+                " Webhook-donasjonene slettes og hentes på nytt fra CSV."}
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="secondary"
+                className="flex-1"
+                onClick={() => setConfirmingMode(undefined)}
+              >
+                Avbryt
+              </Button>
+              <Button
+                variant="gold"
+                className="flex-1"
+                onClick={() => changeMode(confirmingMode)}
+              >
+                Bytt
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </Modal>
 
       <Section title="Nuke">
