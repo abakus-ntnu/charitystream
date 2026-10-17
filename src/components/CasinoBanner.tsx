@@ -94,7 +94,7 @@ const CrashGraph = ({
 
   return (
     <svg
-      className="block w-full h-auto"
+      className="block w-full h-auto lg:h-full"
       viewBox={`0 0 ${W} ${H}`}
       aria-hidden="true"
     >
@@ -155,13 +155,13 @@ const CrashPanel = ({ round }: { round: CrashRound }) => {
 
   return (
     <>
-      <div className="relative bg-ink-alt">
+      <div className="relative bg-ink-alt lg:flex-1 lg:min-h-0">
         <CrashGraph
           elapsed={round.elapsed}
           multiplier={round.multiplier}
           crashed={crashed}
         />
-        <div className="absolute top-3 left-[9%] md:top-4 flex flex-col gap-1">
+        <div className="absolute top-3 left-[9%] md:top-4 lg:left-1/2 lg:-translate-x-1/2 lg:items-center lg:text-center lg:whitespace-nowrap flex flex-col gap-1">
           <span
             className={`eyebrow ${
               crashed ? "text-red-5" : running ? "text-green-6" : ""
@@ -201,23 +201,29 @@ const CrashPanel = ({ round }: { round: CrashRound }) => {
 
 const QrPanel = () => (
   <>
-    <div className="flex items-center gap-4">
-      <span className={`${styles.trophy} flex-none p-3 bg-ink-alt`}>
-        <PixelSprite rows={TROPHY} palette={TROPHY_PALETTE} scale={4} />
+    <div className="flex items-center gap-4 lg:gap-3">
+      <span className={`${styles.trophy} flex-none p-3 lg:p-1.5 bg-ink-alt`}>
+        <PixelSprite
+          rows={TROPHY}
+          palette={TROPHY_PALETTE}
+          scale={4}
+          className="lg:w-9 lg:h-auto"
+        />
       </span>
-      <div className="flex flex-col gap-1 min-w-0">
-        <span className="eyebrow text-gold">Spill og vinn</span>
-        <h2 className="m-0 text-xl md:text-2xl font-extrabold leading-tight">
+      <div className="flex flex-col gap-1 lg:gap-0 min-w-0">
+        <h2 className="m-0 text-xl md:text-2xl lg:text-lg font-extrabold leading-tight">
           Vinn trofé på <span className="text-gold">abakus.no</span>
         </h2>
-        <p className="m-0 text-sm text-text-dim">…og andre flotte premier!</p>
+        <p className="m-0 text-sm lg:text-xs text-text-dim">
+          …og andre flotte premier!
+        </p>
       </div>
     </div>
 
-    <div className="flex-1 flex flex-col items-center justify-center gap-3 p-4 bg-ink-alt">
+    <div className="flex-1 flex flex-col items-center justify-center gap-3 lg:gap-2 p-4 lg:p-3 lg:min-h-0 bg-ink-alt">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        className={`${styles.qr} w-full max-w-56 h-auto`}
+        className={`${styles.qr} w-full max-w-56 h-auto lg:max-w-none lg:flex-1 lg:min-h-0 lg:object-contain`}
         src="/casino-qr.svg"
         alt="QR-kode til casino.abakus.no"
       />
@@ -267,7 +273,7 @@ const CasinoBanner = () => {
 
   return (
     <a
-      className={`${styles.banner} group flex flex-col gap-5 h-full p-5 md:p-6 bg-panel no-underline hover:bg-panel-hover focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2`}
+      className={`${styles.banner} group flex flex-col gap-5 lg:gap-3 h-full p-5 md:p-6 lg:p-4 bg-panel no-underline hover:bg-panel-hover focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2`}
       href={CASINO_URL}
       target="_blank"
       rel="noopener noreferrer"

@@ -1,19 +1,6 @@
-import PixelSprite from "@/components/PixelSprite";
-
 import { formatCurrency } from "@/lib/helpers";
 
 import { StretchGoal } from "@/models/types";
-
-const CHECK_SPRITE = [
-  "......K",
-  ".....KK",
-  "K...KK.",
-  "KK.KK..",
-  ".KKK...",
-  "..K....",
-];
-
-const CHECK_PALETTE = { K: "#111111" };
 
 const Checkbox = ({ reached, next }: { reached: boolean; next: boolean }) => (
   <span
@@ -21,12 +8,21 @@ const Checkbox = ({ reached, next }: { reached: boolean; next: boolean }) => (
       reached
         ? "bg-green-6 animate-pop-in"
         : next
-        ? "shadow-[inset_0_0_0_2px_var(--color-red-5)]"
-        : "shadow-[inset_0_0_0_2px_var(--color-border)]"
-    }`}
+        ? "bg-panel shadow-[inset_0_0_0_2px_var(--color-red-5)]"
+        : "bg-panel shadow-[inset_0_0_0_2px_var(--color-border)]"
+    } relative`}
   >
     {reached && (
-      <PixelSprite rows={CHECK_SPRITE} palette={CHECK_PALETTE} scale={2} />
+      <svg viewBox="0 0 16 16" className="size-3.5" aria-hidden>
+        <path
+          d="M3 8.5l3.5 3.5L13 4.5"
+          fill="none"
+          stroke="var(--color-ink)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     )}
   </span>
 );
@@ -42,7 +38,7 @@ export default function StretchGoals({
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex items-baseline gap-4 mb-4">
+      <div className="flex items-baseline gap-4 mb-4 lg:mb-1">
         <div className="eyebrow">Stretch goals</div>
       </div>
 
@@ -56,8 +52,12 @@ export default function StretchGoals({
             return (
               <li
                 key={goal._id}
-                className="flex items-center gap-3 py-2.5 border-b border-border-dim last:border-b-0"
+                className="group relative flex items-center gap-3 py-2.5 lg:py-1.5 border-b border-border-dim last:border-b-0 lg:border-b-0"
               >
+                <span
+                  aria-hidden
+                  className="hidden lg:block group-last:lg:hidden absolute left-[9px] top-1/2 h-full w-0.5 bg-border"
+                />
                 {/* keyed so the check pops in when a goal is reached live */}
                 <Checkbox key={String(reached)} reached={reached} next={next} />
                 <span className="sr-only">

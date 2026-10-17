@@ -29,23 +29,25 @@ const AuctionCard = ({
 }) => {
   const hasBid = !!bid?.amount;
   return (
-    <li className="w-60 min-h-40 flex-shrink-0 flex flex-col gap-2 p-4 bg-ink-alt relative">
+    <li className="w-60 min-h-40 lg:w-40 lg:min-h-0 flex-shrink-0 flex flex-col gap-2 lg:gap-1 p-4 lg:p-3 bg-ink-alt relative">
       {hottest && <span className="absolute inset-y-0 left-0 w-1 bg-gold" />}
       <div className="flex items-baseline justify-between gap-3">
-        <span className="eyebrow">
+        <span className="eyebrow lg:text-xs">
           {hasBid ? "Høyeste bud" : "Ingen bud ennå"}
         </span>
-        {hottest && <span className="eyebrow text-gold">Mest budt</span>}
+        {hottest && (
+          <span className="eyebrow lg:text-xs text-gold">Mest budt</span>
+        )}
       </div>
       <div
         key={bid?.amount ?? 0}
-        className={`text-2xl font-extrabold tabular-nums leading-none ${
+        className={`text-2xl lg:text-lg font-extrabold tabular-nums leading-none ${
           hasBid ? "text-gold animate-bump origin-left" : "text-text-faint"
         }`}
       >
         {hasBid ? formatCurrency(bid.amount) : "—"}
       </div>
-      <p className="m-0 flex-1 text-sm font-semibold leading-snug line-clamp-2">
+      <p className="m-0 flex-1 text-sm font-semibold leading-snug line-clamp-2 lg:line-clamp-1">
         {auction.description}
       </p>
       <div className="text-xs text-text-faint truncate">
@@ -91,8 +93,8 @@ const SilentAuction = ({
     });
 
   return (
-    <div className="flex flex-col gap-6 h-full p-5 md:p-6 bg-panel">
-      <div className="grid grid-cols-[5rem_1fr] md:grid-cols-[7rem_1fr_auto] items-center gap-x-6 gap-y-4">
+    <div className="flex flex-col gap-6 lg:gap-3 h-full p-5 md:p-6 lg:p-4 bg-panel">
+      <div className="grid grid-cols-[5rem_1fr] md:grid-cols-[7rem_1fr_auto] lg:grid-cols-[3.25rem_1fr_auto] items-center gap-x-6 lg:gap-x-4 gap-y-4">
         <span className="block bg-ink-alt">
           <GavelArt />
         </span>
