@@ -287,11 +287,7 @@ const CasinoBanner = () => {
           </span>
         </span>
         {!showQr && round.live && round.players !== null && (
-          <span className="eyebrow inline-flex items-center gap-2 text-green-6 tabular-nums">
-            <span className="relative flex size-2">
-              <span className="absolute inset-0 bg-green-6 opacity-75 motion-safe:animate-ping" />
-              <span className="relative size-2 bg-green-6" />
-            </span>
+          <span className="eyebrow text-green-6 tabular-nums">
             {round.players} {round.players === 1 ? "spiller" : "spillere"} nå
           </span>
         )}
