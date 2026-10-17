@@ -63,7 +63,7 @@ export default function Page() {
               totalAmount={total}
             />
           </Card>
-          <Card className="flex flex-col lg:p-4 lg:min-h-0 lg:col-start-2 lg:row-start-2 lg:row-span-2">
+          <Card className="flex flex-col lg:p-3 lg:min-h-0 lg:col-start-2 lg:row-start-2 lg:row-span-2">
             <Donations donations={data.vipps} topDonor={data.topDonors[0]} />
           </Card>
           <div className="min-w-0 lg:min-h-0 lg:col-start-1 lg:col-span-2 lg:row-start-4">
