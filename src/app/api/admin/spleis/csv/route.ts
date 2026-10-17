@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     return new Response("Ugyldig passord :'(", { status: 401 });
   }
 
-  const { csv, source } = await request.json().catch(() => ({}));
+  const { csv, source, fetchedAt } = await request.json().catch(() => ({}));
   if (typeof csv !== "string") {
     return NextResponse.json({ message: "Mangler csv" }, { status: 400 });
   }
@@ -23,12 +23,27 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const count = await importSpleisCsv(csv, String(source));
-  if (count == null) {
+  const result = await importSpleisCsv(
+    csv,
+    String(source),
+    new Date(
+      Number.isFinite(fetchedAt) ? Math.min(fetchedAt, Date.now()) : Date.now()
+    )
+  );
+  if (result == null) {
     return NextResponse.json(
       { message: "Filen er ikke en Spleis-CSV" },
       { status: 400 }
     );
   }
-  return NextResponse.json({ count });
+  if (result === "empty") {
+    return NextResponse.json(
+      { message: "Tom CSV ignorert, Spleis-listen er beholdt" },
+      { status: 400 }
+    );
+  }
+  if (result === "stale") {
+    return NextResponse.json({ ignored: "eldre kopi" });
+  }
+  return NextResponse.json({ count: result });
 }

@@ -60,7 +60,11 @@ const Page = () => {
     const res = await fetchRequest("/api/admin/spleis/csv", {
       method: "POST",
       password: state.token ?? undefined,
-      body: { csv: await file.text(), source: "opplastet" },
+      body: {
+        csv: await file.text(),
+        source: "opplastet",
+        fetchedAt: file.lastModified,
+      },
       addAlert,
     });
     if (res.ok) {

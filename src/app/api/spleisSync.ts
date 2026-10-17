@@ -1,6 +1,6 @@
 import { inspect } from "node:util";
 
-import { SpleisSync, Vipps } from "@/models/schema.js";
+import { SpleisSnapshot, SpleisSync } from "@/models/schema.js";
 
 import { parseSpleisCsv } from "@/api/spleisCsv";
 
@@ -8,6 +8,9 @@ const CSV_URL =
   "https://www.spleis.no/api/private/project/518623/rewards-info.csv";
 
 let nextCheckAt = 0;
+
+const isDuplicateKey = (error: unknown) =>
+  (error as { code?: number }).code === 11000;
 
 const claimSync = async () => {
   const now = new Date();
@@ -24,7 +27,7 @@ const claimSync = async () => {
     );
     return true;
   } catch (error) {
-    if ((error as { code?: number }).code === 11000) return false;
+    if (isDuplicateKey(error)) return false;
     throw error;
   }
 };
@@ -42,31 +45,44 @@ const record = (message: string, error?: string) => {
   );
 };
 
-export const importSpleisCsv = async (text: string, source: string) => {
+export const importSpleisCsv = async (
+  text: string,
+  source: string,
+  fetchedAt: Date
+) => {
   const donations = parseSpleisCsv(text);
   if (!donations) {
     await record(`${source}: mottok ikke Spleis-CSV`, text.slice(0, 3000));
     return null;
   }
-  const now = new Date();
-  await Vipps.bulkWrite(
-    donations.map(({ key, name, message, amount }) => ({
-      updateOne: {
-        filter: { spleisTransactionId: key },
-        update: {
-          $setOnInsert: {
-            name,
-            message,
-            amount,
-            createdAt: now,
-            updatedAt: now,
-          },
-        },
-        upsert: true,
+  const seen = new Map<string, number>();
+  const entries = donations.map(({ name, message, amount, donatedAt }) => {
+    const createdAt = donatedAt ?? fetchedAt;
+    const id = `spleis:${createdAt.getTime()}:${amount}`;
+    const count = (seen.get(id) ?? 0) + 1;
+    seen.set(id, count);
+    return { _id: `${id}:${count}`, name, message, amount, createdAt };
+  });
+
+  try {
+    await SpleisSnapshot.updateOne(
+      {
+        _id: "spleis",
+        fetchedAt: { $not: { $gte: fetchedAt } },
+        ...(entries.length === 0 && { "donations.0": { $exists: false } }),
       },
-    })),
-    { timestamps: false }
-  );
+      { fetchedAt, donations: entries },
+      { upsert: true }
+    );
+  } catch (error) {
+    if (!isDuplicateKey(error)) throw error;
+    if (entries.length === 0) {
+      await record(`${source}: tom CSV ignorert`, text.slice(0, 3000));
+      return "empty";
+    }
+    await record(`${source}: eldre kopi ignorert`);
+    return "stale";
+  }
   await record(`${donations.length} donasjoner i CSV (${source})`);
   return donations.length;
 };
@@ -89,6 +105,7 @@ export const syncSpleisIfDue = async () => {
   if (!(await claimSync())) return;
 
   try {
+    const fetchedAt = new Date();
     const res = await fetch(CSV_URL, {
       headers: { cookie: `spleis-user-token=${token}` },
       cache: "no-store",
@@ -104,7 +121,7 @@ export const syncSpleisIfDue = async () => {
       await record(message, describeResponse(res, text));
       return;
     }
-    await importSpleisCsv(text, "poll");
+    await importSpleisCsv(text, "poll", fetchedAt);
   } catch (error) {
     await record(
       String(error),
