@@ -25,11 +25,11 @@ const DonationCard = (props: Props) => {
 const TopDonation = ({ topDonor }: { topDonor: Donation }) => {
   if (!topDonor) return null;
   return (
-    <div className="mb-6">
-      <div className="eyebrow mb-2">Største vippser</div>
+    <div className="mb-6 lg:mb-3">
+      <div className="eyebrow mb-2 lg:mb-1">Største vippser</div>
       <div className="flex items-stretch gap-4 bg-ink-alt">
         <div className="w-2 flex-shrink-0 bg-gold" />
-        <div className="flex items-center gap-3 py-3 pr-4 w-full min-w-0">
+        <div className="flex items-center gap-3 py-3 lg:py-2 pr-4 w-full min-w-0">
           <div className="flex justify-between items-baseline w-full min-w-0">
             <span className="font-bold text-lg truncate" title={topDonor.name}>
               {topDonor.name}
@@ -58,7 +58,7 @@ const Donations = ({
       <TopDonation topDonor={topDonor} />
       <div className="eyebrow mb-1">Siste transaksjoner</div>
       <ol
-        className="flex flex-col flex-1 overflow-y-auto"
+        className="flex flex-col flex-1 overflow-y-auto lg:overflow-hidden"
         aria-label="Nyeste Vipps-donasjoner"
       >
         {vipps.map((donation) => (

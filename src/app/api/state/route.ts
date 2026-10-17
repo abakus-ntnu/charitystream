@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
     bids,
     auctions,
     totalAmount,
-    vipps: donations.latest.reverse(),
+    vipps: donations.latest,
     streamLink,
     slidoView,
     stretchGoals,

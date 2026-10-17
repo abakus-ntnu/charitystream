@@ -114,12 +114,12 @@ const BeerCounter = ({ beerData }: Props) => {
   const pouring = pour.key > 0;
 
   return (
-    <div className="flex flex-col h-full gap-6">
+    <div className="flex flex-col h-full gap-6 lg:gap-3">
       {full && <div className="eyebrow text-gold">Maks nådd!</div>}
 
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center lg:min-h-0">
         <svg
-          className={`${styles.art} w-full max-w-[32rem] h-auto`}
+          className={`${styles.art} w-full max-w-[32rem] h-auto lg:h-full lg:max-w-full`}
           viewBox="0 -4 160 124"
           aria-hidden="true"
         >

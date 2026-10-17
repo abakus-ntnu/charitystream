@@ -19,10 +19,10 @@ const DonationTotal = ({ total, stretchGoals }: Props) => {
     : 100;
 
   return (
-    <div className="flex flex-col justify-between h-full gap-8">
+    <div className="flex flex-col justify-between h-full gap-8 lg:gap-2">
       <div className="flex flex-col gap-1">
         <p className="eyebrow m-0">Totalt donert</p>
-        <p className="stat-display text-green-6">
+        <p className="stat-display text-green-6 lg:text-[3.8rem]">
           <span
             key={shown.bumps}
             className={shown.bumps ? "inline-block animate-bump" : undefined}
