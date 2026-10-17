@@ -19,11 +19,20 @@ export default function Page() {
   const { data, error } = useSWR<CharityState>("/api/state", fetcher, {
     refreshInterval: 5000,
   });
-  const [scale, setScale] = useState(1);
+  const [stage, setStage] = useState({ scale: 1, width: 1280, height: 720 });
 
   useEffect(() => {
-    const fit = () =>
-      setScale(Math.min(window.innerWidth / 1280, window.innerHeight / 720));
+    const fit = () => {
+      const scale = Math.min(
+        window.innerWidth / 1280,
+        window.innerHeight / 720
+      );
+      setStage({
+        scale,
+        width: window.innerWidth / scale,
+        height: window.innerHeight / scale,
+      });
+    };
     fit();
     window.addEventListener("resize", fit);
     return () => window.removeEventListener("resize", fit);
@@ -41,9 +50,15 @@ export default function Page() {
   return (
     <div
       className="flex flex-col min-h-screen lg:fixed lg:inset-0 lg:min-h-0 lg:items-center lg:justify-center lg:overflow-hidden"
-      style={{ "--tv-scale": scale } as React.CSSProperties}
+      style={
+        {
+          "--tv-scale": stage.scale,
+          "--tv-width": `${stage.width}px`,
+          "--tv-height": `${stage.height}px`,
+        } as React.CSSProperties
+      }
     >
-      <div className="flex-1 flex flex-col w-full lg:flex-none lg:w-[1280px] lg:h-[720px] lg:[scale:var(--tv-scale)] lg:px-7 lg:pt-6 lg:pb-3 lg:gap-4">
+      <div className="flex-1 flex flex-col w-full lg:flex-none lg:w-[var(--tv-width)] lg:h-[var(--tv-height)] lg:[scale:var(--tv-scale)] lg:px-4 lg:pt-4 lg:pb-2 lg:gap-3">
         <header className="w-full px-4 md:px-10 pt-6 md:pt-8 lg:p-0 flex items-center justify-between gap-4">
           <h1 className="logo m-0">
             Abakus<span className="logo__accent">Veldedighetsfest</span>
