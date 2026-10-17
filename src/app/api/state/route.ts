@@ -17,8 +17,14 @@ import { connectMongoose } from "@/api/utils";
 
 const findTopDonors = () =>
   Vipps.aggregate([
-    { $group: { _id: "$name", amount: { $sum: "$amount" } } },
-    { $sort: { amount: -1 } },
+    {
+      $group: {
+        _id: "$name",
+        amount: { $sum: "$amount" },
+        firstAt: { $min: "$createdAt" },
+      },
+    },
+    { $sort: { amount: -1, firstAt: 1, _id: 1 } },
     { $limit: 1 },
     { $addFields: { name: "$_id" } },
   ]);
