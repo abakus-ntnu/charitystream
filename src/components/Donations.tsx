@@ -4,6 +4,7 @@ import { Donation } from "@/models/types";
 
 type Props = {
   name: string;
+  message: string;
   amount: number;
 };
 
@@ -11,8 +12,14 @@ const DonationCard = (props: Props) => {
   return (
     <li className="flex items-center gap-3 py-2.5 lg:py-0.5 border-b border-border-dim last:border-b-0 animate-pop-in">
       <div className="flex justify-between w-full min-w-0 text-sm md:text-base lg:text-sm">
-        <span className="font-medium truncate" title={props.name}>
-          {props.name}
+        <span
+          className="min-w-0 truncate"
+          title={props.message ? `${props.name}: ${props.message}` : props.name}
+        >
+          <span className="font-medium">{props.name}</span>
+          {props.message && (
+            <span className="ml-2 text-text-dim">{props.message}</span>
+          )}
         </span>
         <span className="font-bold text-green-6 tabular-nums ml-4 whitespace-nowrap">
           {formatCurrency(props.amount)}
@@ -71,6 +78,7 @@ const Donations = ({
         {vipps.map((donation) => (
           <DonationCard
             name={donation.name}
+            message={donation.message}
             amount={donation.amount}
             key={donation._id}
           />
