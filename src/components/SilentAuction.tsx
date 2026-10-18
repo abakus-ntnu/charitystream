@@ -29,28 +29,34 @@ const AuctionCard = ({
 }) => {
   const hasBid = !!bid?.amount;
   return (
-    <li className="w-60 min-h-40 lg:w-40 lg:min-h-0 flex-shrink-0 flex flex-col gap-2 lg:gap-1 p-4 lg:p-3 bg-ink-alt relative">
+    <li className="w-60 min-h-40 lg:w-56 lg:min-h-0 flex-shrink-0 flex flex-col gap-2 lg:gap-1 p-4 lg:p-3 bg-ink-alt relative">
       {hottest && <span className="absolute inset-y-0 left-0 w-1 bg-gold" />}
       <div className="flex items-baseline justify-between gap-3">
-        <span className="eyebrow lg:text-xs">
+        <span className="eyebrow lg:text-sm">
           {hasBid ? "Høyeste bud" : "Ingen bud ennå"}
         </span>
         {hottest && (
-          <span className="eyebrow lg:text-xs text-gold">Mest budt</span>
+          <span className="eyebrow lg:text-sm text-gold">Mest bydd</span>
         )}
       </div>
       <div
         key={bid?.amount ?? 0}
-        className={`text-2xl lg:text-lg font-extrabold tabular-nums leading-none ${
-          hasBid ? "text-gold animate-bump origin-left" : "text-text-faint"
+        className={`text-2xl lg:text-xl font-extrabold tabular-nums leading-none ${
+          hasBid
+            ? "text-gold animate-bump origin-left"
+            : "text-text-faint lg:hidden"
         }`}
       >
         {hasBid ? formatCurrency(bid.amount) : "—"}
       </div>
-      <p className="m-0 flex-1 text-sm font-semibold leading-snug line-clamp-2 lg:line-clamp-1">
+      <p className="m-0 flex-1 lg:flex-none text-sm lg:text-base font-semibold leading-snug line-clamp-2">
         {auction.description}
       </p>
-      <div className="text-xs text-text-faint truncate">
+      <div
+        className={`text-xs text-text-faint truncate ${
+          bid?.name ? "" : "lg:hidden"
+        }`}
+      >
         {bid?.name ? (
           <>
             Leder: <span className="text-text-dim">{bid.name}</span>

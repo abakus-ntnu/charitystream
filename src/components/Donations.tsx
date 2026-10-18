@@ -10,7 +10,7 @@ type Props = {
 
 const DonationCard = (props: Props) => {
   return (
-    <li className="flex items-center gap-3 py-2.5 lg:py-0.5 border-b border-border-dim last:border-b-0 animate-pop-in">
+    <li className="flex items-center gap-3 py-2.5 lg:py-0.5 border-b border-border-dim last:border-b-0 lg:nth-[4]:border-b-0 lg:nth-[n+5]:hidden animate-pop-in">
       <div className="flex justify-between w-full min-w-0 text-sm md:text-base lg:text-sm">
         <span
           className="min-w-0 truncate"

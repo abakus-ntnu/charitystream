@@ -34,7 +34,7 @@ const AuctionCard = ({
         {hottest && <span className="absolute inset-x-0 top-0 h-1 bg-gold" />}
         <div className="flex items-center justify-between gap-3">
           {hottest && (
-            <span className={`${TAG} bg-gold text-ink`}>Mest budt</span>
+            <span className={`${TAG} bg-gold text-ink`}>Mest bydd</span>
           )}
           {!hasBid && (
             <span className={`${TAG} bg-green-6/15 text-green-6`}>

@@ -63,7 +63,7 @@ export default function Page() {
           </h1>
         </header>
 
-        <main className="flex-1 grid grid-cols-1 gap-6 w-full px-4 md:px-10 py-6 md:py-8 lg:p-0 lg:min-h-0 lg:grid-cols-3 lg:grid-rows-[147px_96px_minmax(0,1fr)_220px] lg:gap-4">
+        <main className="flex-1 grid grid-cols-1 gap-6 w-full px-4 md:px-10 py-6 md:py-8 lg:p-0 lg:min-h-0 lg:grid-cols-3 lg:grid-rows-[154px_96px_minmax(0,1fr)_220px] lg:gap-4">
           <Card className="md:p-8 lg:p-4 lg:min-h-0 lg:col-start-2 lg:row-start-1">
             <DonationTotal total={total} stretchGoals={data.stretchGoals} />
           </Card>

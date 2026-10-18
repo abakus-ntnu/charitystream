@@ -20,9 +20,9 @@ const DonationTotal = ({ total, stretchGoals }: Props) => {
 
   return (
     <div className="flex flex-col justify-between h-full gap-8 lg:gap-2">
-      <div className="flex flex-col gap-1">
-        <p className="eyebrow m-0">Totalt donert</p>
-        <p className="stat-display text-green-6 lg:text-[3.8rem]">
+      <div className="flex flex-col gap-1 lg:gap-0">
+        <p className="eyebrow m-0 lg:leading-tight">Totalt donert</p>
+        <p className="stat-display text-green-6 lg:text-[3.2rem]">
           <span
             key={shown.bumps}
             className={shown.bumps ? "inline-block animate-bump" : undefined}
@@ -33,7 +33,7 @@ const DonationTotal = ({ total, stretchGoals }: Props) => {
       </div>
 
       {stretchGoals.length > 0 && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 lg:gap-1.5">
           <div className="flex items-baseline justify-between gap-4 text-sm">
             {nextGoal ? (
               <>
@@ -54,7 +54,7 @@ const DonationTotal = ({ total, stretchGoals }: Props) => {
             )}
           </div>
           <div
-            className="h-2 w-full bg-ink-alt overflow-hidden"
+            className="h-2 lg:h-3.5 w-full bg-border overflow-hidden"
             role="progressbar"
             aria-label="Fremdrift mot neste stretch goal"
             aria-valuenow={Math.round(progress)}
