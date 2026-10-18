@@ -23,14 +23,12 @@ export default function Page() {
 
   useEffect(() => {
     const fit = () => {
-      const scale = Math.min(
-        window.innerWidth / 1280,
-        window.innerHeight / 720
-      );
+      const { clientWidth, clientHeight } = document.documentElement;
+      const scale = Math.min(clientWidth / 1280, clientHeight / 720);
       setStage({
         scale,
-        width: window.innerWidth / scale,
-        height: window.innerHeight / scale,
+        width: clientWidth / scale,
+        height: clientHeight / scale,
       });
     };
     fit();
@@ -65,7 +63,7 @@ export default function Page() {
           </h1>
         </header>
 
-        <main className="flex-1 grid grid-cols-1 gap-6 w-full px-4 md:px-10 py-6 md:py-8 lg:p-0 lg:min-h-0 lg:grid-cols-3 lg:grid-rows-[147px_56px_1fr_220px] lg:gap-4">
+        <main className="flex-1 grid grid-cols-1 gap-6 w-full px-4 md:px-10 py-6 md:py-8 lg:p-0 lg:min-h-0 lg:grid-cols-3 lg:grid-rows-[147px_96px_minmax(0,1fr)_220px] lg:gap-4">
           <Card className="md:p-8 lg:p-4 lg:min-h-0 lg:col-start-2 lg:row-start-1">
             <DonationTotal total={total} stretchGoals={data.stretchGoals} />
           </Card>
