@@ -14,7 +14,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json().catch(() => null);
+  connectMongoose();
+  const raw = await request.text();
+  await SpleisSync.updateOne(
+    { _id: "spleis" },
+    { lastWebhookAt: new Date(), lastWebhookBody: raw.slice(0, 3000) },
+    { upsert: true }
+  );
+
+  const body = await new Response(raw).json().catch(() => null);
   const { name, message, amount, transactionId } = body ?? {};
   if (
     !Number.isFinite(amount) ||
@@ -25,7 +33,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 
-  connectMongoose();
   if (!(await SpleisSync.exists({ _id: "spleis", mode: "webhook" }))) {
     return NextResponse.json({ ignored: true });
   }
@@ -37,7 +44,11 @@ export async function POST(request: NextRequest) {
     // so we assume worst case
     await Vipps.create({
       name: typeof name === "string" ? name.slice(0, 100) : "",
-      message: typeof message === "string" ? message.slice(0, 500) : "",
+      message:
+        typeof message === "string" &&
+        !/^(https?:\/\/)?(www\.)?spleis\.no\/\d+\/?$/i.test(message.trim())
+          ? message.slice(0, 500)
+          : "",
       amount,
       spleisTransactionId: transactionId,
     });

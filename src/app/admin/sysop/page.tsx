@@ -55,6 +55,8 @@ type SpleisStatus = {
   lastSuccessAt?: string;
   lastMessage?: string;
   lastError?: string | null;
+  lastWebhookAt?: string;
+  lastWebhookBody?: string;
 };
 
 const formatTime = (time?: string) =>
@@ -285,6 +287,16 @@ const Page = () => {
               </details>
             )}
           </>
+        )}
+        {spleis?.lastWebhookBody != null && (
+          <details>
+            <summary className="cursor-pointer text-sm text-text-dim">
+              Vis siste webhook ({formatTime(spleis.lastWebhookAt)})
+            </summary>
+            <pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap break-all bg-ink-alt p-3 text-xs font-mono">
+              {spleis.lastWebhookBody}
+            </pre>
+          </details>
         )}
       </Section>
 

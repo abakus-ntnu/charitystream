@@ -111,6 +111,8 @@ const SpleisSyncSchema = new mongoose.Schema(
     lastSuccessAt: Date,
     lastMessage: String,
     lastError: String,
+    lastWebhookAt: Date,
+    lastWebhookBody: String,
   },
   { autoCreate: true }
 );

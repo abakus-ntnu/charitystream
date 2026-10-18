@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   connectMongoose();
   const sync = await SpleisSync.findById(
     "spleis",
-    "-_id mode lastAttemptAt lastSuccessAt lastMessage lastError"
+    "-_id mode lastAttemptAt lastSuccessAt lastMessage lastError lastWebhookAt lastWebhookBody"
   ).lean();
   return NextResponse.json({
     ...sync,
