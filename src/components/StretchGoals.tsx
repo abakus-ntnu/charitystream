@@ -4,7 +4,7 @@ import { StretchGoal } from "@/models/types";
 
 const Checkbox = ({ reached, next }: { reached: boolean; next: boolean }) => (
   <span
-    className={`flex-shrink-0 flex items-center justify-center size-5 ${
+    className={`flex-shrink-0 flex items-center justify-center size-5 lg:size-4 ${
       reached
         ? "bg-green-6 animate-pop-in"
         : next
@@ -13,7 +13,7 @@ const Checkbox = ({ reached, next }: { reached: boolean; next: boolean }) => (
     } relative`}
   >
     {reached && (
-      <svg viewBox="0 0 16 16" className="size-3.5" aria-hidden>
+      <svg viewBox="0 0 16 16" className="size-3.5 lg:size-3" aria-hidden>
         <path
           d="M3 8.5l3.5 3.5L13 4.5"
           fill="none"
@@ -52,11 +52,11 @@ export default function StretchGoals({
             return (
               <li
                 key={goal._id}
-                className="group relative flex items-center gap-3 py-2.5 lg:py-1.5 border-b border-border-dim last:border-b-0 lg:border-b-0"
+                className="group relative flex items-center gap-3 py-2.5 lg:py-px border-b border-border-dim last:border-b-0 lg:border-b-0"
               >
                 <span
                   aria-hidden
-                  className="hidden lg:block group-last:lg:hidden absolute left-[9px] top-1/2 h-full w-0.5 bg-border"
+                  className="hidden lg:block group-last:lg:hidden absolute left-[7px] top-1/2 h-full w-0.5 bg-border"
                 />
                 {/* keyed so the check pops in when a goal is reached live */}
                 <Checkbox key={String(reached)} reached={reached} next={next} />
@@ -64,7 +64,7 @@ export default function StretchGoals({
                   {reached ? "Nådd:" : next ? "Neste mål:" : "Ikke nådd:"}
                 </span>
                 <span
-                  className={`min-w-0 flex-1 truncate text-sm md:text-base ${
+                  className={`min-w-0 flex-1 truncate text-sm md:text-base lg:text-sm lg:leading-4 ${
                     reached
                       ? "font-medium"
                       : next
@@ -76,7 +76,7 @@ export default function StretchGoals({
                   {goal.description}
                 </span>
                 <span
-                  className={`ml-4 whitespace-nowrap tabular-nums text-sm md:text-base ${
+                  className={`ml-4 whitespace-nowrap tabular-nums text-sm md:text-base lg:text-sm lg:leading-4 ${
                     reached
                       ? "font-bold text-green-6"
                       : next
